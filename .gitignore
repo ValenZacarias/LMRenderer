@@ -1,0 +1,8 @@
+*.exe
+*.log
+*.obj
+*.user
+LMRenderer/LMRenderer/x64
+LMRenderer/x64
+LMRenderer/.vs/LMRenderer
+LMRenderer/LMRenderer/debug
