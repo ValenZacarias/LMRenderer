@@ -153,6 +153,10 @@
   <ItemGroup>
     <ClCompile Include="example_rendering.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="GLFWCanvas.cpp" />
+    <ClCompile Include="Globals.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ToolFPSCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="difusse_fragment_shader.txt" />
@@ -161,7 +165,11 @@
     <Text Include="light_vertex_shader.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GLFWCanvas.hpp" />
+    <ClInclude Include="Globals.h" />
     <ClInclude Include="shader_s.h" />
+    <ClInclude Include="Tool.hpp" />
+    <ClInclude Include="ToolFPSCamera.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,6 @@
 //https://github.com/JoeyDeVries/LearnOpenGL
 //Un cambio de prueba
-/*
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
@@ -10,68 +10,36 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "shader_s.h"
-#include "stb_image.h"
+#include "Globals.h"
+#include "Tool.hpp"
+#include "ToolFPSCamera.hpp"
+#include "GLFWCanvas.hpp"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+//void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+//void processInput(GLFWwindow* window);
+//void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+//void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 int screenWidth = 1280;
 int screenHeigth = 720;
 
-//Camera settings
-const float cameraSpeed = 6.0f;
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-glm::vec3 direction = glm::vec3(0.0f);
-
-//Camera direction settings
-float fov = 45.0f;
-float pitch = 0.0f;
-float yaw = -90.0f;
-float lastX = 400.0f, lastY = 300.0f;
-float xoffset = 0.0f;
-float yoffset = 0.0f;
-const float sensitivity = 0.1f;
-bool firstMouse = true;
-glm::vec3 front = glm::vec3(0.0f);
-
-float deltaTime = 0.0f;
+//float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+GLFWwindow* window = NULL;
 
 int main()
 {
-	// glfw: initialize and configure
-	// ------------------------------
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// glfw window creation
-	GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeigth, "LearnOpenGL", NULL, NULL);
-	if (window == NULL)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(window);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	GLFWCanvas canvas = GLFWCanvas(1280, 720);
+	window = canvas.Init();
 
-	// glad: load all OpenGL function pointers
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
+	//Ahora le damos un ptr a algo que esta en el stack y muere con el main
+	//Si la idea es ir creando y destruyendo a medida que cambiamos, podemos usar smart pointers
+	ToolFPSCamera cameraTool = ToolFPSCamera(&canvas.currentCamera);
+	canvas.SetCurrentTool(&cameraTool);
+	//canvas.currentTool = cameraTool;
 
-	glViewport(0, 0, screenWidth, screenHeigth);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -175,32 +143,38 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-
 	float currentFrame = 0.0f;
 	//RENDER LOOP! -----------------------------------------------------------------------------------------
 	while (!glfwWindowShouldClose(window))
 	{
+		/*	Asi deberia quedar despues de las abstracciones
+			Canvas.procesEvent()
+			Canvas.render()*/
 		//Input
-		processInput(window);
+		canvas.KeyboardHandler(window);
 
 		currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
 		//Rendering config --------------------------------------------------------------------------------------
-		glClearColor(0.05f, 0.08f, 0.1f, 1.0f);
+		glClearColor(0.05f, 0.28f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
 		//3D Transformations --------------------------------------------------------------------------------------
 		//view: World -> View
 		glm::mat4 view;
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		//view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		view = glm::lookAt(canvas.currentCamera.cameraPos, canvas.currentCamera.cameraPos + canvas.currentCamera.cameraFront, 
+							canvas.currentCamera.cameraUp);
 
 		//projection: View -> Clip
 		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(fov), (float)screenWidth / (float)screenHeigth, 1.0f, 1000.0f);
+		projection = glm::perspective(glm::radians(canvas.currentCamera.FOV), (float)screenWidth / (float)screenHeigth, 1.0f, 1000.0f);
+		//projection = glm::perspective(glm::radians(fov), (float)screenWidth / (float)screenHeigth, 1.0f, 1000.0f);
 
 		//Render cubes --------------------------------------------------------------------------------------
+		//Todo esto va a visualization, la ventana tendra un puntero a vis
 		for (unsigned int i = 0; i < 10; i++)
 		{
 			diffuseShader.use();
@@ -260,68 +234,5 @@ int main()
 	glfwTerminate();
 	return 0;
 }
-
-//Resize viewport when window resizes callback
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	glViewport(0, 0, width, height);
-}
-
-//Get Input function
-void processInput(GLFWwindow* window) {
-
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPos += cameraSpeed * deltaTime * cameraFront;
-
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPos -= cameraSpeed * deltaTime * cameraFront;
-
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * deltaTime;
-
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * deltaTime;
-
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-		cameraPos -= cameraUp * cameraSpeed * deltaTime;
-
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		cameraPos += cameraUp * cameraSpeed * deltaTime;
-}
-
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	if (firstMouse) // initially set to true 
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-	xoffset = xpos - lastX;
-	yoffset = lastY - ypos;
-
-	lastX = xpos;
-	lastY = ypos;
-
-	yoffset *= sensitivity;
-	xoffset *= sensitivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-
-	cameraFront = glm::normalize(front);
-}
-
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	fov -= (float)yoffset;
-}*/
 
 

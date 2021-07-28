@@ -1,0 +1,60 @@
+#pragma once
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <stb_image.h>
+
+#include <glm/glm.hpp> 
+#include <glm/gtc/matrix_transform.hpp> 
+#include <glm/gtc/type_ptr.hpp>
+
+#include "Globals.h"
+#include "Tool.hpp"
+#include "ToolFPSCamera.hpp"
+#include "shader_s.h"
+
+struct Camera
+{
+public:
+	//Camera settings
+	const float sensitivity = 0.1f;
+	const float cameraSpeed = 6.0f;
+	float FOV = 45.0f;
+
+	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 direction = glm::vec3(0.0f);
+	glm::vec3 front = glm::vec3(0.0f);
+
+	//Camera Pos and Rot settings
+	float pitch = 0.0f;
+	float yaw = -90.0f;
+	float lastX = 400.0f;
+	float lastY = 300.0f;
+	float xoffset = 0.0f;
+	float yoffset = 0.0f;
+};
+
+class GLFWCanvas
+{
+private:
+	int width;
+	int heigth;
+	Tool* currentTool; //Tool deberia ser un puntero a tool
+	
+
+public:
+	Camera currentCamera;
+
+	GLFWCanvas(int screenWidth, int screenHeigth);
+	~GLFWCanvas() {};
+	void SetCurrentTool(Tool* tool);
+	void MousePosHandler(double xpos, double ypos);
+	void ScrollHandler(double yoffset);
+	void FrameResizeHandler(int width, int height);
+	void KeyboardHandler(GLFWwindow* window);
+	//Camera GetCurrentCamera();
+
+	GLFWwindow* Init();
+};
+
