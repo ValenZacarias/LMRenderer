@@ -7,8 +7,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Globals.h"
-#include "Tool.hpp"
-#include "ToolFPSCamera.hpp"
+#include "Tool.h"
+#include "ToolFPSCamera.h"
 
 void ToolFPSCamera::OnScroll(double yoffset)
 {

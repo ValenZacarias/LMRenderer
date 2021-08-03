@@ -3,12 +3,10 @@
 
 #include <string>
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <glm/glm.hpp> 
 
-#include "Tool.hpp"
-#include "GLFWCanvas.hpp" //Para acceder a camera debo incluir este HPP, esta bien?
+#include "Tool.h"
+#include "GLFWCanvas.h" //Para acceder a camera debo incluir este HPP, esta bien?
 
 
 class ToolFPSCamera : public Tool
@@ -16,6 +14,7 @@ class ToolFPSCamera : public Tool
 
 public:
 	Camera* cam;
+
 	ToolFPSCamera(Camera* currentCamera)
 	{
 		std::cout << "ToolFPSCamera instance created" << std::endl;

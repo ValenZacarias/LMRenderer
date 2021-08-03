@@ -8,13 +8,14 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Globals.h"
-#include "Tool.hpp"
-#include "ToolFPSCamera.hpp"
+#include "Tool.h"
+#include "ToolFPSCamera.h"
 #include "shader_s.h"
+
+#include "VisualizationGroup.h"
 
 struct Camera
 {
-public:
 	//Camera settings
 	const float sensitivity = 0.1f;
 	const float cameraSpeed = 6.0f;
@@ -41,6 +42,9 @@ private:
 	int width;
 	int heigth;
 	Tool* currentTool; //Tool deberia ser un puntero a tool
+	VisualizationGroup* currentViz; 
+	Shader currentShader;
+	glm::vec3 lightPos = glm::vec3(0.0f, 8.0f, 0.0f);
 	
 
 public:
@@ -48,6 +52,8 @@ public:
 
 	GLFWCanvas(int screenWidth, int screenHeigth);
 	~GLFWCanvas() {};
+	void SetupContext(VisualizationGroup* viz);
+	void Render();
 	void SetCurrentTool(Tool* tool);
 	void MousePosHandler(double xpos, double ypos);
 	void ScrollHandler(double yoffset);

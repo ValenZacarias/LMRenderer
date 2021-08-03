@@ -33,6 +33,15 @@
     <ClCompile Include="ToolFPSCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VisualizationGroup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualizationPrimitive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualizationPrimitiveTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="difusse_fragment_shader.txt">
@@ -52,16 +61,25 @@
     <ClInclude Include="Globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tool.hpp">
+    <ClInclude Include="Tool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="shader_s.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ToolFPSCamera.hpp">
+    <ClInclude Include="GLFWCanvas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GLFWCanvas.hpp">
+    <ClInclude Include="VisualizationBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualizationGroup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualizationPrimitive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualizationPrimitiveTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

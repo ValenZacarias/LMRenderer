@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
+#include <vector>
 
 #include <glm/glm.hpp> 
 #include <glm/gtc/matrix_transform.hpp> 
@@ -11,9 +12,15 @@
 
 #include "shader_s.h"
 #include "Globals.h"
-#include "Tool.hpp"
-#include "ToolFPSCamera.hpp"
-#include "GLFWCanvas.hpp"
+#include "Tool.h"
+#include "ToolFPSCamera.h"
+#include "GLFWCanvas.h"
+
+#include "VisualizationBase.h"
+#include "VisualizationGroup.h"
+#include "VisualizationPrimitive.h"
+#include "VisualizationPrimitiveTest.h"
+
 
 //void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //void processInput(GLFWwindow* window);
@@ -38,13 +45,12 @@ int main()
 	//Si la idea es ir creando y destruyendo a medida que cambiamos, podemos usar smart pointers
 	ToolFPSCamera cameraTool = ToolFPSCamera(&canvas.currentCamera);
 	canvas.SetCurrentTool(&cameraTool);
-	//canvas.currentTool = cameraTool;
-
+	
 
 	glEnable(GL_DEPTH_TEST);
 
 	Shader lightShader("light_vertex_shader.txt", "light_fragment_shader.txt");
-	Shader diffuseShader("difusse_vertex_shader.txt", "difusse_fragment_shader.txt");
+	//Shader diffuseShader("difusse_vertex_shader.txt", "difusse_fragment_shader.txt");
 
 	//Cube with Normals
 	float vertices[] = {
@@ -92,24 +98,23 @@ int main()
 	};
 
 	// world space positions of our cubes
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
+	//glm::vec3 cubePositions[] = {
+	//	glm::vec3(0.0f,  0.0f,  0.0f),
+	//	glm::vec3(2.0f,  5.0f, 0.0f),
+	//	glm::vec3(-1.5f, -2.2f, -2.5f),
+	//	glm::vec3(-3.8f, -2.0f, -12.3f),
+	//	glm::vec3(2.4f, -0.4f, -3.5f),
+	//	glm::vec3(-1.7f,  3.0f, -7.5f),
+	//	glm::vec3(1.3f, -2.0f, -2.5f),
+	//	glm::vec3(1.5f,  2.0f, -2.5f),
+	//	glm::vec3(1.5f,  0.2f, -1.5f),
+	//	glm::vec3(-1.3f,  1.0f, -1.5f)
+	//};
 
-	// world space positions of our cubes
-	glm::vec3 lightPos = glm::vec3(0.0f, 5.0f, -10.0f);
+	//glm::vec3 lightPosition = glm::vec3(0.0f, 2.0f, 0.0f);
 
 	//Vertex buffer def ---------------------------------------------------------------------
-	unsigned int VBO, cubeVAO;
+	GLuint VBO, cubeVAO;
 
 	//Vertex array object init
 	glGenVertexArrays(1, &cubeVAO);
@@ -143,23 +148,42 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
+
+	//Armado de Visualizations
+	VisualizationPrimitive CubeViz = VisualizationPrimitive(&cubeVAO);
+	VisualizationPrimitiveTest CubeViz2 = VisualizationPrimitiveTest(&cubeVAO);
+
+	VisualizationGroup MainGroupViz = VisualizationGroup();
+	VisualizationGroup TestGroupViz = VisualizationGroup();
+	//Checkear Object Slicing, el problema aca es que visualizations esta guardando un VizBase y no un VizPrimitive, por eso no se llama a la funcion
+	//Render de la clase hija
+	TestGroupViz.visualizations.insert(TestGroupViz.visualizations.begin(), &CubeViz2);
+
+	MainGroupViz.visualizations.insert(MainGroupViz.visualizations.begin(), &CubeViz);
+	MainGroupViz.visualizations.insert(MainGroupViz.visualizations.begin() + 1, &TestGroupViz);
+	//MainGroupViz.visualizations[0] = CubeViz;
+	canvas.SetupContext(&MainGroupViz);
+
+
+
+
 	float currentFrame = 0.0f;
 	//RENDER LOOP! -----------------------------------------------------------------------------------------
 	while (!glfwWindowShouldClose(window))
 	{
-		/*	Asi deberia quedar despues de las abstracciones
-			Canvas.procesEvent()
-			Canvas.render()*/
-		//Input
-		canvas.KeyboardHandler(window);
-
+		
 		currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-
-		//Rendering config --------------------------------------------------------------------------------------
-		glClearColor(0.05f, 0.28f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
+		/*	Asi deberia quedar despues de las abstracciones
+			Canvas.procesEvent()
+			Canvas.render()*/
+			//Input
+		canvas.KeyboardHandler(window);
+		canvas.Render();
+		////Rendering config --------------------------------------------------------------------------------------
+		//glClearColor(0.05f, 0.28f, 0.5f, 1.0f);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
 		//3D Transformations --------------------------------------------------------------------------------------
 		//view: World -> View
@@ -173,33 +197,7 @@ int main()
 		projection = glm::perspective(glm::radians(canvas.currentCamera.FOV), (float)screenWidth / (float)screenHeigth, 1.0f, 1000.0f);
 		//projection = glm::perspective(glm::radians(fov), (float)screenWidth / (float)screenHeigth, 1.0f, 1000.0f);
 
-		//Render cubes --------------------------------------------------------------------------------------
-		//Todo esto va a visualization, la ventana tendra un puntero a vis
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			diffuseShader.use();
-
-			diffuseShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-			diffuseShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-			diffuseShader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
-
-			unsigned int viewLoc = glGetUniformLocation(diffuseShader.ID, "view");
-			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-			unsigned int projectionLoc = glGetUniformLocation(diffuseShader.ID, "projection");
-			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			model = glm::rotate(model, (float)glfwGetTime() * 1.5f, cubePositions[i]);
-			unsigned int modelLoc = glGetUniformLocation(diffuseShader.ID, "model");
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-			glBindVertexArray(cubeVAO);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-
 		//Render light --------------------------------------------------------------------------------------
-
 		lightShader.use();
 		lightShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 
@@ -213,7 +211,7 @@ int main()
 		//glDrawArrays(GL_TRIANGLES, 0, 5);
 
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, lightPos);
+		model = glm::translate(model, lightPosition);
 		model = glm::scale(model, glm::vec3(0.3f));
 		//model = glm::rotate(model, (float)glfwGetTime() * 1.5f, cubePositions[i]);
 		unsigned int modelLoc = glGetUniformLocation(lightShader.ID, "model");
