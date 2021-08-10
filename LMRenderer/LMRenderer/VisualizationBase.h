@@ -9,12 +9,12 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "shader_s.h"
-//#include "GLFWCanvas.h"
+
 struct Camera;
 
 class VisualizationBase
 {
 public:
 	VisualizationBase() {};
-	virtual void Render(Camera* cam, Shader* shader) {}; //Camera va a obtenerse de canvas.currentCamera
+	virtual void Render(Camera* cam) {}; //Camera va a obtenerse de canvas.currentCamera
 };

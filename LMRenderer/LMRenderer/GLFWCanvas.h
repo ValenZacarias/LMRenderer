@@ -59,7 +59,6 @@ public:
 	void ScrollHandler(double yoffset);
 	void FrameResizeHandler(int width, int height);
 	void KeyboardHandler(GLFWwindow* window);
-	//Camera GetCurrentCamera();
 
 	GLFWwindow* Init();
 };

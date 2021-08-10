@@ -72,35 +72,15 @@ GLFWwindow* GLFWCanvas::Init()
 }
 void GLFWCanvas::SetupContext(VisualizationGroup* viz)
 {
-	Shader diffuseShader("difusse_vertex_shader.txt", "difusse_fragment_shader.txt");
-	//diffuseShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-	//diffuseShader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
-	
 	currentViz = viz;
-	currentShader = diffuseShader;
 }
 void GLFWCanvas::Render()
 {
 	//Rendering config --------------------------------------------------------------------------------------
 	glClearColor(0.05f, 0.28f, 0.5f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//3D Transformations --------------------------------------------------------------------------------------
-	//view: World -> View
-	//glm::mat4 view;
-	//view = glm::lookAt(currentCamera.cameraPos, currentCamera.cameraPos + currentCamera.cameraFront, currentCamera.cameraUp);
-	//unsigned int viewLoc = glGetUniformLocation(currentShader.ID, "view");
-	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-	////projection: View -> Clip
-	//glm::mat4 projection;
-	//projection = glm::perspective(glm::radians(currentCamera.FOV), (float)width / (float)heigth, 1.0f, 1000.0f);
-	//unsigned int projectionLoc = glGetUniformLocation(currentShader.ID, "projection");
-	//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-	//std::cout << "CurrentShad ID: " << currentShader.ID << std::endl;
-
-	currentViz->Render(&currentCamera, &currentShader);
+	currentViz->Render(&currentCamera);
 }
 
 void GLFWCanvas::SetCurrentTool(Tool* tool)
@@ -111,8 +91,6 @@ void GLFWCanvas::SetCurrentTool(Tool* tool)
 
 void GLFWCanvas::MousePosHandler(double xpos, double ypos)
 {
-	//std::cout << "MP hand:" << xpos << " - " << ypos << std::endl;
-	//currentTool.OnMouseMove(xpos, ypos);
 	if (this == nullptr)
 	{
 		std::cout << "CANVAS NULL" << std::endl;

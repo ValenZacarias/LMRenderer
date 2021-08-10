@@ -14,18 +14,12 @@
 
 VisualizationGroup::VisualizationGroup() {};
 
-void VisualizationGroup::Render(Camera* cam, Shader* shader)
+//void VisualizationGroup::Render(Camera* cam, Shader* shader)
+void VisualizationGroup::Render(Camera* cam)
 {
-	//std::cout << "VGROUP RENDER" << std::endl;
-	//for (VisualizationBase v : visualizations)
-	//{
-	//	std::cout << "child..." << std::endl;
-	//	v.Render(cam, shader); //Recursion
-	//}
 
 	for (int i = 0; i < visualizations.size(); i++)
 	{
-		//std::cout << "child: " << visualizations[i]->VAO << std::endl;
-		visualizations[i]->Render(cam, shader); //Recursion
+		visualizations[i]->Render(cam); //Recursion
 	}
 }

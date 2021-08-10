@@ -21,16 +21,9 @@
 #include "VisualizationPrimitive.h"
 #include "VisualizationPrimitiveTest.h"
 
-
-//void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-//void processInput(GLFWwindow* window);
-//void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-//void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-
 int screenWidth = 1280;
 int screenHeigth = 720;
 
-//float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 GLFWwindow* window = NULL;
@@ -50,7 +43,6 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	Shader lightShader("light_vertex_shader.txt", "light_fragment_shader.txt");
-	//Shader diffuseShader("difusse_vertex_shader.txt", "difusse_fragment_shader.txt");
 
 	//Cube with Normals
 	float vertices[] = {
@@ -97,6 +89,33 @@ int main()
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 	};
 
+	GLfloat pyramidVertices[] = {
+		// first triangle texture
+		0.5f, -0.5f, -0.5f,  1.0f,  1.0f, 1.0f,//1.0f, 1.0f, // upper right corner
+		0.5f, -0.5f, 0.5f,   1.0f,  1.0f, 1.0f,//1.0f, 0.0f, // lower right corner
+		-0.5f, -0.5f, -0.5f, 1.0f,  1.0f, 1.0f, //0.0f, 1.0f, // upper left corner
+		// second triangle
+		0.5f, -0.5f, 0.5f,  1.0f,  1.0f, 1.0f,//1.0f, 0.0f, // lower right corner
+		-0.5f, -0.5f, 0.5f, 1.0f,  1.0f, 1.0f,//0.0f, 0.0f, // lower left corner
+		-0.5f, -0.5f, -0.5f, 1.0f,  1.0f, 1.0f,//0.0f, 1.0f, // upper left corner
+		//The third triangle
+	   -0.5f, -0.5f, 0.5f, 1.0f,  1.0f, 1.0f,//0.0f, 0.0f, // lower left corner
+		0.0f, 0.4f, 0.0f,  1.0f,  1.0f, 1.0f,// 0.5f, 1.0f, // vertex
+		0.5f, -0.5f, 0.5f, 1.0f,  1.0f, 1.0f,// 1.0f, 0.0f, // lower right corner
+		//fourth triangle
+		0.5f, -0.5f, 0.5f, 1.0f,  1.0f, 1.0f,// 0.0f, 0.0f, // lower right corner
+		0.0f, 0.4f, 0.0f,  1.0f,  1.0f, 1.0f,//0.5f, 1.0f, // vertex
+		0.5f, -0.5f, -0.5f, 1.0f,  1.0f, 1.0f,//1.0f, 0.0f, // upper right corner
+		//The fifth triangle
+		0.5f, -0.5f, -0.5f, 1.0f,  1.0f, 1.0f,//0.0f, 0.0f, // upper right corner
+		0.0f, 0.4f, 0.0f,   1.0f,  1.0f, 1.0f,// 0.5f, 1.0f, // vertex
+		-0.5f, -0.5f, -0.5f,1.0f,  1.0f, 1.0f,// 1.0f, 0.0f, // upper left corner
+		// sixth triangle
+		-0.5f, -0.5f, -0.5f, 1.0f,  1.0f, 1.0f,//0.0f, 0.0f, // upper left corner
+		0.0f, 0.4f, 0.0f,    1.0f,  1.0f, 1.0f,//0.5f, 1.0f, // vertex
+		-0.5f, -0.5f, 0.5f,  1.0f,  1.0f, 1.0f,// 1.0f, 0.0f // lower left corner
+	};
+
 	// world space positions of our cubes
 	//glm::vec3 cubePositions[] = {
 	//	glm::vec3(0.0f,  0.0f,  0.0f),
@@ -114,19 +133,41 @@ int main()
 	//glm::vec3 lightPosition = glm::vec3(0.0f, 2.0f, 0.0f);
 
 	//Vertex buffer def ---------------------------------------------------------------------
-	GLuint VBO, cubeVAO;
+	GLuint cubeVBO, cubeVAO;
 
 	//Vertex array object init
 	glGenVertexArrays(1, &cubeVAO);
 
 	//Vertex buffer data initialize
-	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &cubeVBO);
 
 	//Pass vertex data to buffer
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	glBindVertexArray(cubeVAO);
+
+	//Position Pointer
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	////Normal Pointer
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	GLuint pyramidVBO, pyramidVAO;
+
+	//Vertex array object init
+	glGenVertexArrays(1, &pyramidVAO);
+
+	//Vertex buffer data initialize
+	glGenBuffers(1, &pyramidVBO);
+
+	//Pass vertex data to buffer
+	glBindBuffer(GL_ARRAY_BUFFER, pyramidVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidVertices), pyramidVertices, GL_STATIC_DRAW);
+
+	glBindVertexArray(pyramidVAO);
 
 	//Position Pointer
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
@@ -142,30 +183,29 @@ int main()
 	glBindVertexArray(lightVAO);
 
 	//Pass vertex data to buffer
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	/*glBindBuffer(GL_ARRAY_BUFFER, VBO);*/
 
 	//Position Pointer
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-
-
+	//DATA END ----------------------------------------------------------------------
+	
 	//Armado de Visualizations
-	VisualizationPrimitive CubeViz = VisualizationPrimitive(&cubeVAO);
-	VisualizationPrimitiveTest CubeViz2 = VisualizationPrimitiveTest(&cubeVAO);
+	VisualizationPrimitive CubeViz = VisualizationPrimitive(&pyramidVAO, &pyramidVBO);
+	VisualizationPrimitiveTest CubeViz2 = VisualizationPrimitiveTest(&cubeVAO, &cubeVBO);
 
 	VisualizationGroup MainGroupViz = VisualizationGroup();
 	VisualizationGroup TestGroupViz = VisualizationGroup();
-	//Checkear Object Slicing, el problema aca es que visualizations esta guardando un VizBase y no un VizPrimitive, por eso no se llama a la funcion
-	//Render de la clase hija
+
 	TestGroupViz.visualizations.insert(TestGroupViz.visualizations.begin(), &CubeViz2);
 
 	MainGroupViz.visualizations.insert(MainGroupViz.visualizations.begin(), &CubeViz);
 	MainGroupViz.visualizations.insert(MainGroupViz.visualizations.begin() + 1, &TestGroupViz);
 	//MainGroupViz.visualizations[0] = CubeViz;
-	canvas.SetupContext(&MainGroupViz);
 
-
-
+	canvas.SetupContext(&MainGroupViz);//SMART POINTER
+	// DEBEMOS BUSCAR UNA FORMA DE SABER QUIEN ES DUEÑO DE QUE, A CANVAS LE PASAN LA VISUALIZACION, DE LA CUAL ES DUEÑA
+	// LA CLASE MAIN. DEBEMOS REGISTRAR LA INTENCION DE CADA PUNTERO
 
 	float currentFrame = 0.0f;
 	//RENDER LOOP! -----------------------------------------------------------------------------------------
@@ -175,27 +215,20 @@ int main()
 		currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		/*	Asi deberia quedar despues de las abstracciones
-			Canvas.procesEvent()
-			Canvas.render()*/
-			//Input
+
 		canvas.KeyboardHandler(window);
 		canvas.Render();
-		////Rendering config --------------------------------------------------------------------------------------
-		//glClearColor(0.05f, 0.28f, 0.5f, 1.0f);
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
 		//3D Transformations --------------------------------------------------------------------------------------
 		//view: World -> View
 		glm::mat4 view;
-		//view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		view = glm::lookAt(canvas.currentCamera.cameraPos, canvas.currentCamera.cameraPos + canvas.currentCamera.cameraFront, 
 							canvas.currentCamera.cameraUp);
 
 		//projection: View -> Clip
+		glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(canvas.currentCamera.FOV), (float)screenWidth / (float)screenHeigth, 1.0f, 1000.0f);
-		//projection = glm::perspective(glm::radians(fov), (float)screenWidth / (float)screenHeigth, 1.0f, 1000.0f);
 
 		//Render light --------------------------------------------------------------------------------------
 		lightShader.use();
@@ -207,13 +240,9 @@ int main()
 		unsigned int lightProjectionLoc = glGetUniformLocation(lightShader.ID, "projection");
 		glUniformMatrix4fv(lightProjectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-		//glBindVertexArray(lightVAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 5);
-
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPosition);
 		model = glm::scale(model, glm::vec3(0.3f));
-		//model = glm::rotate(model, (float)glfwGetTime() * 1.5f, cubePositions[i]);
 		unsigned int modelLoc = glGetUniformLocation(lightShader.ID, "model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glBindVertexArray(lightVAO);
@@ -226,7 +255,9 @@ int main()
 
 	// de-allocate all resources once they've outlived their purpose:
 	glDeleteVertexArrays(1, &cubeVAO);
-	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &cubeVBO);
+	glDeleteVertexArrays(1, &pyramidVAO);
+	glDeleteBuffers(1, &pyramidVBO);
 	glDeleteVertexArrays(1, &lightVAO);
 
 	glfwTerminate();

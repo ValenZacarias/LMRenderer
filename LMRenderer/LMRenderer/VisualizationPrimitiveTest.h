@@ -15,7 +15,9 @@ class VisualizationPrimitiveTest : public VisualizationBase
 {
 private:
 	GLuint* VAO; //Deberia ser puntero al vao? Mepa que no es necesario dado que solo es el ID y no el array en si
+	GLuint* VBO;
+	Shader shader;
 public:
-	VisualizationPrimitiveTest(GLuint* vao);
-	void Render(Camera* cam, Shader* shader) override;
+	VisualizationPrimitiveTest(GLuint* vao, GLuint* vbo);
+	void Render(Camera* cam) override;
 };

@@ -28,44 +28,42 @@ glm::vec3 cubePositions2[] = {
 };
 
 
-VisualizationPrimitiveTest::VisualizationPrimitiveTest(GLuint* vao)
+VisualizationPrimitiveTest::VisualizationPrimitiveTest(GLuint* vao, GLuint* vbo)
 {
 	this->VAO = vao;
+	this->VBO = vbo;
+	Shader diffuseShader("difusse_vertex_shader.txt", "difusse_fragment_shader.txt");
+	this->shader = diffuseShader;
 };
 
-void VisualizationPrimitiveTest::Render(Camera* cam, Shader* shader)
+void VisualizationPrimitiveTest::Render(Camera* cam)
 {
-	//std::cout << "VPRIM RENDER" << std::endl;
-
-
-	//std::cout << "PrimShader ID: " << shader->ID << std::endl;
 	for (unsigned int i = 0; i < 5; i++)
 	{
-		// Por que tengo que setear todos los datos del shader aca, si yo quiero por ejemplo 
-		// que la posicion de la luz sea fija para todos los VizPrimitives, y VizGroups
-		shader->use();
-		shader->setVec3("objectColor", 0.1f, 0.9f, 0.2f);
-		shader->setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		shader->setVec3("lightPos", lightPosition.x, lightPosition.y, lightPosition.z);
+		glBindBuffer(GL_ARRAY_BUFFER, *VBO);
+
+		shader.use();
+		shader.setVec3("objectColor", 0.0f, 0.1f, 0.9f);
+		shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		shader.setVec3("lightPos", lightPosition.x, lightPosition.y, lightPosition.z);
 
 		glm::mat4 view;
 		view = glm::lookAt(cam->cameraPos, cam->cameraPos + cam->cameraFront, cam->cameraUp);
-		unsigned int viewLoc = glGetUniformLocation(shader->ID, "view");
+		unsigned int viewLoc = glGetUniformLocation(shader.ID, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 		//projection: View -> Clip
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(cam->FOV), 1280.0f / 720.0f, 1.0f, 1000.0f);
-		unsigned int projectionLoc = glGetUniformLocation(shader->ID, "projection");
+		unsigned int projectionLoc = glGetUniformLocation(shader.ID, "projection");
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, cubePositions2[i]);
-		unsigned int modelLoc = glGetUniformLocation(shader->ID, "model");
+		unsigned int modelLoc = glGetUniformLocation(shader.ID, "model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 		glBindVertexArray(*VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
-
 }
