@@ -47,26 +47,19 @@ void ToolFPSCamera::OnKeyPress(std::string key)
 {
 	if (key == "W")
 		cam->cameraPos += cam->cameraSpeed * deltaTime * cam->cameraFront;
-	//cameraPos += cameraSpeed * cameraFront;
 
 	if (key == "S")
 		cam->cameraPos -= cam->cameraSpeed * deltaTime * cam->cameraFront;
-	//cameraPos -= cameraSpeed * cameraFront;
 
 	if (key == "A")
 		cam->cameraPos -= glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp)) * cam->cameraSpeed * deltaTime;
-	//cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 
 	if (key == "D")
 		cam->cameraPos += glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp)) * cam->cameraSpeed * deltaTime;
-	//cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 
 	if (key == "Q")
 		cam->cameraPos -= cam->cameraUp * cam->cameraSpeed * deltaTime;
-	//cameraPos -= cameraUp * cameraSpeed;
 
 	if (key == "E")
 		cam->cameraPos += cam->cameraUp * cam->cameraSpeed * deltaTime;
-	//cameraPos += cameraUp * cameraSpeed;
-
 }

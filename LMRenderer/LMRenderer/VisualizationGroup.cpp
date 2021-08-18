@@ -14,10 +14,8 @@
 
 VisualizationGroup::VisualizationGroup() {};
 
-//void VisualizationGroup::Render(Camera* cam, Shader* shader)
 void VisualizationGroup::Render(Camera* cam)
 {
-
 	for (int i = 0; i < visualizations.size(); i++)
 	{
 		visualizations[i]->Render(cam); //Recursion

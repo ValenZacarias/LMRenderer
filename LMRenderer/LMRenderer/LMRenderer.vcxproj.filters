@@ -13,6 +13,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Data">
+      <UniqueIdentifier>{cf68c664-c758-4451-bd04-a8cd61e82fdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization">
+      <UniqueIdentifier>{f741bd6a-4a97-4cdf-9354-e40c70312a58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization">
+      <UniqueIdentifier>{07a297db-6ec9-418c-9cee-3b59c5475309}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tool">
+      <UniqueIdentifier>{17606c29-3d6a-4031-908e-b17ef6c0253f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tool">
+      <UniqueIdentifier>{62f02d0c-4771-49fb-af16-0531a297b832}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -30,17 +45,14 @@
     <ClCompile Include="Globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ToolFPSCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="VisualizationGroup.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Visualization</Filter>
     </ClCompile>
     <ClCompile Include="VisualizationPrimitive.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Visualization</Filter>
     </ClCompile>
-    <ClCompile Include="VisualizationPrimitiveTest.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ToolFPSCamera.cpp">
+      <Filter>Source Files\Tool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -61,26 +73,35 @@
     <ClInclude Include="Globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="shader_s.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GLFWCanvas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VisualizationBase.h">
+    <ClInclude Include="DataStructureBase.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="DataVectorTest.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualizationBase.h">
+      <Filter>Header Files\Visualization</Filter>
     </ClInclude>
     <ClInclude Include="VisualizationGroup.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Visualization</Filter>
     </ClInclude>
     <ClInclude Include="VisualizationPrimitive.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Visualization</Filter>
     </ClInclude>
-    <ClInclude Include="VisualizationPrimitiveTest.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Tool.h">
+      <Filter>Header Files\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolFPSCamera.h">
+      <Filter>Header Files\Tool</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

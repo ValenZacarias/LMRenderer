@@ -159,7 +159,6 @@
     <ClCompile Include="ToolFPSCamera.cpp" />
     <ClCompile Include="VisualizationGroup.cpp" />
     <ClCompile Include="VisualizationPrimitive.cpp" />
-    <ClCompile Include="VisualizationPrimitiveTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="difusse_fragment_shader.txt" />
@@ -168,14 +167,17 @@
     <Text Include="light_vertex_shader.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataStructureBase.h" />
+    <ClInclude Include="DataVectorTest.h" />
     <ClInclude Include="GLFWCanvas.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="shader_s.h" />
     <ClInclude Include="Tool.h" />
+    <ClInclude Include="ToolFPSCamera.h" />
     <ClInclude Include="VisualizationBase.h" />
     <ClInclude Include="VisualizationGroup.h" />
     <ClInclude Include="VisualizationPrimitive.h" />
-    <ClInclude Include="VisualizationPrimitiveTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -9,7 +9,6 @@
 
 #include "shader_s.h"
 #include "VisualizationBase.h"
-//#include "GLFWCanvas.h"
 
 class VisualizationGroup : public VisualizationBase
 {

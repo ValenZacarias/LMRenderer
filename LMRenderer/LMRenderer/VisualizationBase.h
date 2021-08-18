@@ -15,6 +15,7 @@ struct Camera;
 class VisualizationBase
 {
 public:
+	//TODO: Agregar IDs
 	VisualizationBase() {};
-	virtual void Render(Camera* cam) {}; //Camera va a obtenerse de canvas.currentCamera
+	virtual void Render(Camera* cam) {};
 };

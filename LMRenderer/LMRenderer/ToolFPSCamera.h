@@ -6,7 +6,7 @@
 #include <glm/glm.hpp> 
 
 #include "Tool.h"
-#include "GLFWCanvas.h" //Para acceder a camera debo incluir este HPP, esta bien?
+#include "GLFWCanvas.h"
 
 
 class ToolFPSCamera : public Tool

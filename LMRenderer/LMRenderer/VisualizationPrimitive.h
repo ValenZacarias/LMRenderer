@@ -4,22 +4,26 @@
 #include <vector>
 #include <memory>
 
-#include <glm/glm.hpp> 
-#include <glm/gtc/matrix_transform.hpp> 
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/glm.hpp>
 
 #include "shader_s.h"
 #include "VisualizationBase.h"
-//#include "GLFWCanvas.h"
+#include "DataStructureBase.h"
+#include "DataVectorTest.h"
 
 class VisualizationPrimitive : public VisualizationBase
 { 
 private:
-	GLuint* VAO; //Deberia ser puntero al vao? Mepa que no es necesario dado que solo es el ID y no el array en si
-	GLuint* VBO;
+	std::shared_ptr<DataVectorTest<float>> vertexdata;
+	std::shared_ptr<DataVectorTest<float>> normaldata;
+	GLuint VAO;
+	GLuint VBO;
 	Shader shader;
 public:
 	VisualizationPrimitive(GLuint* vao, GLuint* vbo);
-	//void Render(Camera* cam, Shader* shader) override;
+	//Agregar constructor que tome unicamente un vetexData y arme el normalData
+	VisualizationPrimitive(std::shared_ptr<DataVectorTest<float>> v, std::shared_ptr<DataVectorTest<float>> n);
+
 	void Render(Camera* cam) override;
+	int GenerateBuffers();
 };

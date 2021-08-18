@@ -103,7 +103,6 @@ void GLFWCanvas::MousePosHandler(double xpos, double ypos)
 
 void GLFWCanvas::ScrollHandler(double yoffset)
 {
-	//currentTool.OnScroll(yoffset);
 	currentTool->OnScroll(yoffset);
 }
 
@@ -120,25 +119,19 @@ void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
 	
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		currentTool->OnKeyPress("W");
-	//cameraPos += cameraSpeed * deltaTime * cameraFront;
 		
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		currentTool->OnKeyPress("S");
-	//cameraPos -= cameraSpeed * deltaTime * cameraFront;
 		
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		currentTool->OnKeyPress("A");
-	//cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * deltaTime;
 		
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		currentTool->OnKeyPress("D");
-	//cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * deltaTime;
 		
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		currentTool->OnKeyPress("Q");
-	//cameraPos -= cameraUp * cameraSpeed * deltaTime;
 		
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		currentTool->OnKeyPress("E");
-	//cameraPos += cameraUp * cameraSpeed * deltaTime;
 }

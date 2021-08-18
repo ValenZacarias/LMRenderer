@@ -41,7 +41,7 @@ class GLFWCanvas
 private:
 	int width;
 	int heigth;
-	Tool* currentTool; //Tool deberia ser un puntero a tool
+	Tool* currentTool; //Tool deberia ser un smartpointer a tool
 	VisualizationGroup* currentViz; 
 	Shader currentShader;
 	glm::vec3 lightPos = glm::vec3(0.0f, 8.0f, 0.0f);
