@@ -5,7 +5,7 @@
 
 float deltaTime = 0.0f;
 bool firstMouse = true;
-glm::vec3 lightPosition = glm::vec3(0.0f, 3.0f, -3.0f);
+glm::vec3 lightPosition = glm::vec3(3.0f, 3.0f, 3.0f);
 int DataStructureCurrentIndex = 0;
 
 //float cubeVertices[] = {

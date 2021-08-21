@@ -29,6 +29,13 @@ VisualizationPrimitive::VisualizationPrimitive(GLuint* vao, GLuint* vbo)
 
 };
 
+VisualizationPrimitive::~VisualizationPrimitive()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	cout << "VIS DELETED" << endl;
+}
+
 VisualizationPrimitive::VisualizationPrimitive(std::shared_ptr<DataVectorTest<float>> v, 
 											   std::shared_ptr<DataVectorTest<float>> n)
 {
@@ -46,6 +53,8 @@ void VisualizationPrimitive::Render(Camera* cam)
 	for (unsigned int i = 0; i < 5; i++)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		
+		
 
 		shader.use();
 		shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
@@ -70,6 +79,12 @@ void VisualizationPrimitive::Render(Camera* cam)
 
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+		
+		//Para pasarle los indices
+		// EBO = glElementArrayBuffer(VBOIndices)
+		//Version con indices
+		//glDrawElements(GL_TRIANGLES, 0, 36);
+
 	}
 }
 
@@ -84,6 +99,7 @@ int VisualizationPrimitive::GenerateBuffers()
 		bufferdata.push_back(vertexdata->GetData(i + 1));
 		bufferdata.push_back(vertexdata->GetData(i + 2));
 
+		//Esto lo va a calcular el Procesing Algo
 		bufferdata.push_back(normaldata->GetData(i));
 		bufferdata.push_back(normaldata->GetData(i + 1));
 		bufferdata.push_back(normaldata->GetData(i + 2));
@@ -103,6 +119,10 @@ int VisualizationPrimitive::GenerateBuffers()
 	//Pass vertex data to buffer
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, bufferdata.size() * sizeof(float), bufferdata.data(), GL_STATIC_DRAW);
+
+	//En caso de los vertices por ejemplo, podemos mandar derecho el buffer
+	//glBufferData(GL_ARRAY_BUFFER, vertexdata->size() * sizeof(float), vertexdata->data(), GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, vertexmasindice->size() * sizeof(float), vertexmasindice->data(), GL_STATIC_DRAW);
 
 	glBindVertexArray(VAO);
 

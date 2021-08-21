@@ -77,7 +77,7 @@ void GLFWCanvas::SetupContext(VisualizationGroup* viz)
 void GLFWCanvas::Render()
 {
 	//Rendering config --------------------------------------------------------------------------------------
-	glClearColor(0.05f, 0.28f, 0.5f, 1.0f);
+	glClearColor(0.05f, 0.28f, 0.4f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	currentViz->Render(&currentCamera);

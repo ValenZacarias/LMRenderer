@@ -9,22 +9,28 @@
 #include "shader_s.h"
 #include "VisualizationBase.h"
 #include "DataStructureBase.h"
+#include "PATriangulate.h"
+#include "PACalcNormals.h"
 #include "DataVectorTest.h"
 
-class VisualizationPrimitive : public VisualizationBase
-{ 
+class VisualizationIndxElement : public VisualizationBase
+{
 private:
 	//ESTO TIENE QUE ESTAR GENERALIZADO, NO PODEMOS ASIGNAR UN DATA ESPECIFICO A UNA VIZ
-	std::shared_ptr<DataVectorTest<float>> vertexdata;
-	std::shared_ptr<DataVectorTest<float>> normaldata;
-	GLuint VAO;
+	std::shared_ptr<DataVectorTest<float>> vertexData;
+	std::shared_ptr<DataVectorTest<int>> indexData;
 	GLuint VBO;
+	GLuint VAO;
+	GLuint EBO;
+
+	PATriangulate triangulate;
+	PACalcNormals calcnormals;
 	Shader shader;
 public:
-	VisualizationPrimitive(GLuint* vao, GLuint* vbo);
+	VisualizationIndxElement(GLuint* vao, GLuint* vbo);
 	//Agregar constructor que tome unicamente un vetexData y arme el normalData
-	VisualizationPrimitive(std::shared_ptr<DataVectorTest<float>> v, std::shared_ptr<DataVectorTest<float>> n);
-	~VisualizationPrimitive();
+	VisualizationIndxElement(std::shared_ptr<DataVectorTest<float>> v, std::shared_ptr<DataVectorTest<int>> i);
+	~VisualizationIndxElement();
 
 	void Render(Camera* cam) override;
 	int GenerateBuffers();

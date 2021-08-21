@@ -16,5 +16,6 @@ private:
 public:
 	std::vector<VisualizationBase*> visualizations {};
 	VisualizationGroup();
+	~VisualizationGroup();
 	void Render(Camera* cam) override;
 };

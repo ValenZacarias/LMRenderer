@@ -28,6 +28,12 @@
     <Filter Include="Source Files\Tool">
       <UniqueIdentifier>{62f02d0c-4771-49fb-af16-0531a297b832}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ProcessingAlgorithms">
+      <UniqueIdentifier>{43f02cfe-5ce8-4912-8c83-45d1054848a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ProcessingAlgorithms">
+      <UniqueIdentifier>{6a16ced5-fe9f-4895-ae48-62ffd162377a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -53,6 +59,15 @@
     </ClCompile>
     <ClCompile Include="ToolFPSCamera.cpp">
       <Filter>Source Files\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualizationIndxElement.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="PATriangulate.cpp">
+      <Filter>Source Files\ProcessingAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="PACalcNormals.cpp">
+      <Filter>Source Files\ProcessingAlgorithms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +117,15 @@
     </ClInclude>
     <ClInclude Include="ToolFPSCamera.h">
       <Filter>Header Files\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualizationIndxElement.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="PATriangulate.h">
+      <Filter>Header Files\ProcessingAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="PACalcNormals.h">
+      <Filter>Header Files\ProcessingAlgorithms</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

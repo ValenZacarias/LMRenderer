@@ -156,8 +156,11 @@
     <ClCompile Include="GLFWCanvas.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PACalcNormals.cpp" />
+    <ClCompile Include="PATriangulate.cpp" />
     <ClCompile Include="ToolFPSCamera.cpp" />
     <ClCompile Include="VisualizationGroup.cpp" />
+    <ClCompile Include="VisualizationIndxElement.cpp" />
     <ClCompile Include="VisualizationPrimitive.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -172,11 +175,14 @@
     <ClInclude Include="GLFWCanvas.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="PACalcNormals.h" />
+    <ClInclude Include="PATriangulate.h" />
     <ClInclude Include="shader_s.h" />
     <ClInclude Include="Tool.h" />
     <ClInclude Include="ToolFPSCamera.h" />
     <ClInclude Include="VisualizationBase.h" />
     <ClInclude Include="VisualizationGroup.h" />
+    <ClInclude Include="VisualizationIndxElement.h" />
     <ClInclude Include="VisualizationPrimitive.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -13,6 +13,13 @@
 #include "GLFWCanvas.h"
 
 VisualizationGroup::VisualizationGroup() {};
+VisualizationGroup::~VisualizationGroup() 
+{
+	//for (int i = 0; i < visualizations.size(); i++)
+	//{
+	//	delete visualizations[i]; //Recursion
+	//}
+};
 
 void VisualizationGroup::Render(Camera* cam)
 {

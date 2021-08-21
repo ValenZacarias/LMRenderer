@@ -17,9 +17,12 @@
 #include "VisualizationBase.h"
 #include "VisualizationGroup.h"
 #include "VisualizationPrimitive.h"
+#include "VisualizationIndxElement.h"
 
 #include "DataStructureBase.h"
 #include "DataVectorTest.h"
+
+#include "PATriangulate.h"
 
 #include "main.h"
 
@@ -120,38 +123,36 @@ float cubeNormals[] =
  0.0f,  1.0f,  0.0f
 };
 
-float pyramidVertices[] = 
+float cubeElemVertices[]
 {
-	// first triangle texture
-	0.5f, -0.5f, -0.5f, // upper right corner
-	0.5f, -0.5f, 0.5f,  // lower right corner
-	-0.5f, -0.5f, -0.5f, // upper left corner
-	// second triangle
-	0.5f, -0.5f, 0.5f, // lower right corner
-	-0.5f, -0.5f, 0.5f,// lower left corner
-	-0.5f, -0.5f, -0.5f // upper left corner
-	//The third triangl
-   -0.5f, -0.5f, 0.5f, // lower left corner
-	0.0f, 0.4f, 0.0f,  // vertex
-	0.5f, -0.5f, 0.5f, // lower right corner
-	//fourth triangle
-	0.5f, -0.5f, 0.5f, // lower right corner
-	0.0f, 0.4f, 0.0f,  // vertex
-	0.5f, -0.5f, -0.5f,// upper right corner
-	//The fifth triangl
-	0.5f, -0.5f, -0.5f,// upper right corner
-	0.0f, 0.4f, 0.0f,   // vertex
-	-0.5f, -0.5f, -0.5f // upper left corner
-	// sixth triangle
-	-0.5f, -0.5f, -0.5f, // upper left corner
-	0.0f, 0.4f, 0.0f,   // vertex
-	-0.5f, -0.5f, 0.5f, // lower left corner
+	// front
+	-0.5, -0.5,  0.5,
+	 0.5, -0.5,  0.5,
+	 0.5,  0.5,  0.5,
+	-0.5,  0.5,  0.5,
+	// back
+	-0.5, -0.5, -0.5,
+	 0.5, -0.5, -0.5,
+	 0.5,  0.5, -0.5,
+	-0.5,  0.5, -0.5
 };
+
+float cubeElemIndex[]
+{
+	0, 1, 2, 3,
+	1, 5, 6, 2,
+	7, 6, 5 ,4,
+	4, 0, 3, 7,
+	4, 5, 1, 0,
+	3, 2, 6, 7
+
+};
+
 
 int main()
 {
 	//CANVAS SETUP ----------------------------------------------------------------------------------------------------------
-	GLFWCanvas canvas = GLFWCanvas(1280, 720);
+	GLFWCanvas canvas = GLFWCanvas(screenWidth, screenHeigth);
 	window = canvas.Init();
 
 	//Ahora le damos un ptr a algo que esta en el stack y muere con el main
@@ -163,18 +164,24 @@ int main()
 	Shader lightShader("light_vertex_shader.txt", "light_fragment_shader.txt");
 
 	//DATA -----------------------------------------------------------------------------------------------------------------
-	int count = sizeof(cubeVertices) / sizeof(*cubeVertices);
-	std::shared_ptr<DataVectorTest<float>> DataVertex = std::make_shared<DataVectorTest<float>>(FLOATVAL, cubeVertices, count);
+
+	int count = sizeof(cubeElemVertices) / sizeof(*cubeElemVertices);
+
+	auto DataVertex = std::make_shared<DataVectorTest<float>>(FLOATVAL);
+	DataVertex->ReserveData(count);
+	for (int i = 0; i < count; i++) { DataVertex->SetData(cubeElemVertices[i]);}
 	
-	count = sizeof(cubeNormals) / sizeof(*cubeNormals);
-	std::shared_ptr<DataVectorTest<float>> DataNormal = std::make_shared<DataVectorTest<float>>(FLOATVAL, cubeNormals, count);
+	auto DataIndex = std::make_shared<DataVectorTest<int>>(INTVAL);
+	DataIndex->ReserveData(count);
+	for (int i = 0; i < count; i++) { DataIndex->SetData(cubeElemIndex[i]); }
 	
 	//VISUALIZATION SETUP --------------------------------------------------------------------------------------------------
-	VisualizationPrimitive testViz = VisualizationPrimitive(DataVertex, DataNormal);
+	//VisualizationPrimitive testViz = VisualizationPrimitive(DataVertex, DataNormal);
+	VisualizationIndxElement vizElement = VisualizationIndxElement(DataVertex, DataIndex);
 
 	//TODO: smart pointers
 	VisualizationGroup MainGroupViz = VisualizationGroup();
-	MainGroupViz.visualizations.push_back(&testViz);
+	MainGroupViz.visualizations.push_back(&vizElement);
 	canvas.SetupContext(&MainGroupViz);
 
 	float currentFrame = 0.0f;
@@ -192,16 +199,6 @@ int main()
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
-	//TODO
-	//Pasar todos los glDelete a los destructores de Data, visualization, etc
-
-	// de-allocate all resources once they've outlived their purpose:
-	//glDeleteVertexArrays(1, &cubeVAO);
-	//glDeleteBuffers(1, &cubeVBO);
-	//glDeleteVertexArrays(1, &pyramidVAO);
-	//glDeleteBuffers(1, &pyramidVBO);
-	//glDeleteVertexArrays(1, &lightVAO);
 
 	glfwTerminate();
 	return 0;
