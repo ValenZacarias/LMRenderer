@@ -73,13 +73,15 @@ GLFWwindow* GLFWCanvas::Init()
 void GLFWCanvas::SetupContext(VisualizationGroup* viz)
 {
 	currentViz = viz;
+	glEnable(GL_DEPTH_TEST);
 }
 void GLFWCanvas::Render()
 {
 	//Rendering config --------------------------------------------------------------------------------------
-	glClearColor(0.05f, 0.28f, 0.4f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	currentViz->Render(&currentCamera);
 }
 

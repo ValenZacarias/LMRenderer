@@ -16,6 +16,7 @@
 
 #include "VisualizationBase.h"
 #include "VisualizationGroup.h"
+#include "VisualizationGrid.h"
 #include "VisualizationPrimitive.h"
 #include "VisualizationIndxElement.h"
 
@@ -160,11 +161,9 @@ int main()
 	ToolFPSCamera cameraTool = ToolFPSCamera(&canvas.currentCamera);
 	canvas.SetCurrentTool(&cameraTool);
 	
-	glEnable(GL_DEPTH_TEST);
-	Shader lightShader("light_vertex_shader.txt", "light_fragment_shader.txt");
+	
 
 	//DATA -----------------------------------------------------------------------------------------------------------------
-
 	int count = sizeof(cubeElemVertices) / sizeof(*cubeElemVertices);
 
 	auto DataVertex = std::make_shared<DataVectorTest<float>>(FLOATVAL);
@@ -178,10 +177,12 @@ int main()
 	//VISUALIZATION SETUP --------------------------------------------------------------------------------------------------
 	//VisualizationPrimitive testViz = VisualizationPrimitive(DataVertex, DataNormal);
 	VisualizationIndxElement vizElement = VisualizationIndxElement(DataVertex, DataIndex);
+	VisualizationGrid vizGrid = VisualizationGrid();
 
 	//TODO: smart pointers
 	VisualizationGroup MainGroupViz = VisualizationGroup();
 	MainGroupViz.visualizations.push_back(&vizElement);
+	MainGroupViz.visualizations.push_back(&vizGrid);
 	canvas.SetupContext(&MainGroupViz);
 
 	float currentFrame = 0.0f;

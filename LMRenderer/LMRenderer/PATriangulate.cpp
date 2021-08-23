@@ -9,7 +9,7 @@ PATriangulate::PATriangulate()
 //Es decir, si queremos mandarlo a un Data que pueda escribir a archivo de texto, sobrecargamos con un retorno de DataTextFile
 DataVectorTest<float> PATriangulate::Process(std::shared_ptr<DataVectorTest<int>> elementIndx, int perElemIndex)
 {											//Aca deberiamos poder generalizar al DATA que use la visualizacion para tomar sus indices
-
+	//Debariamos hacer un reserve aca, asi no resizeamos multiples veces
 	DataVectorTest<float> trisIndx = DataVectorTest<float>(FLOATVAL);
 
 	for (int i = 0; i < elementIndx->GetSize(); i += perElemIndex) //Agarro el quad completo
@@ -32,9 +32,8 @@ DataVectorTest<float> PATriangulate::Process(std::shared_ptr<DataVectorTest<floa
 												std::shared_ptr<DataVectorTest<int>> elementIndx, 
 												int perElemIndex)
 {											//Aca deberiamos poder generalizar al DATA que use la visualizacion para tomar sus indices
-
+	//Debariamos hacer un reserve aca, asi no resizeamos multiples veces
 	DataVectorTest<float> trisVertex = DataVectorTest<float>(FLOATVAL);
-
 
 	int t1_0;
 	int t1_1;
@@ -44,6 +43,7 @@ DataVectorTest<float> PATriangulate::Process(std::shared_ptr<DataVectorTest<floa
 	int t2_1;
 	int t2_2;
 
+	//Refactorizar de forma que use el structs de Polygons
 	for (int i = 0; i < elementIndx->GetSize(); i += perElemIndex) //Agarro el quad completo
 	{
 		//Tri 1 (3 vertex)
