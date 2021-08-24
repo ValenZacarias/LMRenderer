@@ -169,6 +169,8 @@
     <Text Include="difusse_vertex_shader.txt" />
     <Text Include="light_fragment_shader.txt" />
     <Text Include="light_vertex_shader.txt" />
+    <Text Include="testmesh_45e_faces.txt" />
+    <Text Include="testmesh_45e_points.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataStructureBase.h" />
@@ -178,6 +180,7 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="PACalcNormals.h" />
     <ClInclude Include="PATriangulate.h" />
+    <ClInclude Include="PMeshParserTxt.h" />
     <ClInclude Include="shader_s.h" />
     <ClInclude Include="Tool.h" />
     <ClInclude Include="ToolFPSCamera.h" />
@@ -186,6 +189,10 @@
     <ClInclude Include="VisualizationGroup.h" />
     <ClInclude Include="VisualizationIndxElement.h" />
     <ClInclude Include="VisualizationPrimitive.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="faces" />
+    <None Include="points" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -34,6 +34,9 @@
     <Filter Include="Source Files\ProcessingAlgorithms">
       <UniqueIdentifier>{6a16ced5-fe9f-4895-ae48-62ffd162377a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Meshes">
+      <UniqueIdentifier>{af25d861-5ec4-471c-be78-b79a1b9a8069}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -86,6 +89,12 @@
     <Text Include="light_vertex_shader.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="testmesh_45e_faces.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="testmesh_45e_points.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h">
@@ -133,5 +142,16 @@
     <ClInclude Include="VisualizationGrid.h">
       <Filter>Header Files\Visualization</Filter>
     </ClInclude>
+    <ClInclude Include="PMeshParserTxt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="faces">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="points">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

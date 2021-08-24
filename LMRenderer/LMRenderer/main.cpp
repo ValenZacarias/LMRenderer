@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 #include <glm/glm.hpp> 
 #include <glm/gtc/matrix_transform.hpp> 
@@ -24,6 +26,10 @@
 #include "DataVectorTest.h"
 
 #include "PATriangulate.h"
+
+#include "PMeshParserTxt.h"
+
+
 
 #include "main.h"
 
@@ -161,10 +167,15 @@ int main()
 	ToolFPSCamera cameraTool = ToolFPSCamera(&canvas.currentCamera);
 	canvas.SetCurrentTool(&cameraTool);
 	
-	
+	//PARSING AND DATA GENERATION -------------------------------------------------------------------------------------------
+	PMeshPareserTxt Parser = PMeshPareserTxt();
 
-	//DATA -----------------------------------------------------------------------------------------------------------------
-	int count = sizeof(cubeElemVertices) / sizeof(*cubeElemVertices);
+	auto DataIndex = Parser.ParseFaces("testmesh_45e_faces.txt");
+	auto DataVertex = Parser.ParsePoints("testmesh_45e_points.txt");
+
+
+	//OLD DATA -----------------------------------------------------------------------------------------------------------------
+	/*int count = sizeof(cubeElemVertices) / sizeof(*cubeElemVertices);
 
 	auto DataVertex = std::make_shared<DataVectorTest<float>>(FLOATVAL);
 	DataVertex->ReserveData(count);
@@ -172,7 +183,7 @@ int main()
 	
 	auto DataIndex = std::make_shared<DataVectorTest<int>>(INTVAL);
 	DataIndex->ReserveData(count);
-	for (int i = 0; i < count; i++) { DataIndex->SetData(cubeElemIndex[i]); }
+	for (int i = 0; i < count; i++) { DataIndex->SetData(cubeElemIndex[i]); }*/
 	
 	//VISUALIZATION SETUP --------------------------------------------------------------------------------------------------
 	//VisualizationPrimitive testViz = VisualizationPrimitive(DataVertex, DataNormal);

@@ -80,7 +80,7 @@ void VisualizationIndxElement::Render(Camera* cam)
 	////glDrawElements(GL_TRIANGLES, 8, GL_UNSIGNED_INT, bufferIndex.data());
 	//glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
-	glDrawArrays(GL_TRIANGLES, 0, 108);
+	glDrawArrays(GL_TRIANGLES, 0, 10000);
 	//Para pasarle los indices
 	// EBO = glElementArrayBuffer(VBOIndices)
 	//Version con indices
@@ -132,7 +132,7 @@ int VisualizationIndxElement::GenerateBuffers()
 
 	//Vertex buffer data initialize
 	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	//glGenBuffers(1, &EBO);
 
 	//Pass vertex data to buffer
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
