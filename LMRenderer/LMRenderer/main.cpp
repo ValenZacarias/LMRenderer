@@ -14,6 +14,8 @@
 
 #include "Tool.h"
 #include "ToolFPSCamera.h"
+#include "ToolOrbitCamera.h"
+
 #include "GLFWCanvas.h"
 
 #include "VisualizationBase.h"
@@ -32,9 +34,6 @@
 
 
 #include "main.h"
-
-int screenWidth = 1280;
-int screenHeigth = 720;
 
 float lastFrame = 0.0f;
 
@@ -159,12 +158,13 @@ float cubeElemIndex[]
 int main()
 {
 	//CANVAS SETUP ----------------------------------------------------------------------------------------------------------
-	GLFWCanvas canvas = GLFWCanvas(screenWidth, screenHeigth);
+	GLFWCanvas canvas = GLFWCanvas(screenWidth, screenHeight);
 	window = canvas.Init();
 
 	//Ahora le damos un ptr a algo que esta en el stack y muere con el main
 	//Si la idea es ir creando y destruyendo a medida que cambiamos, podemos usar smart pointers
-	ToolFPSCamera cameraTool = ToolFPSCamera(&canvas.currentCamera);
+	//ToolFPSCamera cameraTool = ToolFPSCamera(&canvas.currentCamera);
+	ToolOrbitCamera cameraTool = ToolOrbitCamera(&canvas.currentCamera);
 	canvas.SetCurrentTool(&cameraTool);
 	
 	//PARSING AND DATA GENERATION -------------------------------------------------------------------------------------------

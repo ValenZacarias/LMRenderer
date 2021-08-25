@@ -12,8 +12,11 @@
 
 void ToolFPSCamera::OnScroll(double yoffset)
 {
-	std::cout << cam->FOV << std::endl;
 	cam->FOV -= yoffset;
+}
+
+void ToolFPSCamera::OnDrag(MouseState state)
+{
 }
 
 void ToolFPSCamera::OnMouseMove(double xpos, double ypos)

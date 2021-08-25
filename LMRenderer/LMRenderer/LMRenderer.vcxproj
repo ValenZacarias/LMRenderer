@@ -159,6 +159,7 @@
     <ClCompile Include="PACalcNormals.cpp" />
     <ClCompile Include="PATriangulate.cpp" />
     <ClCompile Include="ToolFPSCamera.cpp" />
+    <ClCompile Include="ToolOrbitCamera.cpp" />
     <ClCompile Include="VisualizationGrid.cpp" />
     <ClCompile Include="VisualizationGroup.cpp" />
     <ClCompile Include="VisualizationIndxElement.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="shader_s.h" />
     <ClInclude Include="Tool.h" />
     <ClInclude Include="ToolFPSCamera.h" />
+    <ClInclude Include="ToolOrbitCamera.h" />
     <ClInclude Include="VisualizationBase.h" />
     <ClInclude Include="VisualizationGrid.h" />
     <ClInclude Include="VisualizationGroup.h" />

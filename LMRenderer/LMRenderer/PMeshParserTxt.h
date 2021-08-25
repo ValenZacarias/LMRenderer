@@ -36,7 +36,7 @@ public:
 		pos2 = datastr.find("(");
 		string countElem = datastr.substr(pos1, pos2);
 
-		std::cout << "COUNT: " << countElem << std::endl;
+		std::cout << "INDX COUNT: " << countElem << std::endl;
 
 		datastr.erase(0, countElem.size() + 2);
 		//std::cout << datastr << std::endl;
@@ -62,8 +62,6 @@ public:
 			{
 				value = v.substr(0, aux1);
 				DataIndex->SetData(stoi(value));
-
-				std::cout << value << std::endl;
 				v = v.erase(0, aux1 + 1);
 				aux1 = v.find(" ");
 			} while (aux1 != string::npos);
@@ -100,7 +98,7 @@ public:
 		pos2 = datastr.find("(");
 		string countElem = datastr.substr(pos1, pos2);
 
-		std::cout << "COUNT: " << countElem << std::endl;
+		std::cout << "VRTX COUNT: " << countElem << std::endl;
 
 		datastr.erase(0, countElem.size() + 2);
 		//std::cout << datastr << std::endl;
@@ -126,16 +124,12 @@ public:
 			{
 				value = v.substr(0, aux1);
 				DataIndex->SetData(stof(value) * 10.0f);
-
-				std::cout << value << ", ";
 				v = v.erase(0, aux1 + 1);
 				aux1 = v.find(" ");
 			} while (aux1 != string::npos);
 
-			v.pop_back(); // elimino el ultimo \n
-			//v.pop_back(); // elimino el ultimo parentesis
+			v.pop_back(); // elimino el ultimo parentesis
 			value = v; //queda el ultimo numero dentro de v
-			std::cout << value << endl;
 			DataIndex->SetData(stof(value) * 10.0f);
 
 			//std::cout << "CANT INDX: " << elemIndxs << std::endl;

@@ -21,15 +21,19 @@ struct Camera
 	const float cameraSpeed = 6.0f;
 	float FOV = 45.0f;
 
-	glm::vec3 cameraPos = glm::vec3(0.0f, 10.0f, 10.0f);
+	//glm::vec3 cameraPos = glm::vec3(0.0f, 10.0f, 10.0f);
+	glm::vec3 cameraPos = glm::vec3(0.0f, 3.0f, 10.0f);
 	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
 	glm::vec3 direction = glm::vec3(0.0f);
 	glm::vec3 front = glm::vec3(0.0f);
 
 	//Camera Pos and Rot settings
-	float pitch = -45.0f;
-	float yaw = -90.0f;
+	//float pitch = -45.0f;
+	float pitch = 0.0f;
+	//float yaw = -90.0f;
+	float yaw = 0.0f;
 	float lastX = 400.0f;
 	float lastY = 300.0f;
 	float xoffset = 0.0f;
@@ -56,6 +60,7 @@ public:
 	void SetupContext(VisualizationGroup* viz);
 	void Render();
 	void SetCurrentTool(Tool* tool);
+	void MouseLDragHandler(int button, int action, int mods);
 	void MousePosHandler(double xpos, double ypos);
 	void ScrollHandler(double yoffset);
 	void FrameResizeHandler(int width, int height);

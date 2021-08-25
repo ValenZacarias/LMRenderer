@@ -8,6 +8,7 @@
 #include "Tool.h"
 #include "GLFWCanvas.h"
 
+struct Camera;
 
 class ToolFPSCamera : public Tool
 {
@@ -22,6 +23,7 @@ public:
 	}
 
 	void OnScroll(double yoffset) override;
+	void OnDrag(MouseState state) override;
 	void OnMouseMove(double xpos, double ypos) override;
 	void OnKeyPress(std::string key) override;
 };

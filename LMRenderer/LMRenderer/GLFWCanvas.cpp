@@ -39,6 +39,13 @@ GLFWwindow* GLFWCanvas::Init()
 	glfwSetWindowUserPointer(window, this);
 
 	//Callback Binding ------------------------------------------------------------------------
+
+	auto mouseLDragCallback = [](GLFWwindow* w, int button, int action, int mods)
+	{
+		static_cast<GLFWCanvas*>(glfwGetWindowUserPointer(w))->MouseLDragHandler(button, action, mods);
+	};
+	glfwSetMouseButtonCallback(window, mouseLDragCallback);
+
 	auto mousePosCallback = [](GLFWwindow* w, double xpos, double ypos)
 	{
 		static_cast<GLFWCanvas*>(glfwGetWindowUserPointer(w))->MousePosHandler(xpos, ypos);
@@ -89,6 +96,19 @@ void GLFWCanvas::SetCurrentTool(Tool* tool)
 {
 	if (tool != nullptr)
 		currentTool = tool;
+}
+
+void GLFWCanvas::MouseLDragHandler(int button, int action, int mods)
+{
+
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		currentTool->OnDrag(PRESS);
+	}
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+	{
+		currentTool->OnDrag(RELEASE);
+	}
 }
 
 void GLFWCanvas::MousePosHandler(double xpos, double ypos)

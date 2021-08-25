@@ -75,6 +75,9 @@
     <ClCompile Include="VisualizationGrid.cpp">
       <Filter>Source Files\Visualization</Filter>
     </ClCompile>
+    <ClCompile Include="ToolOrbitCamera.cpp">
+      <Filter>Source Files\Tool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="difusse_fragment_shader.txt">
@@ -144,6 +147,9 @@
     </ClInclude>
     <ClInclude Include="PMeshParserTxt.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolOrbitCamera.h">
+      <Filter>Header Files\Tool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

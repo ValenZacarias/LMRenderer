@@ -1,6 +1,9 @@
 #pragma once
 #include <glm/glm.hpp> 
 
+extern int screenWidth;
+extern int screenHeight;
+
 extern float deltaTime;
 extern bool firstMouse;
 extern glm::vec3 lightPosition;
