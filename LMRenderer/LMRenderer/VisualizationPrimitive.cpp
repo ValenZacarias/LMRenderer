@@ -36,8 +36,8 @@ VisualizationPrimitive::~VisualizationPrimitive()
 	cout << "VIS DELETED" << endl;
 }
 
-VisualizationPrimitive::VisualizationPrimitive(std::shared_ptr<DataVectorTest<float>> v, 
-											   std::shared_ptr<DataVectorTest<float>> n)
+VisualizationPrimitive::VisualizationPrimitive(std::shared_ptr<DataVector<float>> v, 
+											   std::shared_ptr<DataVector<float>> n)
 {
 	this->vertexdata = v;
 	this->normaldata = n;

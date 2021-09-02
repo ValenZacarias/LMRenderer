@@ -6,7 +6,7 @@
 #include <glm/glm.hpp> 
 using namespace std;
 
-template <class T> class DataVectorTest : public DataStructureBase
+template <class T> class DataVector : public DataStructureBase
 {
 private:
 
@@ -14,8 +14,9 @@ private:
 
 
 public:
-	DataVectorTest(DATATYPE type) : DataStructureBase(type) { }
-	DataVectorTest(DATATYPE type, const T* rawdata, int count) : DataStructureBase(type)
+	DataVector() : DataStructureBase(type) { }
+	DataVector(DATATYPE type) : DataStructureBase(type) { }
+	DataVector(DATATYPE type, const T* rawdata, int count) : DataStructureBase(type)
 	{
 		for(int i = 0; i < count; i++) { data.push_back(rawdata[i]); }
 	}

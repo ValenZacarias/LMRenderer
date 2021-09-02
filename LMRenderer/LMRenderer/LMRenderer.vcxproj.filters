@@ -31,9 +31,6 @@
     <Filter Include="Header Files\ProcessingAlgorithms">
       <UniqueIdentifier>{43f02cfe-5ce8-4912-8c83-45d1054848a1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ProcessingAlgorithms">
-      <UniqueIdentifier>{6a16ced5-fe9f-4895-ae48-62ffd162377a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Meshes">
       <UniqueIdentifier>{af25d861-5ec4-471c-be78-b79a1b9a8069}</UniqueIdentifier>
     </Filter>
@@ -41,9 +38,6 @@
   <ItemGroup>
     <ClCompile Include="glad.c">
       <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="example_rendering.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GLFWCanvas.cpp">
       <Filter>Source Files</Filter>
@@ -62,15 +56,6 @@
     </ClCompile>
     <ClCompile Include="ToolFPSCamera.cpp">
       <Filter>Source Files\Tool</Filter>
-    </ClCompile>
-    <ClCompile Include="VisualizationIndxElement.cpp">
-      <Filter>Source Files\Visualization</Filter>
-    </ClCompile>
-    <ClCompile Include="PATriangulate.cpp">
-      <Filter>Source Files\ProcessingAlgorithms</Filter>
-    </ClCompile>
-    <ClCompile Include="PACalcNormals.cpp">
-      <Filter>Source Files\ProcessingAlgorithms</Filter>
     </ClCompile>
     <ClCompile Include="VisualizationGrid.cpp">
       <Filter>Source Files\Visualization</Filter>
@@ -112,7 +97,7 @@
     <ClInclude Include="DataStructureBase.h">
       <Filter>Header Files\Data</Filter>
     </ClInclude>
-    <ClInclude Include="DataVectorTest.h">
+    <ClInclude Include="DataVector.h">
       <Filter>Header Files\Data</Filter>
     </ClInclude>
     <ClInclude Include="main.h">
@@ -151,13 +136,5 @@
     <ClInclude Include="ToolOrbitCamera.h">
       <Filter>Header Files\Tool</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="faces">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="points">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

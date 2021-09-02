@@ -9,21 +9,21 @@
 #include "shader_s.h"
 #include "VisualizationBase.h"
 #include "DataStructureBase.h"
-#include "DataVectorTest.h"
+#include "DataVector.h"
 
 class VisualizationPrimitive : public VisualizationBase
 { 
 private:
 	//ESTO TIENE QUE ESTAR GENERALIZADO, NO PODEMOS ASIGNAR UN DATA ESPECIFICO A UNA VIZ
-	std::shared_ptr<DataVectorTest<float>> vertexdata;
-	std::shared_ptr<DataVectorTest<float>> normaldata;
+	std::shared_ptr<DataVector<float>> vertexdata;
+	std::shared_ptr<DataVector<float>> normaldata;
 	GLuint VAO;
 	GLuint VBO;
 	Shader shader;
 public:
 	VisualizationPrimitive(GLuint* vao, GLuint* vbo);
 	//Agregar constructor que tome unicamente un vetexData y arme el normalData
-	VisualizationPrimitive(std::shared_ptr<DataVectorTest<float>> v, std::shared_ptr<DataVectorTest<float>> n);
+	VisualizationPrimitive(std::shared_ptr<DataVector<float>> v, std::shared_ptr<DataVector<float>> n);
 	~VisualizationPrimitive();
 
 	void Render(Camera* cam) override;

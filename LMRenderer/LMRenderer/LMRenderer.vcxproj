@@ -151,18 +151,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="example_rendering.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="GLFWCanvas.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PACalcNormals.cpp" />
-    <ClCompile Include="PATriangulate.cpp" />
     <ClCompile Include="ToolFPSCamera.cpp" />
     <ClCompile Include="ToolOrbitCamera.cpp" />
     <ClCompile Include="VisualizationGrid.cpp" />
     <ClCompile Include="VisualizationGroup.cpp" />
-    <ClCompile Include="VisualizationIndxElement.cpp" />
     <ClCompile Include="VisualizationPrimitive.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -175,7 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataStructureBase.h" />
-    <ClInclude Include="DataVectorTest.h" />
+    <ClInclude Include="DataVector.h" />
     <ClInclude Include="GLFWCanvas.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="main.h" />
@@ -191,10 +187,6 @@
     <ClInclude Include="VisualizationGroup.h" />
     <ClInclude Include="VisualizationIndxElement.h" />
     <ClInclude Include="VisualizationPrimitive.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="faces" />
-    <None Include="points" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

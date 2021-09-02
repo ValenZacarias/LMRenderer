@@ -9,14 +9,11 @@
 #include "shader_s.h"
 #include "VisualizationBase.h"
 #include "DataStructureBase.h"
-#include "DataVectorTest.h"
+#include "DataVector.h"
 
 class VisualizationGrid : public VisualizationBase
 {
 private:
-	//ESTO TIENE QUE ESTAR GENERALIZADO, NO PODEMOS ASIGNAR UN DATA ESPECIFICO A UNA VIZ
-	//std::shared_ptr<DataVectorTest<float>> vertexdata;
-	//std::shared_ptr<DataVectorTest<float>> normaldata;
 	GLuint VAO;
 	GLuint VBO;
 	int lenght;

@@ -25,7 +25,7 @@
 #include "VisualizationIndxElement.h"
 
 #include "DataStructureBase.h"
-#include "DataVectorTest.h"
+#include "DataVector.h"
 
 #include "PATriangulate.h"
 
@@ -38,121 +38,6 @@
 float lastFrame = 0.0f;
 
 GLFWwindow* window = NULL;
-
-float cubeVertices[] =
-{
--0.5f, -0.5f, -0.5f,
- 0.5f, -0.5f, -0.5f,
- 0.5f,  0.5f, -0.5f,
- 0.5f,  0.5f, -0.5f,
--0.5f,  0.5f, -0.5f,
--0.5f, -0.5f, -0.5f,
-
--0.5f, -0.5f,  0.5f,
- 0.5f, -0.5f,  0.5f,
- 0.5f,  0.5f,  0.5f,
- 0.5f,  0.5f,  0.5f,
--0.5f,  0.5f,  0.5f,
--0.5f, -0.5f,  0.5f,
-
--0.5f,  0.5f,  0.5f,
--0.5f,  0.5f, -0.5f,
--0.5f, -0.5f, -0.5f,
--0.5f, -0.5f, -0.5f,
--0.5f, -0.5f,  0.5f,
--0.5f,  0.5f,  0.5f,
-
- 0.5f,  0.5f,  0.5f,
- 0.5f,  0.5f, -0.5f,
- 0.5f, -0.5f, -0.5f,
- 0.5f, -0.5f, -0.5f,
- 0.5f, -0.5f,  0.5f,
- 0.5f,  0.5f,  0.5f,
-
--0.5f, -0.5f, -0.5f,
- 0.5f, -0.5f, -0.5f,
- 0.5f, -0.5f,  0.5f,
- 0.5f, -0.5f,  0.5f,
--0.5f, -0.5f,  0.5f,
--0.5f, -0.5f, -0.5f,
-
--0.5f,  0.5f, -0.5f,
- 0.5f,  0.5f, -0.5f,
- 0.5f,  0.5f,  0.5f,
- 0.5f,  0.5f,  0.5f,
--0.5f,  0.5f,  0.5f,
--0.5f,  0.5f, -0.5f,
-};
-
-float cubeNormals[] =
-{
- 0.0f,  0.0f, -1.0f,
- 0.0f,  0.0f, -1.0f,
- 0.0f,  0.0f, -1.0f,
- 0.0f,  0.0f, -1.0f,
- 0.0f,  0.0f, -1.0f,
- 0.0f,  0.0f, -1.0f,
-
- 0.0f,  0.0f,  1.0f,
- 0.0f,  0.0f,  1.0f,
- 0.0f,  0.0f,  1.0f,
- 0.0f,  0.0f,  1.0f,
- 0.0f,  0.0f,  1.0f,
- 0.0f,  0.0f,  1.0f,
-
--1.0f,  0.0f,  0.0f,
--1.0f,  0.0f,  0.0f,
--1.0f,  0.0f,  0.0f,
--1.0f,  0.0f,  0.0f,
--1.0f,  0.0f,  0.0f,
--1.0f,  0.0f,  0.0f,
-
- 1.0f,  0.0f,  0.0f,
- 1.0f,  0.0f,  0.0f,
- 1.0f,  0.0f,  0.0f,
- 1.0f,  0.0f,  0.0f,
- 1.0f,  0.0f,  0.0f,
- 1.0f,  0.0f,  0.0f,
-
- 0.0f, -1.0f,  0.0f,
- 0.0f, -1.0f,  0.0f,
- 0.0f, -1.0f,  0.0f,
- 0.0f, -1.0f,  0.0f,
- 0.0f, -1.0f,  0.0f,
- 0.0f, -1.0f,  0.0f,
-
- 0.0f,  1.0f,  0.0f,
- 0.0f,  1.0f,  0.0f,
- 0.0f,  1.0f,  0.0f,
- 0.0f,  1.0f,  0.0f,
- 0.0f,  1.0f,  0.0f,
- 0.0f,  1.0f,  0.0f
-};
-
-float cubeElemVertices[]
-{
-	// front
-	-0.5, -0.5,  0.5,
-	 0.5, -0.5,  0.5,
-	 0.5,  0.5,  0.5,
-	-0.5,  0.5,  0.5,
-	// back
-	-0.5, -0.5, -0.5,
-	 0.5, -0.5, -0.5,
-	 0.5,  0.5, -0.5,
-	-0.5,  0.5, -0.5
-};
-
-float cubeElemIndex[]
-{
-	0, 1, 2, 3,
-	1, 5, 6, 2,
-	7, 6, 5 ,4,
-	4, 0, 3, 7,
-	4, 5, 1, 0,
-	3, 2, 6, 7
-
-};
 
 
 int main()
@@ -169,28 +54,14 @@ int main()
 	
 	//PARSING AND DATA GENERATION -------------------------------------------------------------------------------------------
 	PMeshPareserTxt Parser = PMeshPareserTxt();
+	auto DataIndex = make_shared<vector<DataVector<int>>>(Parser.ParseFaces("testmesh_45e_faces.txt"));
+	shared_ptr<DataVector<float>> DataVertex = Parser.ParsePoints("testmesh_45e_points.txt");
 
-	auto DataIndex = Parser.ParseFaces("testmesh_45e_faces.txt");
-	auto DataVertex = Parser.ParsePoints("testmesh_45e_points.txt");
 
-
-	//OLD DATA -----------------------------------------------------------------------------------------------------------------
-	/*int count = sizeof(cubeElemVertices) / sizeof(*cubeElemVertices);
-
-	auto DataVertex = std::make_shared<DataVectorTest<float>>(FLOATVAL);
-	DataVertex->ReserveData(count);
-	for (int i = 0; i < count; i++) { DataVertex->SetData(cubeElemVertices[i]);}
-	
-	auto DataIndex = std::make_shared<DataVectorTest<int>>(INTVAL);
-	DataIndex->ReserveData(count);
-	for (int i = 0; i < count; i++) { DataIndex->SetData(cubeElemIndex[i]); }*/
-	
-	//VISUALIZATION SETUP --------------------------------------------------------------------------------------------------
-	//VisualizationPrimitive testViz = VisualizationPrimitive(DataVertex, DataNormal);
-	VisualizationIndxElement vizElement = VisualizationIndxElement(DataVertex, DataIndex);
+	//VISUALIZATIONS-----------------------------------------------------------------------------------------------------------
+	VisualizationIndxElement<shared_ptr<DataVector<float>>, shared_ptr<vector<DataVector<int>>>> vizElement(DataVertex, DataIndex);
 	VisualizationGrid vizGrid = VisualizationGrid();
 
-	//TODO: smart pointers
 	VisualizationGroup MainGroupViz = VisualizationGroup();
 	MainGroupViz.visualizations.push_back(&vizElement);
 	MainGroupViz.visualizations.push_back(&vizGrid);
@@ -200,7 +71,6 @@ int main()
 	//RENDER LOOP! -----------------------------------------------------------------------------------------
 	while (!glfwWindowShouldClose(window))
 	{
-		
 		currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
