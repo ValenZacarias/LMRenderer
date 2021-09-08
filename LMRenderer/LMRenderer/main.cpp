@@ -54,8 +54,14 @@ int main()
 	
 	//PARSING AND DATA GENERATION -------------------------------------------------------------------------------------------
 	PMeshPareserTxt Parser = PMeshPareserTxt();
-	auto DataIndex = make_shared<vector<DataVector<int>>>(Parser.ParseFaces("testmesh_45e_faces.txt"));
-	shared_ptr<DataVector<float>> DataVertex = Parser.ParsePoints("testmesh_45e_points.txt");
+	//auto DataIndex = make_shared<vector<DataVector<int>>>(Parser.ParseFaces("testmesh_45e_faces.txt"));
+	//shared_ptr<DataVector<float>> DataVertex = Parser.ParsePoints("testmesh_45e_points.txt");
+	// 
+	//auto DataIndex = make_shared<vector<DataVector<int>>>(Parser.ParseFaces("sphere_3k_faces.txt"));
+	//shared_ptr<DataVector<float>> DataVertex = Parser.ParsePoints("sphere_3k_points.txt");
+
+	auto DataIndex = make_shared<vector<DataVector<int>>>(Parser.ParseFaces("spheroid_45k_faces.txt"));
+	shared_ptr<DataVector<float>> DataVertex = Parser.ParsePoints("spheroid_45k_points.txt");
 
 
 	//VISUALIZATIONS-----------------------------------------------------------------------------------------------------------

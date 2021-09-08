@@ -166,6 +166,10 @@
     <Text Include="difusse_vertex_shader.txt" />
     <Text Include="light_fragment_shader.txt" />
     <Text Include="light_vertex_shader.txt" />
+    <Text Include="sphere_3k_faces.txt" />
+    <Text Include="sphere_3k_points.txt" />
+    <Text Include="spheroid_45k_faces.txt" />
+    <Text Include="spheroid_45k_points.txt" />
     <Text Include="testmesh_45e_faces.txt" />
     <Text Include="testmesh_45e_points.txt" />
   </ItemGroup>

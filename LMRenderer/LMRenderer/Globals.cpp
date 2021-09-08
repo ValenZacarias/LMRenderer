@@ -9,6 +9,8 @@ int screenWidth = 1280;
 int screenHeight = 720;
 
 float deltaTime = 0.0f;
-bool firstMouse = true;
-glm::vec3 lightPosition = glm::vec3(3.0f, 3.0f, 3.0f);
+glm::vec3 lightPosition = glm::vec3(0.0f, 100.0f, 0.0f);
 int DataStructureCurrentIndex = 0;
+
+float CAMERA_SPEED = 20.0f;
+bool firstMouse = true;

@@ -80,7 +80,8 @@ public:
 
 		glBindVertexArray(VAO);
 
-		glDrawArrays(GL_TRIANGLES, 0, 10000);
+		//FIX: hay que variabilizar la cantidad de triangulos segun la malla
+		glDrawArrays(GL_TRIANGLES, 0, 1000000);
 
 	}
 

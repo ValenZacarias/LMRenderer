@@ -83,6 +83,18 @@
     <Text Include="testmesh_45e_points.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
+    <Text Include="sphere_3k_faces.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="sphere_3k_points.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="spheroid_45k_faces.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="spheroid_45k_points.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h">

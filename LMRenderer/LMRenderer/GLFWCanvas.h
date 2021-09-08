@@ -18,7 +18,7 @@ struct Camera
 {
 	//Camera settings
 	const float sensitivity = 0.1f;
-	const float cameraSpeed = 6.0f;
+	const float cameraSpeed = CAMERA_SPEED;
 	float FOV = 45.0f;
 
 	//glm::vec3 cameraPos = glm::vec3(0.0f, 10.0f, 10.0f);

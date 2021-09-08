@@ -46,7 +46,7 @@ void VisualizationGrid::Render(Camera* cam)
 int VisualizationGrid::GenerateBuffers()
 {
     int slices = 20;
-    float size = 10;
+    float size = 100;
     std::vector<glm::vec3> vertices;
     std::vector<glm::uvec4> indices;
 
