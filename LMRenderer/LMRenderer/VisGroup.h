@@ -8,14 +8,14 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "shader_s.h"
-#include "VisualizationBase.h"
+#include "VisBase.h"
 
-class VisualizationGroup : public VisualizationBase
+class VisGroup : public VisBase
 {
 private:
 public:
-	std::vector<VisualizationBase*> visualizations {};
-	VisualizationGroup();
-	~VisualizationGroup();
+	std::vector<VisBase*> visualizations {};
+	VisGroup();
+	~VisGroup();
 	void Render(Camera* cam) override;
 };

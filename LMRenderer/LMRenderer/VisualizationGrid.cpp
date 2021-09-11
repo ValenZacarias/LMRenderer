@@ -7,18 +7,18 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "shader_s.h"
-#include "VisualizationBase.h"
-#include "VisualizationGrid.h"
+#include "VisBase.h"
+#include "VisGrid.h"
 #include "GLFWCanvas.h"
 
-VisualizationGrid::VisualizationGrid()
+VisGrid::VisGrid()
 {
     Shader lightShader("light_vertex_shader.txt", "light_fragment_shader.txt");
     this->shader = lightShader;
 	GenerateBuffers();
 }
 
-void VisualizationGrid::Render(Camera* cam)
+void VisGrid::Render(Camera* cam)
 {
 	glBindVertexArray(VAO);
     shader.use();
@@ -43,7 +43,7 @@ void VisualizationGrid::Render(Camera* cam)
 	glBindVertexArray(0);
 }
 
-int VisualizationGrid::GenerateBuffers()
+int VisGrid::GenerateBuffers()
 {
     int slices = 20;
     float size = 100;

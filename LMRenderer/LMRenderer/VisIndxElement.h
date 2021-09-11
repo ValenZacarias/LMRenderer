@@ -11,16 +11,17 @@
 #include "shader_s.h"
 #include "GLFWCanvas.h"
 
-#include "VisualizationBase.h"
+#include "VisBase.h"
 
 #include "DataStructureBase.h"
 #include "DataVector.h"
 
 #include "PATriangulate.h"
 #include "PACalcNormals.h"
+#include "PAUniformSample.h"
 
 template <typename TVertex, typename TIndex>
-class VisualizationIndxElement : public VisualizationBase
+class VisIndxElement : public VisBase
 {
 private:
 
@@ -29,14 +30,16 @@ private:
 	GLuint VBO;
 	GLuint VAO;
 	GLuint EBO;
+	long trisCount;
 
 	PATriangulate triangulate;
 	PACalcNormals calcnormals;
+	PAUniformSample uniformSample;
 
 	Shader shader;
 public:
 
-	VisualizationIndxElement(TVertex v, TIndex i)
+	VisIndxElement(TVertex v, TIndex i)
 	{
 		this->vertexData = v;
 		this->indexData = i;
@@ -46,7 +49,7 @@ public:
 		GenerateBuffers();
 	}
 	
-	~VisualizationIndxElement()
+	~VisIndxElement()
 	{
 		glDeleteVertexArrays(1, &VAO);
 		glDeleteBuffers(1, &VBO);
@@ -81,21 +84,24 @@ public:
 		glBindVertexArray(VAO);
 
 		//FIX: hay que variabilizar la cantidad de triangulos segun la malla
-		glDrawArrays(GL_TRIANGLES, 0, 1000000);
+		glDrawArrays(GL_TRIANGLES, 0, trisCount);
 
 	}
 
 	void GenerateBuffers()
 	{
 		DataVector<glm::vec3> triVertexData = triangulate.Process(*vertexData, *indexData);
-		DataVector<glm::vec3> normaldata = calcnormals.ProcessVec3(triVertexData);
+		DataVector<glm::vec3> triVertexSample = uniformSample.Process(triVertexData, 0.01);
 
-		int n = triVertexData.GetSize();
+		trisCount = triVertexData.GetSize();
+		DataVector<glm::vec3> normaldata = calcnormals.ProcessVec3(triVertexSample);
+
+		int n = triVertexSample.GetSize();
 		std::vector<glm::vec3> bufferdata{};
 
 		for (int i = 0; i < n; i++)
 		{
-			bufferdata.push_back(triVertexData.GetData(i));
+			bufferdata.push_back(triVertexSample.GetData(i));
 			bufferdata.push_back(normaldata.GetData(i));
 		}
 

@@ -181,16 +181,17 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="PACalcNormals.h" />
     <ClInclude Include="PATriangulate.h" />
+    <ClInclude Include="PAUniformSample.h" />
     <ClInclude Include="PMeshParserTxt.h" />
     <ClInclude Include="shader_s.h" />
     <ClInclude Include="Tool.h" />
     <ClInclude Include="ToolFPSCamera.h" />
     <ClInclude Include="ToolOrbitCamera.h" />
-    <ClInclude Include="VisualizationBase.h" />
-    <ClInclude Include="VisualizationGrid.h" />
-    <ClInclude Include="VisualizationGroup.h" />
-    <ClInclude Include="VisualizationIndxElement.h" />
-    <ClInclude Include="VisualizationPrimitive.h" />
+    <ClInclude Include="VisBase.h" />
+    <ClInclude Include="VisGrid.h" />
+    <ClInclude Include="VisGroup.h" />
+    <ClInclude Include="VisIndxElement.h" />
+    <ClInclude Include="VisPrimitive.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

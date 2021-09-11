@@ -115,23 +115,11 @@
     <ClInclude Include="main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VisualizationBase.h">
-      <Filter>Header Files\Visualization</Filter>
-    </ClInclude>
-    <ClInclude Include="VisualizationGroup.h">
-      <Filter>Header Files\Visualization</Filter>
-    </ClInclude>
-    <ClInclude Include="VisualizationPrimitive.h">
-      <Filter>Header Files\Visualization</Filter>
-    </ClInclude>
     <ClInclude Include="Tool.h">
       <Filter>Header Files\Tool</Filter>
     </ClInclude>
     <ClInclude Include="ToolFPSCamera.h">
       <Filter>Header Files\Tool</Filter>
-    </ClInclude>
-    <ClInclude Include="VisualizationIndxElement.h">
-      <Filter>Header Files\Visualization</Filter>
     </ClInclude>
     <ClInclude Include="PATriangulate.h">
       <Filter>Header Files\ProcessingAlgorithms</Filter>
@@ -139,14 +127,29 @@
     <ClInclude Include="PACalcNormals.h">
       <Filter>Header Files\ProcessingAlgorithms</Filter>
     </ClInclude>
-    <ClInclude Include="VisualizationGrid.h">
-      <Filter>Header Files\Visualization</Filter>
-    </ClInclude>
     <ClInclude Include="PMeshParserTxt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToolOrbitCamera.h">
       <Filter>Header Files\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="VisIndxElement.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="VisGroup.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="VisGrid.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="VisBase.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="VisPrimitive.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="PAUniformSample.h">
+      <Filter>Header Files\ProcessingAlgorithms</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

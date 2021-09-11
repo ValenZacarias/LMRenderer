@@ -10,17 +10,20 @@
 #include <glm/glm.hpp>
 
 #include "DataVector.h"
+#include "Globals.h"
 
+struct Face;
  
 class PMeshPareserTxt
 {
 public:
 	PMeshPareserTxt() {};
 
-	vector<DataVector<int>> ParseFaces(string filename)
+	std::shared_ptr<vector<DataVector<int>>> ParseFaces(string filename)
 	{
-
+		//Hay que optimizar este metodo dado que los Find() son muy caros y realentizan un monton la extraccion de datos
 		vector<DataVector<int>> dataIndexVector = {};
+
 		for (int i = 0; i < 12; i++)
 			dataIndexVector.push_back(DataVector<int>(INTVAL));
 
@@ -85,7 +88,8 @@ public:
 			datastr.erase(pos1, pos2 + 2);
 		}
 		
-		return dataIndexVector;
+		auto result = std::make_shared<vector<DataVector<int>>>(dataIndexVector);
+		return result;
 	}
 
 	shared_ptr<DataVector<int>> ParseFaces_Quads(string filename)
@@ -151,6 +155,7 @@ public:
 
 	std::shared_ptr<DataVector<float>> ParsePoints(string filename)
 	{
+		auto dataPoints = std::make_shared<DataVector<float>>(FLOATVAL);
 
 		//FILE PARSING
 		std::ifstream in(filename);
@@ -178,8 +183,6 @@ public:
 		size_t aux1;
 		string value;
 
-		auto DataIndex = std::make_shared<DataVector<float>>(FLOATVAL);
-
 		while (datastr.find(")\n)") != string::npos)
 		{
 			pos1 = datastr.find("(");
@@ -192,21 +195,21 @@ public:
 			do
 			{
 				value = v.substr(0, aux1);
-				DataIndex->SetData(stof(value) * 10.0f);
+				dataPoints->SetData(stof(value) * 10.0f);
 				v = v.erase(0, aux1 + 1);
 				aux1 = v.find(" ");
 			} while (aux1 != string::npos);
 
 			v.pop_back(); // elimino el ultimo parentesis
 			value = v; //queda el ultimo numero dentro de v
-			DataIndex->SetData(stof(value) * 10.0f);
+			dataPoints->SetData(stof(value) * 10.0f);
 
 			//std::cout << "CANT INDX: " << elemIndxs << std::endl;
 			//std::cout << v.str() << std::endl;
 			datastr.erase(pos1, pos2 + 2);
 		}
 
-		return DataIndex;
+		return dataPoints;
 	}
 
 

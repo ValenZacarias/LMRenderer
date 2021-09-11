@@ -7,11 +7,11 @@
 #include <glm/glm.hpp>
 
 #include "shader_s.h"
-#include "VisualizationBase.h"
+#include "VisBase.h"
 #include "DataStructureBase.h"
 #include "DataVector.h"
 
-class VisualizationGrid : public VisualizationBase
+class VisGrid : public VisBase
 {
 private:
 	GLuint VAO;
@@ -19,7 +19,7 @@ private:
 	int lenght;
 	Shader shader;
 public:
-	VisualizationGrid();
+	VisGrid();
 
 	void Render(Camera* cam) override;
 	int GenerateBuffers();

@@ -12,10 +12,10 @@
 
 struct Camera;
 
-class VisualizationBase
+class VisBase
 {
 public:
 	//TODO: Agregar IDs
-	VisualizationBase() {};
+	VisBase() {};
 	virtual void Render(Camera* cam) {};
 };

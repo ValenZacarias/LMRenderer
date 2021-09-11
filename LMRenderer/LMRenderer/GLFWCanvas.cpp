@@ -77,7 +77,7 @@ GLFWwindow* GLFWCanvas::Init()
 
 	return window;
 }
-void GLFWCanvas::SetupContext(VisualizationGroup* viz)
+void GLFWCanvas::SetupContext(VisGroup* viz)
 {
 	currentViz = viz;
 	glEnable(GL_DEPTH_TEST);

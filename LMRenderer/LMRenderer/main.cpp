@@ -18,11 +18,11 @@
 
 #include "GLFWCanvas.h"
 
-#include "VisualizationBase.h"
-#include "VisualizationGroup.h"
-#include "VisualizationGrid.h"
-#include "VisualizationPrimitive.h"
-#include "VisualizationIndxElement.h"
+#include "VisBase.h"
+#include "VisGroup.h"
+#include "VisGrid.h"
+#include "VisPrimitive.h"
+#include "VisIndxElement.h"
 
 #include "DataStructureBase.h"
 #include "DataVector.h"
@@ -56,19 +56,22 @@ int main()
 	PMeshPareserTxt Parser = PMeshPareserTxt();
 	//auto DataIndex = make_shared<vector<DataVector<int>>>(Parser.ParseFaces("testmesh_45e_faces.txt"));
 	//shared_ptr<DataVector<float>> DataVertex = Parser.ParsePoints("testmesh_45e_points.txt");
-	// 
-	//auto DataIndex = make_shared<vector<DataVector<int>>>(Parser.ParseFaces("sphere_3k_faces.txt"));
-	//shared_ptr<DataVector<float>> DataVertex = Parser.ParsePoints("sphere_3k_points.txt");
+	
+	//auto DataIndex = Parser.ParseFaces("testmesh_45e_faces.txt");
+	//auto DataVertex = Parser.ParsePoints("testmesh_45e_points.txt");
 
-	auto DataIndex = make_shared<vector<DataVector<int>>>(Parser.ParseFaces("spheroid_45k_faces.txt"));
-	shared_ptr<DataVector<float>> DataVertex = Parser.ParsePoints("spheroid_45k_points.txt");
+	//auto DataIndex  = Parser.ParseFaces("sphere_3k_faces.txt");
+	//auto DataVertex = Parser.ParsePoints("sphere_3k_points.txt");
+
+	auto DataIndex = Parser.ParseFaces("spheroid_45k_faces.txt");
+	auto DataVertex = Parser.ParsePoints("spheroid_45k_points.txt");
 
 
 	//VISUALIZATIONS-----------------------------------------------------------------------------------------------------------
-	VisualizationIndxElement<shared_ptr<DataVector<float>>, shared_ptr<vector<DataVector<int>>>> vizElement(DataVertex, DataIndex);
-	VisualizationGrid vizGrid = VisualizationGrid();
+	VisIndxElement<shared_ptr<DataVector<float>>, shared_ptr<vector<DataVector<int>>>> vizElement(DataVertex, DataIndex);
+	VisGrid vizGrid = VisGrid();
 
-	VisualizationGroup MainGroupViz = VisualizationGroup();
+	VisGroup MainGroupViz = VisGroup();
 	MainGroupViz.visualizations.push_back(&vizElement);
 	MainGroupViz.visualizations.push_back(&vizGrid);
 	canvas.SetupContext(&MainGroupViz);

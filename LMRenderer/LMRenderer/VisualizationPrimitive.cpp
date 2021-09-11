@@ -7,8 +7,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "shader_s.h"
-#include "VisualizationBase.h"
-#include "VisualizationPrimitive.h"
+#include "VisBase.h"
+#include "VisPrimitive.h"
 #include "GLFWCanvas.h"
 
 glm::vec3 cubePositions[] = {
@@ -20,7 +20,7 @@ glm::vec3 cubePositions[] = {
 };
 
 
-VisualizationPrimitive::VisualizationPrimitive(GLuint* vao, GLuint* vbo)
+VisPrimitive::VisPrimitive(GLuint* vao, GLuint* vbo)
 {
 	//this->VAO = vao;
 	//this->VBO = vbo;
@@ -29,14 +29,14 @@ VisualizationPrimitive::VisualizationPrimitive(GLuint* vao, GLuint* vbo)
 
 };
 
-VisualizationPrimitive::~VisualizationPrimitive()
+VisPrimitive::~VisPrimitive()
 {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	cout << "VIS DELETED" << endl;
 }
 
-VisualizationPrimitive::VisualizationPrimitive(std::shared_ptr<DataVector<float>> v, 
+VisPrimitive::VisPrimitive(std::shared_ptr<DataVector<float>> v, 
 											   std::shared_ptr<DataVector<float>> n)
 {
 	this->vertexdata = v;
@@ -48,7 +48,7 @@ VisualizationPrimitive::VisualizationPrimitive(std::shared_ptr<DataVector<float>
 
 };
 
-void VisualizationPrimitive::Render(Camera* cam)
+void VisPrimitive::Render(Camera* cam)
 {
 	for (unsigned int i = 0; i < 5; i++)
 	{
@@ -88,7 +88,7 @@ void VisualizationPrimitive::Render(Camera* cam)
 	}
 }
 
-int VisualizationPrimitive::GenerateBuffers()
+int VisPrimitive::GenerateBuffers()
 {
 	int n = vertexdata->GetSize();
 	std::vector<float> bufferdata {};

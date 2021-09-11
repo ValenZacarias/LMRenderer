@@ -12,7 +12,7 @@
 #include "ToolFPSCamera.h"
 #include "shader_s.h"
 
-#include "VisualizationGroup.h"
+#include "VisGroup.h"
 
 struct Camera
 {
@@ -46,7 +46,7 @@ private:
 	int width;
 	int heigth;
 	Tool* currentTool; //Tool deberia ser un smartpointer a tool
-	VisualizationGroup* currentViz; 
+	VisGroup* currentViz; 
 	Shader currentShader;
 	glm::vec3 lightPos = glm::vec3(0.0f, 8.0f, 0.0f);
 	glm::vec3 backgroundColor = glm::vec3(0.02f, 0.08f, 0.09f);
@@ -57,7 +57,7 @@ public:
 
 	GLFWCanvas(int screenWidth, int screenHeigth);
 	~GLFWCanvas() {};
-	void SetupContext(VisualizationGroup* viz);
+	void SetupContext(VisGroup* viz);
 	void Render();
 	void SetCurrentTool(Tool* tool);
 	void MouseLDragHandler(int button, int action, int mods);

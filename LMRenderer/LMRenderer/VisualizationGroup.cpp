@@ -7,13 +7,13 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "shader_s.h"
-#include "VisualizationBase.h"
-#include "VisualizationGroup.h"
-#include "VisualizationPrimitive.h"
+#include "VisBase.h"
+#include "VisGroup.h"
+#include "VisPrimitive.h"
 #include "GLFWCanvas.h"
 
-VisualizationGroup::VisualizationGroup() {};
-VisualizationGroup::~VisualizationGroup() 
+VisGroup::VisGroup() {};
+VisGroup::~VisGroup() 
 {
 	//for (int i = 0; i < visualizations.size(); i++)
 	//{
@@ -21,7 +21,7 @@ VisualizationGroup::~VisualizationGroup()
 	//}
 };
 
-void VisualizationGroup::Render(Camera* cam)
+void VisGroup::Render(Camera* cam)
 {
 	for (int i = 0; i < visualizations.size(); i++)
 	{
