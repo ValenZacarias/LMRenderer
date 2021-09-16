@@ -151,5 +151,11 @@
     <ClInclude Include="PAUniformSample.h">
       <Filter>Header Files\ProcessingAlgorithms</Filter>
     </ClInclude>
+    <ClInclude Include="Face.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="PAFaceIndexTriangulate.h">
+      <Filter>Header Files\ProcessingAlgorithms</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

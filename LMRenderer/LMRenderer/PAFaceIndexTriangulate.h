@@ -2,36 +2,33 @@
 #include <glm/glm.hpp> 
 #include "Face.h"
 
-class PATriangulate
+class PAFaceIndexTriangulate
 {
 public:
-	PATriangulate() {}
+	PAFaceIndexTriangulate() {}
 
-	template <typename TIndex>
-	TIndex Process(const TIndex& elementIndx, int perElemIndex)
+	DataVector<glm::vec3> Process(DataVector<glm::vec3>& vertex, DataVector<Face>& faces)
 	{
-			//Este metodo toma 4 indices de un quad y saca 6 indices para los 2 triangulos que lo componen
-			//Debariamos hacer un reserve aca, asi no resizeamos multiples veces
-			TIndex trisIndx(FLOATVAL);
-		
-			for (int i = 0; i < elementIndx.GetSize(); i += perElemIndex) //Agarro el quad completo
+		//Este metodo toma 4 indices de un quad y saca 6 indices para los 2 triangulos que lo componen
+		//Debariamos hacer un reserve aca, asi no resizeamos multiples veces
+		DataVector<glm::vec3> trisData(POINT);
+
+		int p0Index;
+		for (int i = 0; i < faces.GetSize(); i ++) //Agarro el quad completo
+		{
+			p0Index = faces.GetData(i).GetP0();
+			for (int j = 0; j < faces.GetData(i).GetCount() ; j++)
 			{
-				//Tri 1
-				trisIndx.SetData(elementIndx.GetData(i));
-				trisIndx.SetData(elementIndx.GetData(i + 1));
-				trisIndx.SetData(elementIndx.GetData(i + 2));
-				//Tri 2						
-				trisIndx.SetData(elementIndx.GetData(i + 2));
-				trisIndx.SetData(elementIndx.GetData(i + 3));
-				trisIndx.SetData(elementIndx.GetData(i));
+				trisData.SetData(vertex.GetData( p0Index + j ));
 			}
-		
-			return trisIndx;
+		}
+
+		return trisData;
 	}
 
 
 	template <typename TVertex, typename TIndex>
-	TVertex Process(TVertex &vertex, TIndex&elementIndx, int perElemIndex)
+	TVertex Process(TVertex& vertex, TIndex& elementIndx, int perElemIndex)
 	{
 		//Este metodo genera un DS de flotantes con las coordenadas de los vertices que obtiene de triangular quads
 		//segun los indices de este
@@ -57,11 +54,11 @@ public:
 			trisVertex.SetData(vertex.GetData(3 * t1_0));
 			trisVertex.SetData(vertex.GetData(3 * t1_0 + 1));
 			trisVertex.SetData(vertex.GetData(3 * t1_0 + 2));
-					  
+
 			trisVertex.SetData(vertex.GetData(3 * t1_1));
 			trisVertex.SetData(vertex.GetData(3 * t1_1 + 1));
 			trisVertex.SetData(vertex.GetData(3 * t1_1 + 2));
-					  
+
 			trisVertex.SetData(vertex.GetData(3 * t1_2));
 			trisVertex.SetData(vertex.GetData(3 * t1_2 + 1));
 			trisVertex.SetData(vertex.GetData(3 * t1_2 + 2));
@@ -73,11 +70,11 @@ public:
 			trisVertex.SetData(vertex.GetData(3 * t2_0));
 			trisVertex.SetData(vertex.GetData(3 * t2_0 + 1));
 			trisVertex.SetData(vertex.GetData(3 * t2_0 + 2));
-					  
+
 			trisVertex.SetData(vertex.GetData(3 * t2_1));
 			trisVertex.SetData(vertex.GetData(3 * t2_1 + 1));
 			trisVertex.SetData(vertex.GetData(3 * t2_1 + 2));
-					  
+
 			trisVertex.SetData(vertex.GetData(3 * t2_2));
 			trisVertex.SetData(vertex.GetData(3 * t2_2 + 1));
 			trisVertex.SetData(vertex.GetData(3 * t2_2 + 2));
@@ -109,40 +106,40 @@ public:
 			//Hacer un _expect(vpos.getType()==PointsType) para Esperar valores mayores a 2;
 			switch (i)
 			{
-				case 3:
-					for (int j = 0; j < indxData.GetSize(); j+=3)
-					{
-						//tri 1
-						trisVertex.SetData(GetPoint(vertex, indxData.GetData(j)));
-						trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 1)));
-						trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 2)));
-					}
-					break;
-				case 4:
-					for (int j = 0; j < indxData.GetSize(); j += 4)
-					{
-						Face faceData;
-						trisVertex.GetSize() != 0 ? faceData.SetP0(trisVertex.GetSize()) : faceData.SetP0(0);
-						faceData.SetCount(6);
-						faceIndex.SetData(faceData);
+			case 3:
+				for (int j = 0; j < indxData.GetSize(); j += 3)
+				{
+					//tri 1
+					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j)));
+					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 1)));
+					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 2)));
+				}
+				break;
+			case 4:
+				for (int j = 0; j < indxData.GetSize(); j += 4)
+				{
+					Face faceData;
+					trisVertex.GetSize() != 0 ? faceData.SetP0(trisVertex.GetSize() - 1) : faceData.SetP0(0);
+					faceData.SetCount(6);
+					faceIndex.SetData(faceData);
 
-						//tri 1
-						trisVertex.SetData(GetPoint(vertex, indxData.GetData(j)));
-						trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 1)));
-						trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 2)));
+					//tri 1
+					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j)));
+					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 1)));
+					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 2)));
 
-						//tri 2
-						trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 2)));
-						trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 3)));
-						trisVertex.SetData(GetPoint(vertex, indxData.GetData(j)));
-					}
-					break;
-				case 5:
-					break;
-				case 6:
-					break;
-				default:
-					break;
+					//tri 2
+					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 2)));
+					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 3)));
+					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j)));
+				}
+				break;
+			case 5:
+				break;
+			case 6:
+				break;
+			default:
+				break;
 			}
 		}
 

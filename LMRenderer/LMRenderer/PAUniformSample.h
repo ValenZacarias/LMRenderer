@@ -12,12 +12,12 @@ public:
 
 	DataVector<glm::vec3> Process(DataVector<glm::vec3> vertex, float reductionFactor)
 	{
+		// TriangleSampling
 		DataVector<glm::vec3> sampledData(POINT);
 		
-
 		std::random_device rd{};
 		std::mt19937 engine{ rd() };
-		std::uniform_int_distribution<long> dist{ 0, ( vertex.GetSize() / 3 - 1 ) };
+		std::uniform_int_distribution<long> dist{ 0, ( vertex.GetSize() / 6 - 1 ) };
 
 		long rnd;
 		long sampleSize = ceil(vertex.GetSize() * reductionFactor);
@@ -25,7 +25,8 @@ public:
 
 		for (int i = 0; i < sampleSize; i++)
 		{
-			rnd = dist(engine) * 3;
+			//rnd = dist(engine) * 3; // Tris
+			rnd = dist(engine) * 6;	  // Quads
 
 			if (rnd > vertex.GetSize())
 			{
@@ -36,9 +37,42 @@ public:
 			sampledData.SetData(vertex.GetData(rnd));
 			sampledData.SetData(vertex.GetData(rnd + 1));
 			sampledData.SetData(vertex.GetData(rnd + 2));
+
+			sampledData.SetData(vertex.GetData(rnd + 3));
+			sampledData.SetData(vertex.GetData(rnd + 4));
+			sampledData.SetData(vertex.GetData(rnd + 5));
 		}
 
 		return sampledData;
+	}
+
+	template <class T>
+	void Process(T& dataSet, T& sampledSet, float reductionFactor)
+	{
+		//T sampledData;
+
+
+		std::random_device rd{};
+		std::mt19937 engine{ rd() };
+		std::uniform_int_distribution<long> dist{ 0, (dataSet.GetSize() - 1) };
+
+		long rnd;
+		long sampleSize = ceil(dataSet.GetSize() * reductionFactor);
+		sampledSet.ReserveData(sampleSize);
+
+		for (int i = 0; i < sampleSize; i++)
+		{
+			//rnd = dist(engine) * 3; // Tris
+			rnd = dist(engine);
+
+			if (rnd > dataSet.GetSize())
+			{
+				cout << "OUT OF RANGE" << endl;
+
+			}
+
+			sampledSet.SetData(dataSet.GetData(rnd));
+		}
 	}
 };
 

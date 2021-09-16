@@ -178,8 +178,10 @@
     <ClInclude Include="DataVector.h" />
     <ClInclude Include="GLFWCanvas.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="Face.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="PACalcNormals.h" />
+    <ClInclude Include="PAFaceIndexTriangulate.h" />
     <ClInclude Include="PATriangulate.h" />
     <ClInclude Include="PAUniformSample.h" />
     <ClInclude Include="PMeshParserTxt.h" />

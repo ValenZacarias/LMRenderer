@@ -60,11 +60,11 @@ int main()
 	//auto DataIndex = Parser.ParseFaces("testmesh_45e_faces.txt");
 	//auto DataVertex = Parser.ParsePoints("testmesh_45e_points.txt");
 
-	//auto DataIndex  = Parser.ParseFaces("sphere_3k_faces.txt");
-	//auto DataVertex = Parser.ParsePoints("sphere_3k_points.txt");
+	auto DataIndex  = Parser.ParseFaces("sphere_3k_faces.txt");
+	auto DataVertex = Parser.ParsePoints("sphere_3k_points.txt");
 
-	auto DataIndex = Parser.ParseFaces("spheroid_45k_faces.txt");
-	auto DataVertex = Parser.ParsePoints("spheroid_45k_points.txt");
+	//auto DataIndex = Parser.ParseFaces("spheroid_45k_faces.txt");
+	//auto DataVertex = Parser.ParsePoints("spheroid_45k_points.txt");
 
 
 	//VISUALIZATIONS-----------------------------------------------------------------------------------------------------------

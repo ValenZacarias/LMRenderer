@@ -19,6 +19,7 @@
 #include "PATriangulate.h"
 #include "PACalcNormals.h"
 #include "PAUniformSample.h"
+#include "PAFaceIndexTriangulate.h"
 
 template <typename TVertex, typename TIndex>
 class VisIndxElement : public VisBase
@@ -35,6 +36,7 @@ private:
 	PATriangulate triangulate;
 	PACalcNormals calcnormals;
 	PAUniformSample uniformSample;
+	PAFaceIndexTriangulate faceIndexTriangulate;
 
 	Shader shader;
 public:
@@ -90,10 +92,32 @@ public:
 
 	void GenerateBuffers()
 	{
-		DataVector<glm::vec3> triVertexData = triangulate.Process(*vertexData, *indexData);
-		DataVector<glm::vec3> triVertexSample = uniformSample.Process(triVertexData, 0.01);
+		DataVector<glm::vec3> _triVertexData(POINT);
+		auto triVertexData = make_shared<DataVector<glm::vec3>>(_triVertexData);
 
-		trisCount = triVertexData.GetSize();
+		DataVector<Face> _faceIndexData(FACE);
+		auto faceIndexData = make_shared<DataVector<Face>>(_faceIndexData);
+
+		triangulate.Process(*vertexData, *indexData, *triVertexData, *faceIndexData);
+
+		// Face index Sampling ---------------------------------------------------------
+		// FaceIndex -> Sampled FaceIndex
+		DataVector<Face> _faceIndexSample(FACE);
+		auto faceIndexSample = make_shared<DataVector<Face>>(_faceIndexSample);
+
+		//_faceIndexSample = uniformSample.Process(*faceIndexData, 0.1);
+		uniformSample.Process(*faceIndexData, *faceIndexSample, 0.5);
+
+		// Sampled FaceIndex -> TriVertexData
+		DataVector<glm::vec3> triVertexSample = faceIndexTriangulate.Process(*triVertexData, *faceIndexSample);
+		
+		//Non face index sampling ---------------------------------------------------------
+		//DataVector<glm::vec3> triVertexSample = uniformSample.Process(*triVertexData, 0.1f);
+
+		// NON SAMPLED DATA
+		//DataVector<glm::vec3> triVertexSample = *triVertexData;
+
+		trisCount = triVertexSample.GetSize();
 		DataVector<glm::vec3> normaldata = calcnormals.ProcessVec3(triVertexSample);
 
 		int n = triVertexSample.GetSize();
