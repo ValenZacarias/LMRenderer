@@ -164,20 +164,22 @@
   <ItemGroup>
     <Text Include="difusse_fragment_shader.txt" />
     <Text Include="difusse_vertex_shader.txt" />
-    <Text Include="flange_faces.txt" />
-    <Text Include="flange_points.txt" />
-    <Text Include="gapdetection_faces.txt" />
-    <Text Include="gapdetection_points.txt" />
     <Text Include="light_fragment_shader.txt" />
     <Text Include="light_vertex_shader.txt" />
-    <Text Include="multiRegionHeater_faces.txt" />
-    <Text Include="multiRegionHeater_points.txt" />
-    <Text Include="sphere_3k_faces.txt" />
-    <Text Include="sphere_3k_points.txt" />
-    <Text Include="spheroid_45k_faces.txt" />
-    <Text Include="spheroid_45k_points.txt" />
-    <Text Include="testmesh_45e_faces.txt" />
-    <Text Include="testmesh_45e_points.txt" />
+    <Text Include="Meshes\flange_faces.txt" />
+    <Text Include="Meshes\flange_points.txt" />
+    <Text Include="Meshes\gapdetection_faces.txt" />
+    <Text Include="Meshes\gapdetection_points.txt" />
+    <Text Include="Meshes\light_fragment_shader.txt" />
+    <Text Include="Meshes\light_vertex_shader.txt" />
+    <Text Include="Meshes\multiRegionHeater_faces.txt" />
+    <Text Include="Meshes\multiRegionHeater_points.txt" />
+    <Text Include="Meshes\sphere_3k_faces.txt" />
+    <Text Include="Meshes\sphere_3k_points.txt" />
+    <Text Include="Meshes\spheroid_45k_faces.txt" />
+    <Text Include="Meshes\spheroid_45k_points.txt" />
+    <Text Include="Meshes\testmesh_45e_faces.txt" />
+    <Text Include="Meshes\testmesh_45e_points.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataStructureBase.h" />
@@ -192,7 +194,7 @@
     <ClInclude Include="PAInvTransformSample.h" />
     <ClInclude Include="PATriangulate.h" />
     <ClInclude Include="PAUniformSample.h" />
-    <ClInclude Include="PMeshParserTxt.h" />
+    <ClInclude Include="PMeshParser.h" />
     <ClInclude Include="shader_s.h" />
     <ClInclude Include="Tool.h" />
     <ClInclude Include="ToolFPSCamera.h" />

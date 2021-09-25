@@ -29,7 +29,7 @@
 
 #include "PATriangulate.h"
 
-#include "PMeshParserTxt.h"
+#include "PMeshParser.h"
 
 
 
@@ -53,7 +53,7 @@ int main()
 	canvas.SetCurrentTool(&cameraTool);
 	
 	//PARSING AND DATA GENERATION -------------------------------------------------------------------------------------------
-	PMeshPareserTxt Parser = PMeshPareserTxt();
+	PMeshParser Parser = PMeshParser();
 	//auto DataIndex = make_shared<vector<DataVector<int>>>(Parser.ParseFaces("testmesh_45e_faces.txt"));
 	//shared_ptr<DataVector<float>> DataVertex = Parser.ParsePoints("testmesh_45e_points.txt");
 	
@@ -66,8 +66,8 @@ int main()
 	//auto DataIndex  = Parser.ParseFaces("sphere_3k_faces.txt");
 	//auto DataVertex = Parser.ParsePoints("sphere_3k_points.txt");
 
-	auto DataIndex = Parser.ParseFaces("spheroid_45k_faces.txt");
-	auto DataVertex = Parser.ParsePoints("spheroid_45k_points.txt");
+	auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
+	auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
 
 
 	//VISUALIZATIONS-----------------------------------------------------------------------------------------------------------

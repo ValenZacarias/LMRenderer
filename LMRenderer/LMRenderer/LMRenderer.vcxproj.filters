@@ -77,40 +77,46 @@
     <Text Include="light_vertex_shader.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="testmesh_45e_faces.txt">
+    <Text Include="Meshes\flange_faces.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
-    <Text Include="testmesh_45e_points.txt">
+    <Text Include="Meshes\flange_points.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
-    <Text Include="sphere_3k_faces.txt">
+    <Text Include="Meshes\gapdetection_faces.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
-    <Text Include="sphere_3k_points.txt">
+    <Text Include="Meshes\gapdetection_points.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
-    <Text Include="spheroid_45k_faces.txt">
+    <Text Include="Meshes\light_fragment_shader.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
-    <Text Include="spheroid_45k_points.txt">
+    <Text Include="Meshes\light_vertex_shader.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
-    <Text Include="flange_faces.txt">
+    <Text Include="Meshes\multiRegionHeater_faces.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
-    <Text Include="flange_points.txt">
+    <Text Include="Meshes\multiRegionHeater_points.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
-    <Text Include="gapdetection_faces.txt">
+    <Text Include="Meshes\sphere_3k_faces.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
-    <Text Include="gapdetection_points.txt">
+    <Text Include="Meshes\sphere_3k_points.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
-    <Text Include="multiRegionHeater_faces.txt">
+    <Text Include="Meshes\spheroid_45k_faces.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
-    <Text Include="multiRegionHeater_points.txt">
+    <Text Include="Meshes\spheroid_45k_points.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="Meshes\testmesh_45e_faces.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="Meshes\testmesh_45e_points.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
   </ItemGroup>
@@ -145,7 +151,7 @@
     <ClInclude Include="PACalcNormals.h">
       <Filter>Header Files\ProcessingAlgorithms</Filter>
     </ClInclude>
-    <ClInclude Include="PMeshParserTxt.h">
+    <ClInclude Include="PMeshParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToolOrbitCamera.h">

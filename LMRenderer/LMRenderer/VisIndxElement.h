@@ -125,17 +125,17 @@ public:
 		//map<float, int> histo = uniformSample.Process_DebugHistogram(*faceIndexData, *faceIndexSample, 0.1, faceAreaData);
 		
 		// INVERSE TRANSFORM SAMPLING
-		invTransformSample.Process(CDFData, *faceIndexData, *faceIndexSample, 0.5); //INVERSE TRANSFORM
+		//invTransformSample.Process(CDFData, *faceIndexData, *faceIndexSample, 0.5); //INVERSE TRANSFORM
 		//map<float, int> histo = invTransformSample.Process_DebugHistogram(CDFData, *faceIndexData, *faceIndexSample, 0.1, faceAreaData);
 
 		// Sampled FaceIndex -> TriVertexData
-		DataVector<glm::vec3> triVertexSample = faceIndexTriangulate.Process(*triVertexData, *faceIndexSample);
+		//DataVector<glm::vec3> triVertexSample = faceIndexTriangulate.Process(*triVertexData, *faceIndexSample);
 		
 		// Non face index sampling ---------------------------------------------------------
 		//DataVector<glm::vec3> triVertexSample = uniformSample.Process(*triVertexData, 0.1f);
 
 		// NON SAMPLED DATA
-		//DataVector<glm::vec3> triVertexSample = *triVertexData;
+		DataVector<glm::vec3> triVertexSample = *triVertexData;
 
 		trisCount = triVertexSample.GetSize();
 		DataVector<glm::vec3> normaldata = calcnormals.ProcessVec3(triVertexSample);
