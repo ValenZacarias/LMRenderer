@@ -6,11 +6,15 @@
 #include <memory>
 #include <iostream>
 #include <fstream>
+#include <chrono>
 
 #include <glm/glm.hpp>
 
 #include "DataVector.h"
 #include "Globals.h"
+
+using namespace std;
+using namespace chrono;
 
 struct Face;
  
@@ -21,6 +25,8 @@ public:
 
 	std::shared_ptr<vector<DataVector<int>>> ParseFaces(string filename)
 	{
+		steady_clock::time_point begin = steady_clock::now();
+
 		//Hay que optimizar este metodo dado que los Find() son muy caros y realentizan un monton la extraccion de datos
 		vector<DataVector<int>> dataIndexVector = {};
 
@@ -87,6 +93,11 @@ public:
 			//std::cout << v.str() << std::endl;
 			datastr.erase(pos1, pos2 + 2);
 		}
+		
+
+		steady_clock::time_point end = steady_clock::now();
+
+		cout << "Face Parsing process = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
 		
 		auto result = std::make_shared<vector<DataVector<int>>>(dataIndexVector);
 		return result;
@@ -155,6 +166,8 @@ public:
 
 	std::shared_ptr<DataVector<float>> ParsePoints(string filename)
 	{
+		steady_clock::time_point begin = steady_clock::now();
+
 		auto dataPoints = std::make_shared<DataVector<float>>(FLOATVAL);
 
 		//FILE PARSING
@@ -208,6 +221,10 @@ public:
 			//std::cout << v.str() << std::endl;
 			datastr.erase(pos1, pos2 + 2);
 		}
+
+		steady_clock::time_point end = steady_clock::now();
+
+		cout << "Point Parsing process = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
 
 		return dataPoints;
 	}

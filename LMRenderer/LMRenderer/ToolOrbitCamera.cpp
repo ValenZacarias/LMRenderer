@@ -37,9 +37,6 @@ void ToolOrbitCamera::OnMouseMove(double xpos, double ypos)
 
 		cam->cameraFront = glm::normalize(-cam->cameraPos); // CAMBIAR POR LOOKAT
 		
-		std::cout << "ANG X " << xAngle << std::endl;
-		std::cout << "ANG Y " << yAngle << std::endl;
-		
 		cam->lastX = xpos;
 		cam->lastY = ypos;
 	}

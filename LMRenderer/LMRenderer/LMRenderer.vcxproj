@@ -164,8 +164,14 @@
   <ItemGroup>
     <Text Include="difusse_fragment_shader.txt" />
     <Text Include="difusse_vertex_shader.txt" />
+    <Text Include="flange_faces.txt" />
+    <Text Include="flange_points.txt" />
+    <Text Include="gapdetection_faces.txt" />
+    <Text Include="gapdetection_points.txt" />
     <Text Include="light_fragment_shader.txt" />
     <Text Include="light_vertex_shader.txt" />
+    <Text Include="multiRegionHeater_faces.txt" />
+    <Text Include="multiRegionHeater_points.txt" />
     <Text Include="sphere_3k_faces.txt" />
     <Text Include="sphere_3k_points.txt" />
     <Text Include="spheroid_45k_faces.txt" />
@@ -180,8 +186,10 @@
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="PACalcCDF.h" />
     <ClInclude Include="PACalcNormals.h" />
     <ClInclude Include="PAFaceIndexTriangulate.h" />
+    <ClInclude Include="PAInvTransformSample.h" />
     <ClInclude Include="PATriangulate.h" />
     <ClInclude Include="PAUniformSample.h" />
     <ClInclude Include="PMeshParserTxt.h" />

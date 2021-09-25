@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <random>
+#include <map>
 
 #include "DataVector.h"
 
@@ -62,17 +63,43 @@ public:
 
 		for (int i = 0; i < sampleSize; i++)
 		{
-			//rnd = dist(engine) * 3; // Tris
 			rnd = dist(engine);
-
-			if (rnd > dataSet.GetSize())
-			{
-				cout << "OUT OF RANGE" << endl;
-
-			}
-
 			sampledSet.SetData(dataSet.GetData(rnd));
 		}
+	}
+
+	template <class T>
+	map<float, int> Process_DebugHistogram(T& dataSet, T& sampledSet, float reductionFactor, DataVector<float>& faceArea)
+	{
+		//T sampledData;
+
+		std::random_device rd{};
+		std::mt19937 engine{ rd() };
+		std::uniform_int_distribution<long> dist{ 0, (dataSet.GetSize() - 1) };
+
+		long rnd;
+		long sampleSize = ceil(dataSet.GetSize() * reductionFactor);
+		sampledSet.ReserveData(sampleSize);
+
+		// Histogram
+		map<float, int> areaCountHistogram;
+		float areaSize;
+
+		for (int i = 0; i < sampleSize; i++)
+		{
+			rnd = dist(engine);
+			sampledSet.SetData(dataSet.GetData(rnd));
+			
+			//areaSize = round(faceArea.GetData(rnd) * 1000000) / 1000000;
+			areaSize = round(faceArea.GetData(rnd));
+			
+			if (areaCountHistogram.find(areaSize) != areaCountHistogram.end())
+				areaCountHistogram[areaSize] += 1;
+			else
+				areaCountHistogram.insert(std::make_pair(areaSize, 1));
+		}
+
+		return areaCountHistogram;
 	}
 };
 

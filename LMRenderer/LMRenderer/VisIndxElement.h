@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <memory>
+#include <map>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp> 
@@ -19,7 +20,9 @@
 #include "PATriangulate.h"
 #include "PACalcNormals.h"
 #include "PAUniformSample.h"
+#include "PAInvTransformSample.h"
 #include "PAFaceIndexTriangulate.h"
+#include "PACalcCDF.h"
 
 template <typename TVertex, typename TIndex>
 class VisIndxElement : public VisBase
@@ -36,7 +39,9 @@ private:
 	PATriangulate triangulate;
 	PACalcNormals calcnormals;
 	PAUniformSample uniformSample;
+	PAInvTransformSample invTransformSample;
 	PAFaceIndexTriangulate faceIndexTriangulate;
+	PACalcCDF calcCDF;
 
 	Shader shader;
 public:
@@ -98,20 +103,35 @@ public:
 		DataVector<Face> _faceIndexData(FACE);
 		auto faceIndexData = make_shared<DataVector<Face>>(_faceIndexData);
 
-		triangulate.Process(*vertexData, *indexData, *triVertexData, *faceIndexData);
+		//triangulate.Process(*vertexData, *indexData, *triVertexData, *faceIndexData);
+
+		DataVector<float> faceAreaData(FLOATVAL);
+		//Triangulate with Area Calc
+		triangulate.Process(*vertexData, *indexData, *triVertexData, *faceIndexData, faceAreaData);
+
+
+		//Creating Cumulative Distribution function
+		vector<float> CDFData = calcCDF.Process(faceAreaData);
 
 		// Face index Sampling ---------------------------------------------------------
 		// FaceIndex -> Sampled FaceIndex
 		DataVector<Face> _faceIndexSample(FACE);
+
 		auto faceIndexSample = make_shared<DataVector<Face>>(_faceIndexSample);
 
-		//_faceIndexSample = uniformSample.Process(*faceIndexData, 0.1);
-		uniformSample.Process(*faceIndexData, *faceIndexSample, 0.5);
+	
+		// UNIFORM SAMPLING
+		//uniformSample.Process(*faceIndexData, *faceIndexSample, 1.0); //UNIFORM
+		//map<float, int> histo = uniformSample.Process_DebugHistogram(*faceIndexData, *faceIndexSample, 0.1, faceAreaData);
+		
+		// INVERSE TRANSFORM SAMPLING
+		invTransformSample.Process(CDFData, *faceIndexData, *faceIndexSample, 0.5); //INVERSE TRANSFORM
+		//map<float, int> histo = invTransformSample.Process_DebugHistogram(CDFData, *faceIndexData, *faceIndexSample, 0.1, faceAreaData);
 
 		// Sampled FaceIndex -> TriVertexData
 		DataVector<glm::vec3> triVertexSample = faceIndexTriangulate.Process(*triVertexData, *faceIndexSample);
 		
-		//Non face index sampling ---------------------------------------------------------
+		// Non face index sampling ---------------------------------------------------------
 		//DataVector<glm::vec3> triVertexSample = uniformSample.Process(*triVertexData, 0.1f);
 
 		// NON SAMPLED DATA

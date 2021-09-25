@@ -95,6 +95,24 @@
     <Text Include="spheroid_45k_points.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
+    <Text Include="flange_faces.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="flange_points.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="gapdetection_faces.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="gapdetection_points.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="multiRegionHeater_faces.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="multiRegionHeater_points.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h">
@@ -155,6 +173,12 @@
       <Filter>Header Files\Data</Filter>
     </ClInclude>
     <ClInclude Include="PAFaceIndexTriangulate.h">
+      <Filter>Header Files\ProcessingAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="PACalcCDF.h">
+      <Filter>Header Files\ProcessingAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="PAInvTransformSample.h">
       <Filter>Header Files\ProcessingAlgorithms</Filter>
     </ClInclude>
   </ItemGroup>
