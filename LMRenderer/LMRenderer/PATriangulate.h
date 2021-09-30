@@ -31,62 +31,6 @@ public:
 
 
 	template <typename TVertex, typename TIndex>
-	TVertex Process(TVertex &vertex, TIndex&elementIndx, int perElemIndex)
-	{
-		//Este metodo genera un DS de flotantes con las coordenadas de los vertices que obtiene de triangular quads
-		//segun los indices de este
-		TVertex trisVertex(FLOATVAL);
-
-		int t1_0;
-		int t1_1;
-		int t1_2;
-
-		int t2_0;
-		int t2_1;
-		int t2_2;
-
-		//Refactorizar de forma que use el structs de Polygons
-		for (int i = 0; i < elementIndx.GetSize(); i += perElemIndex) //Agarro el quad completo
-		{
-			//Tri 1 (3 vertex)
-			// 3 * debido a la cantidad de floats por vertice
-			t1_0 = elementIndx.GetData(i);
-			t1_1 = elementIndx.GetData(i + 1);
-			t1_2 = elementIndx.GetData(i + 2);
-
-			trisVertex.SetData(vertex.GetData(3 * t1_0));
-			trisVertex.SetData(vertex.GetData(3 * t1_0 + 1));
-			trisVertex.SetData(vertex.GetData(3 * t1_0 + 2));
-					  
-			trisVertex.SetData(vertex.GetData(3 * t1_1));
-			trisVertex.SetData(vertex.GetData(3 * t1_1 + 1));
-			trisVertex.SetData(vertex.GetData(3 * t1_1 + 2));
-					  
-			trisVertex.SetData(vertex.GetData(3 * t1_2));
-			trisVertex.SetData(vertex.GetData(3 * t1_2 + 1));
-			trisVertex.SetData(vertex.GetData(3 * t1_2 + 2));
-
-			t2_0 = elementIndx.GetData(i + 2);
-			t2_1 = elementIndx.GetData(i + 3);
-			t2_2 = elementIndx.GetData(i);
-
-			trisVertex.SetData(vertex.GetData(3 * t2_0));
-			trisVertex.SetData(vertex.GetData(3 * t2_0 + 1));
-			trisVertex.SetData(vertex.GetData(3 * t2_0 + 2));
-					  
-			trisVertex.SetData(vertex.GetData(3 * t2_1));
-			trisVertex.SetData(vertex.GetData(3 * t2_1 + 1));
-			trisVertex.SetData(vertex.GetData(3 * t2_1 + 2));
-					  
-			trisVertex.SetData(vertex.GetData(3 * t2_2));
-			trisVertex.SetData(vertex.GetData(3 * t2_2 + 1));
-			trisVertex.SetData(vertex.GetData(3 * t2_2 + 2));
-		}
-
-		return trisVertex;
-	}
-
-	template <typename TVertex, typename TIndex>
 	void Process(TVertex& vertex, TIndex& elemIndxVector, DataVector<glm::vec3>& trisVertex, DataVector<Face>& faceIndex)
 	{
 		int vertexCount = 0;
@@ -101,6 +45,7 @@ public:
 
 		//DataVector<glm::vec3> trisVertex(VECTOR);
 		trisVertex.ReserveData(vertexCount);
+		vector<int> triangulationIndices;
 
 		for (int i = 3; i < elemIndxVector.size(); i++)
 		{
@@ -149,6 +94,7 @@ public:
 		//return trisVertex;
 	}
 
+	// Overload that calculate face areas and face index
 	template <typename TVertex, typename TIndex>
 	void Process(TVertex& vertex, TIndex& elemIndxVector, DataVector<glm::vec3>& trisVertex, DataVector<Face>& faceIndex, DataVector<float>& faceArea)
 	{
@@ -163,7 +109,7 @@ public:
 		}
 
 		trisVertex.ReserveData(vertexCount);
-
+		Face faceData;
 
 		for (int i = 3; i < elemIndxVector.size(); i++)
 		{
@@ -176,66 +122,131 @@ public:
 			case 3:
 				for (int j = 0; j < indxData.GetSize(); j += 3)
 				{
-					triArea += 0.5f * glm::length(glm::cross(
-						GetPoint(vertex, indxData.GetData(j + 1)) - GetPoint(vertex, indxData.GetData(j)),
-						GetPoint(vertex, indxData.GetData(j + 2)) - GetPoint(vertex, indxData.GetData(j + 1))));
 					
+					trisVertex.GetSize() != 0 ? faceData.SetP0(trisVertex.GetSize()) : faceData.SetP0(0);
+					faceData.SetCount(3);
+					faceIndex.SetData(faceData);
+
+					AddTri(vertex, indxData, trisVertex, j, 0, 1, 2);
+					triArea = +CalcTriArea(vertex, indxData, j, 0, 1, 2);
+
 					faceArea.SetData(triArea);
 					triArea = 0;
-
-					//tri 1
-					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j)));
-					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 1)));
-					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 2)));
 				}
 				break;
 			case 4:
 				for (int j = 0; j < indxData.GetSize(); j += 4)
 				{
-					Face faceData;
 					trisVertex.GetSize() != 0 ? faceData.SetP0(trisVertex.GetSize()) : faceData.SetP0(0);
 					faceData.SetCount(6);
 					faceIndex.SetData(faceData);
 					
-					triArea += 0.5f * glm::length(glm::cross(
-						GetPoint(vertex, indxData.GetData(j + 1)) - GetPoint(vertex, indxData.GetData(j)),
-						GetPoint(vertex, indxData.GetData(j + 2)) - GetPoint(vertex, indxData.GetData(j + 1))));
+					AddTri(vertex, indxData, trisVertex, j, 0, 1, 2);
+					triArea = +CalcTriArea(vertex, indxData, j, 0, 1, 2);
 
-					triArea += 0.5f * glm::length(glm::cross(
-						GetPoint(vertex, indxData.GetData(j + 3)) - GetPoint(vertex, indxData.GetData(j + 2)),
-						GetPoint(vertex, indxData.GetData(j))	  - GetPoint(vertex, indxData.GetData(j + 2))));
+					AddTri(vertex, indxData, trisVertex, j, 2, 3, 0);
+					triArea = +CalcTriArea(vertex, indxData, j, 2, 3, 0);
 
 					faceArea.SetData(triArea);
 					triArea = 0;
-					
-					//tri 1
-					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j)));
-					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 1)));
-					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 2)));
-
-					//tri 2
-					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 2)));
-					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j + 3)));
-					trisVertex.SetData(GetPoint(vertex, indxData.GetData(j)));
-
 				}
 				break;
 			case 5:
+				for (int j = 0; j < indxData.GetSize(); j += 5)
+				{
+					trisVertex.GetSize() != 0 ? faceData.SetP0(trisVertex.GetSize()) : faceData.SetP0(0);
+					faceData.SetCount(9);
+					faceIndex.SetData(faceData);
+
+					AddTri(vertex, indxData, trisVertex, j, 0, 1, 2);
+					triArea = +CalcTriArea(vertex, indxData, j, 0, 1, 2);
+
+					AddTri(vertex, indxData, trisVertex, j, 2, 3, 0);
+					triArea = +CalcTriArea(vertex, indxData, j, 2, 3, 0);
+
+					AddTri(vertex, indxData, trisVertex, j, 3, 4, 0);
+					triArea = +CalcTriArea(vertex, indxData, j, 3, 4, 0);
+
+					faceArea.SetData(triArea);
+					triArea = 0;
+				}
 				break;
 			case 6:
+				for (int j = 0; j < indxData.GetSize(); j += 6)
+				{
+					trisVertex.GetSize() != 0 ? faceData.SetP0(trisVertex.GetSize()) : faceData.SetP0(0);
+					faceData.SetCount(12);
+					faceIndex.SetData(faceData);
+
+					AddTri(vertex, indxData, trisVertex, j, 0, 1, 2);
+					triArea = +CalcTriArea(vertex, indxData, j, 0, 1, 2);
+
+					AddTri(vertex, indxData, trisVertex, j, 2, 3, 0);
+					triArea = +CalcTriArea(vertex, indxData, j, 2, 3, 0);
+
+					AddTri(vertex, indxData, trisVertex, j, 3, 4, 0);
+					triArea = +CalcTriArea(vertex, indxData, j, 3, 4, 0);
+
+					AddTri(vertex, indxData, trisVertex, j, 4, 5, 0);
+					triArea = +CalcTriArea(vertex, indxData, j, 4, 5, 0);
+
+					faceArea.SetData(triArea);
+					triArea = 0;
+				}
 				break;
+			case 7:
+				for (int j = 0; j < indxData.GetSize(); j += 7)
+				{
+					trisVertex.GetSize() != 0 ? faceData.SetP0(trisVertex.GetSize()) : faceData.SetP0(0);
+					faceData.SetCount(15);
+					faceIndex.SetData(faceData);
+
+					AddTri(vertex, indxData, trisVertex, j, 0, 1, 2);
+					triArea = +CalcTriArea(vertex, indxData, j, 0, 1, 2);
+
+					AddTri(vertex, indxData, trisVertex, j, 2, 3, 0);
+					triArea = +CalcTriArea(vertex, indxData, j, 2, 3, 0);
+
+					AddTri(vertex, indxData, trisVertex, j, 3, 4, 0);
+					triArea = +CalcTriArea(vertex, indxData, j, 3, 4, 0);
+
+					AddTri(vertex, indxData, trisVertex, j, 4, 5, 0);
+					triArea = +CalcTriArea(vertex, indxData, j, 4, 5, 0);
+
+					AddTri(vertex, indxData, trisVertex, j, 5, 6, 0);
+					triArea = +CalcTriArea(vertex, indxData, j, 5, 6, 0);
+
+					faceArea.SetData(triArea);
+					triArea = 0;
+				}
 			default:
 				break;
 			}
 		}
-
-		//return trisVertex;
 	}
 
 private:
 	glm::vec3 GetPoint(DataVector<float>& vertexData, int index)
 	{
 		return glm::vec3(vertexData.GetData(3 * index), vertexData.GetData(3 * index + 1), vertexData.GetData(3 * index + 2));
+	}
+	
+	template <typename TVertex, typename TIndex>
+	void AddTri(TVertex& vertexData, TIndex& indexData, DataVector<glm::vec3>& trisVertex, int firstIndex, int i0, int i1, int i2)
+	{
+		trisVertex.SetData(GetPoint(vertexData, indexData.GetData(firstIndex + i0)));
+		trisVertex.SetData(GetPoint(vertexData, indexData.GetData(firstIndex + i1)));
+		trisVertex.SetData(GetPoint(vertexData, indexData.GetData(firstIndex + i2)));
+	}
+
+	template <typename TVertex, typename TIndex>
+	float CalcTriArea(TVertex& vertexData, TIndex& indexData, int firstIndex, int i0, int i1, int i2)
+	{
+		float triArea = 0.5f * glm::length(glm::cross(
+		GetPoint(vertexData, indexData.GetData(firstIndex + i1)) - GetPoint(vertexData, indexData.GetData(firstIndex + i0)),
+		GetPoint(vertexData, indexData.GetData(firstIndex + i2)) - GetPoint(vertexData, indexData.GetData(firstIndex + i1))));
+		
+		return triArea;
 	}
 };
 

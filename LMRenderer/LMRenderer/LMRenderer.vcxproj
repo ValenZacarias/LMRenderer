@@ -157,28 +157,24 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ToolFPSCamera.cpp" />
     <ClCompile Include="ToolOrbitCamera.cpp" />
-    <ClCompile Include="VisualizationGrid.cpp" />
-    <ClCompile Include="VisualizationGroup.cpp" />
-    <ClCompile Include="VisualizationPrimitive.cpp" />
+    <ClCompile Include="VisGrid.cpp" />
+    <ClCompile Include="VisGroup.cpp" />
+    <ClCompile Include="VisPrimitive.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="difusse_fragment_shader.txt" />
     <Text Include="difusse_vertex_shader.txt" />
     <Text Include="light_fragment_shader.txt" />
     <Text Include="light_vertex_shader.txt" />
-    <Text Include="Meshes\flange_faces.txt" />
-    <Text Include="Meshes\flange_points.txt" />
-    <Text Include="Meshes\gapdetection_faces.txt" />
-    <Text Include="Meshes\gapdetection_points.txt" />
-    <Text Include="Meshes\light_fragment_shader.txt" />
-    <Text Include="Meshes\light_vertex_shader.txt" />
-    <Text Include="Meshes\multiRegionHeater_faces.txt" />
-    <Text Include="Meshes\multiRegionHeater_points.txt" />
+    <Text Include="Meshes\flange_mf_282k_faces.txt" />
+    <Text Include="Meshes\flange_mf_282k_points.txt" />
     <Text Include="Meshes\sphere_3k_faces.txt" />
     <Text Include="Meshes\sphere_3k_points.txt" />
     <Text Include="Meshes\spheroid_45k_faces.txt" />
     <Text Include="Meshes\spheroid_45k_points.txt" />
     <Text Include="Meshes\testmesh_45e_faces.txt" />
+    <Text Include="Meshes\testmesh_45e_neighbour.txt" />
+    <Text Include="Meshes\testmesh_45e_owner.txt" />
     <Text Include="Meshes\testmesh_45e_points.txt" />
   </ItemGroup>
   <ItemGroup>

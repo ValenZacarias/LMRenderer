@@ -48,8 +48,8 @@ int main()
 
 	//Ahora le damos un ptr a algo que esta en el stack y muere con el main
 	//Si la idea es ir creando y destruyendo a medida que cambiamos, podemos usar smart pointers
-	//ToolFPSCamera cameraTool = ToolFPSCamera(&canvas.currentCamera);
-	ToolOrbitCamera cameraTool = ToolOrbitCamera(&canvas.currentCamera);
+	ToolFPSCamera cameraTool = ToolFPSCamera(&canvas.currentCamera);
+	//ToolOrbitCamera cameraTool = ToolOrbitCamera(&canvas.currentCamera);
 	canvas.SetCurrentTool(&cameraTool);
 	
 	//PARSING AND DATA GENERATION -------------------------------------------------------------------------------------------
@@ -57,18 +57,13 @@ int main()
 	//auto DataIndex = make_shared<vector<DataVector<int>>>(Parser.ParseFaces("testmesh_45e_faces.txt"));
 	//shared_ptr<DataVector<float>> DataVertex = Parser.ParsePoints("testmesh_45e_points.txt");
 	
-	//auto DataIndex = Parser.ParseFaces("testmesh_45e_faces.txt");
-	//auto DataVertex = Parser.ParsePoints("testmesh_45e_points.txt");	
-	
-	//auto DataIndex = Parser.ParseFaces("multiRegionHeater_faces.txt");
-	//auto DataVertex = Parser.ParsePoints("multiRegionHeater_points.txt");
+	auto DataIndex = Parser.ParseFaces("Meshes/testmesh_45e_faces.txt");
+	auto DataVertex = Parser.ParsePoints("Meshes/testmesh_45e_points.txt");	
+	auto DataOwner = Parser.ParseCells("Meshes/testmesh_45e_owner.txt");
+	auto DataNeighbour= Parser.ParseCells("Meshes/testmesh_45e_neighbour.txt");
 
-	//auto DataIndex  = Parser.ParseFaces("sphere_3k_faces.txt");
-	//auto DataVertex = Parser.ParsePoints("sphere_3k_points.txt");
-
-	auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
-	auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
-
+	//auto DataIndex = Parser.ParseFaces("Meshes/flange_mf_282k_faces.txt");
+	//auto DataVertex = Parser.ParsePoints("Meshes/flange_mf_282k_points.txt");
 
 	//VISUALIZATIONS-----------------------------------------------------------------------------------------------------------
 	VisIndxElement<shared_ptr<DataVector<float>>, shared_ptr<vector<DataVector<int>>>> vizElement(DataVertex, DataIndex);
@@ -80,6 +75,10 @@ int main()
 	canvas.SetupContext(&MainGroupViz);
 
 	float currentFrame = 0.0f;
+	std::stringstream ss;
+	int nbFrames = 0;
+	double fps;
+	char title_string[11] = "LMRenderer";
 	//RENDER LOOP! -----------------------------------------------------------------------------------------
 	while (!glfwWindowShouldClose(window))
 	{
@@ -92,10 +91,21 @@ int main()
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		// FPS Counter
+		if (deltaTime > 0.015)
+		{
+			fps = round((double)nbFrames / deltaTime);
+			sprintf_s(title_string, "FPS: %.1f", fps);
+			glfwSetWindowTitle(window, title_string);
+			lastFrame = currentFrame;
+			nbFrames = 0;
+		}
+
+		nbFrames++;
 	}
 
 	glfwTerminate();
 	return 0;
 }
-
 

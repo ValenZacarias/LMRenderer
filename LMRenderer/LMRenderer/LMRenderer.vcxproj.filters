@@ -48,20 +48,20 @@
     <ClCompile Include="Globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VisualizationGroup.cpp">
+    <ClCompile Include="VisGroup.cpp">
       <Filter>Source Files\Visualization</Filter>
     </ClCompile>
-    <ClCompile Include="VisualizationPrimitive.cpp">
+    <ClCompile Include="VisPrimitive.cpp">
       <Filter>Source Files\Visualization</Filter>
     </ClCompile>
     <ClCompile Include="ToolFPSCamera.cpp">
       <Filter>Source Files\Tool</Filter>
     </ClCompile>
-    <ClCompile Include="VisualizationGrid.cpp">
-      <Filter>Source Files\Visualization</Filter>
-    </ClCompile>
     <ClCompile Include="ToolOrbitCamera.cpp">
       <Filter>Source Files\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="VisGrid.cpp">
+      <Filter>Source Files\Visualization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,36 +70,6 @@
     </Text>
     <Text Include="difusse_vertex_shader.txt">
       <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="light_fragment_shader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="light_vertex_shader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Meshes\flange_faces.txt">
-      <Filter>Resource Files\Meshes</Filter>
-    </Text>
-    <Text Include="Meshes\flange_points.txt">
-      <Filter>Resource Files\Meshes</Filter>
-    </Text>
-    <Text Include="Meshes\gapdetection_faces.txt">
-      <Filter>Resource Files\Meshes</Filter>
-    </Text>
-    <Text Include="Meshes\gapdetection_points.txt">
-      <Filter>Resource Files\Meshes</Filter>
-    </Text>
-    <Text Include="Meshes\light_fragment_shader.txt">
-      <Filter>Resource Files\Meshes</Filter>
-    </Text>
-    <Text Include="Meshes\light_vertex_shader.txt">
-      <Filter>Resource Files\Meshes</Filter>
-    </Text>
-    <Text Include="Meshes\multiRegionHeater_faces.txt">
-      <Filter>Resource Files\Meshes</Filter>
-    </Text>
-    <Text Include="Meshes\multiRegionHeater_points.txt">
-      <Filter>Resource Files\Meshes</Filter>
     </Text>
     <Text Include="Meshes\sphere_3k_faces.txt">
       <Filter>Resource Files\Meshes</Filter>
@@ -117,6 +87,24 @@
       <Filter>Resource Files\Meshes</Filter>
     </Text>
     <Text Include="Meshes\testmesh_45e_points.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="light_fragment_shader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="light_vertex_shader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Meshes\flange_mf_282k_faces.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="Meshes\flange_mf_282k_points.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="Meshes\testmesh_45e_neighbour.txt">
+      <Filter>Resource Files\Meshes</Filter>
+    </Text>
+    <Text Include="Meshes\testmesh_45e_owner.txt">
       <Filter>Resource Files\Meshes</Filter>
     </Text>
   </ItemGroup>

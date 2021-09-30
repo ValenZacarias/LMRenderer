@@ -80,7 +80,7 @@ public:
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(cam->FOV), 1280.0f / 720.0f, 1.0f, 1000.0f);
+		projection = glm::perspective(glm::radians(cam->FOV), 1280.0f / 720.0f, 0.01f, 500.0f);
 		unsigned int projectionLoc = glGetUniformLocation(shader.ID, "projection");
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
@@ -171,5 +171,7 @@ public:
 		glEnableVertexAttribArray(1);
 
 	}
+
+
 };
 

@@ -89,7 +89,7 @@ public:
 
 		steady_clock::time_point end = steady_clock::now();
 
-		cout << "Face Parsing process = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
+		cout << filename << " Parsing = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
 		
 		auto result = std::make_shared<vector<DataVector<int>>>(dataIndexVector);
 		return result;
@@ -219,7 +219,6 @@ public:
 					dataPoints->SetData(stof(pointCoord));
 					pointCoord.clear();
 					continue;
-					__nop();
 				}
 			}
 
@@ -227,9 +226,66 @@ public:
 
 		steady_clock::time_point end = steady_clock::now();
 
-		cout << "Point Parsing process = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
+		cout << filename << " Parsing = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
 
 		return dataPoints;
+	}
+
+	std::shared_ptr<DataVector<int>> ParseCells(string filename)
+	{
+		steady_clock::time_point begin = steady_clock::now();
+
+		auto dataCells = std::make_shared<DataVector<int>>(INTVAL);
+
+		//FILE PARSING
+		ifstream in(filename);
+		string currentLine;
+
+		int totalDataIndices;
+		int charPtr;
+
+		string startOfData = "(";
+		string endOfData = ")";
+
+		bool parsingData = false;
+
+		while (std::getline(in, currentLine))
+		{
+			// Parse point amount
+			if (!parsingData)
+			{
+				if (isdigit(currentLine[0]))
+				{
+					totalDataIndices = stoi(currentLine);
+					dataCells->ReserveData(totalDataIndices);
+					continue;
+				}
+				if (currentLine[0] == startOfData[0])
+				{
+					parsingData = true;
+					continue;
+				}
+			}
+
+			// Parse point
+			if (parsingData)
+			{
+				if (currentLine[0] != endOfData[0])
+				{
+					dataCells->SetData(stoi(currentLine));
+					continue;
+				}
+				else
+					break;
+			}
+
+		}
+
+		steady_clock::time_point end = steady_clock::now();
+
+		cout << filename << " Parsing = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
+
+		return dataCells;
 	}
 
 
