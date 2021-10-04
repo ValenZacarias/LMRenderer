@@ -166,18 +166,29 @@
     <Text Include="difusse_vertex_shader.txt" />
     <Text Include="light_fragment_shader.txt" />
     <Text Include="light_vertex_shader.txt" />
+    <Text Include="Meshes\flange_mf_282k_boundary.txt" />
     <Text Include="Meshes\flange_mf_282k_faces.txt" />
+    <Text Include="Meshes\flange_mf_282k_neighbour.txt" />
+    <Text Include="Meshes\flange_mf_282k_owner.txt" />
     <Text Include="Meshes\flange_mf_282k_points.txt" />
+    <Text Include="Meshes\sphere_3k_boundary.txt" />
     <Text Include="Meshes\sphere_3k_faces.txt" />
+    <Text Include="Meshes\sphere_3k_neighbour.txt" />
+    <Text Include="Meshes\sphere_3k_owner.txt" />
     <Text Include="Meshes\sphere_3k_points.txt" />
+    <Text Include="Meshes\spheroid_45k_boundary.txt" />
     <Text Include="Meshes\spheroid_45k_faces.txt" />
+    <Text Include="Meshes\spheroid_45k_neighbour.txt" />
+    <Text Include="Meshes\spheroid_45k_owner.txt" />
     <Text Include="Meshes\spheroid_45k_points.txt" />
+    <Text Include="Meshes\testmesh_45e_boundary.txt" />
     <Text Include="Meshes\testmesh_45e_faces.txt" />
     <Text Include="Meshes\testmesh_45e_neighbour.txt" />
     <Text Include="Meshes\testmesh_45e_owner.txt" />
     <Text Include="Meshes\testmesh_45e_points.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cell.h" />
     <ClInclude Include="DataStructureBase.h" />
     <ClInclude Include="DataVector.h" />
     <ClInclude Include="GLFWCanvas.h" />
@@ -187,7 +198,9 @@
     <ClInclude Include="PACalcCDF.h" />
     <ClInclude Include="PACalcNormals.h" />
     <ClInclude Include="PAFaceIndexTriangulate.h" />
+    <ClInclude Include="PAGenerateCells.h" />
     <ClInclude Include="PAInvTransformSample.h" />
+    <ClInclude Include="PAReconstructCells.h" />
     <ClInclude Include="PATriangulate.h" />
     <ClInclude Include="PAUniformSample.h" />
     <ClInclude Include="PMeshParser.h" />

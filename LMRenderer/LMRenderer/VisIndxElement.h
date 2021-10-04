@@ -16,6 +16,8 @@
 
 #include "DataStructureBase.h"
 #include "DataVector.h"
+#include "Face.h"
+#include "Cell.h"
 
 #include "PATriangulate.h"
 #include "PACalcNormals.h"
@@ -23,14 +25,21 @@
 #include "PAInvTransformSample.h"
 #include "PAFaceIndexTriangulate.h"
 #include "PACalcCDF.h"
+#include "PAGenerateCells.h"
+#include "PAReconstructCells.h"
 
-template <typename TVertex, typename TIndex>
+template <typename TVertex, typename TIndex, typename TOwner, typename TNeighbour, typename TBounds>
 class VisIndxElement : public VisBase
 {
 private:
 
 	TVertex vertexData;
 	TIndex indexData;
+	TOwner ownerData;
+	TNeighbour neighbourData;
+	TBounds boundaryData;
+	int cellCount;
+
 	GLuint VBO;
 	GLuint VAO;
 	GLuint EBO;
@@ -42,14 +51,21 @@ private:
 	PAInvTransformSample invTransformSample;
 	PAFaceIndexTriangulate faceIndexTriangulate;
 	PACalcCDF calcCDF;
+	PAGenerateCells generateCells;
+	PAReconstructCells reconstructCells;
 
 	Shader shader;
 public:
 
-	VisIndxElement(TVertex v, TIndex i)
+	VisIndxElement(TVertex v, TIndex i, TOwner o, TNeighbour n, TBounds b, int cc)
 	{
 		this->vertexData = v;
 		this->indexData = i;
+		this->ownerData = o;
+		this->neighbourData = n;
+		this->boundaryData = b;
+		this->cellCount = cc;
+
 		Shader diffuseShader("difusse_vertex_shader.txt", "difusse_fragment_shader.txt");
 		this->shader = diffuseShader;
 
@@ -103,12 +119,14 @@ public:
 		DataVector<Face> _faceIndexData(FACE);
 		auto faceIndexData = make_shared<DataVector<Face>>(_faceIndexData);
 
-		//triangulate.Process(*vertexData, *indexData, *triVertexData, *faceIndexData);
+		DataVector<Cell> _cellData(CELL);
+		auto cellData = make_shared<DataVector<Cell>>(_cellData);
 
+		generateCells.Process(*ownerData, *neighbourData, *boundaryData, *faceIndexData, *cellData, cellCount);
+
+		//Triangulate with Face data CREATION and Area Calc
 		DataVector<float> faceAreaData(FLOATVAL);
-		//Triangulate with Area Calc
 		triangulate.Process(*vertexData, *indexData, *triVertexData, *faceIndexData, faceAreaData);
-
 
 		//Creating Cumulative Distribution function
 		vector<float> CDFData = calcCDF.Process(faceAreaData);
@@ -116,26 +134,35 @@ public:
 		// Face index Sampling ---------------------------------------------------------
 		// FaceIndex -> Sampled FaceIndex
 		DataVector<Face> _faceIndexSample(FACE);
-
 		auto faceIndexSample = make_shared<DataVector<Face>>(_faceIndexSample);
 
+		DataVector<Cell> _cellSample(CELL);
+		auto cellSample = make_shared<DataVector<Cell>>(_cellSample);
+
+		// CELL RECONSTRUCTION TEST
+		//reconstructCells.Process(*faceIndexData, *faceIndexSample, *cellData);
 	
 		// UNIFORM SAMPLING
 		//uniformSample.Process(*faceIndexData, *faceIndexSample, 1.0); //UNIFORM
+		uniformSample.Process(*cellData, *cellSample, 0.1); //UNIFORM CELL SAMPLING
 		//map<float, int> histo = uniformSample.Process_DebugHistogram(*faceIndexData, *faceIndexSample, 0.1, faceAreaData);
 		
 		// INVERSE TRANSFORM SAMPLING
 		//invTransformSample.Process(CDFData, *faceIndexData, *faceIndexSample, 0.5); //INVERSE TRANSFORM
 		//map<float, int> histo = invTransformSample.Process_DebugHistogram(CDFData, *faceIndexData, *faceIndexSample, 0.1, faceAreaData);
 
+		// SAMPLED CELL RECONSTRUCTION
+		reconstructCells.Process(*faceIndexData, *faceIndexSample, *cellSample);
+
 		// Sampled FaceIndex -> TriVertexData
 		//DataVector<glm::vec3> triVertexSample = faceIndexTriangulate.Process(*triVertexData, *faceIndexSample);
+		DataVector<glm::vec3> triVertexSample = faceIndexTriangulate.Process(*triVertexData, *faceIndexSample);
 		
 		// Non face index sampling ---------------------------------------------------------
 		//DataVector<glm::vec3> triVertexSample = uniformSample.Process(*triVertexData, 0.1f);
 
 		// NON SAMPLED DATA
-		DataVector<glm::vec3> triVertexSample = *triVertexData;
+		//DataVector<glm::vec3> triVertexSample = *triVertexData;
 
 		trisCount = triVertexSample.GetSize();
 		DataVector<glm::vec3> normaldata = calcnormals.ProcessVec3(triVertexSample);

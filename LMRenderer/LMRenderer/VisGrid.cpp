@@ -46,7 +46,7 @@ void VisGrid::Render(Camera* cam)
 int VisGrid::GenerateBuffers()
 {
     int slices = 20;
-    float size = 1;
+    float size = 10;
     std::vector<glm::vec3> vertices;
     std::vector<glm::uvec4> indices;
 

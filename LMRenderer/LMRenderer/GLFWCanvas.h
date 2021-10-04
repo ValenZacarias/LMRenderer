@@ -21,8 +21,8 @@ struct Camera
 	const float cameraSpeed = CAMERA_SPEED;
 	float FOV = 45.0f;
 
-	//glm::vec3 cameraPos = glm::vec3(0.0f, 10.0f, 10.0f);
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.02f, 0.15f);
+	glm::vec3 cameraPos = glm::vec3(0.0f, 0.1f, -0.1f);
+	//glm::vec3 cameraPos = glm::vec3(0.0f, 0.02f, 0.15f);
 	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);

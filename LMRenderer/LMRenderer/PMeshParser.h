@@ -95,67 +95,6 @@ public:
 		return result;
 	}
 
-	shared_ptr<DataVector<int>> ParseFaces_Quads(string filename)
-	{
-
-		//FILE PARSING
-		std::ifstream in(filename);
-		std::stringstream buffer;
-		buffer << in.rdbuf();
-		std::string datastr = buffer.str();
-
-		size_t pos1 = 0;
-		size_t pos2;
-
-		pos1 = datastr.find("\n\n");
-		datastr = datastr.substr(pos1);
-		datastr.erase(0, 3); // Con esto ya estamos en la seccion de datos parados en el numero que indica la cantidad de elementos
-		pos1 = 0;
-		pos2 = datastr.find("(");
-		string countElem = datastr.substr(pos1, pos2);
-
-		std::cout << "INDX COUNT: " << countElem << std::endl;
-
-		datastr.erase(0, countElem.size() + 2);
-		//std::cout << datastr << std::endl;
-
-		string elemIndxs;
-		string v;
-		size_t aux1;
-		string value;
-
-		auto DataIndex = std::make_shared<DataVector<int>>(INTVAL);
-
-		while (datastr.find(")\n)") != string::npos)
-		{
-			pos1 = datastr.find("(");
-			pos2 = datastr.find(")");
-			elemIndxs = datastr.substr(0, pos1);// 4 (en el caso de un quad)
-			//v = istringstream(datastr.substr(pos1+1, pos2)); //(8 12 13 9) Asi queda v
-			v = datastr.substr(pos1 + 1, pos2); // 8 12 13 9)\n Asi queda v
-			aux1 = v.find(" ");
-
-			do
-			{
-				value = v.substr(0, aux1);
-				DataIndex->SetData(stoi(value));
-				v = v.erase(0, aux1 + 1);
-				aux1 = v.find(" ");
-			} while (aux1 != string::npos);
-
-			v.pop_back(); // elimino el ultimo \n
-			v.pop_back(); // elimino el ultimo parentesis
-			value = v; //queda el ultimo numero dentro de v
-			DataIndex->SetData(stoi(value));
-
-			//std::cout << "CANT INDX: " << elemIndxs << std::endl;
-			//std::cout << v.str() << std::endl;
-			datastr.erase(pos1, pos2 + 2);
-		}
-
-		return DataIndex;
-	}
-
 	std::shared_ptr<DataVector<float>> ParsePoints(string filename)
 	{
 		steady_clock::time_point begin = steady_clock::now();
@@ -231,6 +170,41 @@ public:
 		return dataPoints;
 	}
 
+	int ParseCellCount(string filename)
+	{
+		steady_clock::time_point begin = steady_clock::now();
+
+		//FILE PARSING
+		ifstream in(filename);
+		string currentLine;
+		string endOfCellCount = "n";
+
+		int lineIndex = 0;
+		int cellCount;
+
+		while (std::getline(in, currentLine))
+		{
+
+			if (lineIndex == 12)
+			{
+				std::size_t auxIt = currentLine.find("nCells:") + 7;
+				string cellCountData;
+				while (currentLine[auxIt] != endOfCellCount[0])
+				{
+					if(isdigit(currentLine[auxIt]))
+						cellCountData.push_back(currentLine[auxIt]);
+					auxIt++;
+				}
+
+				cellCount = stoi(cellCountData);
+				return cellCount;
+			}
+			else
+				lineIndex++;
+		}
+		return -1;
+	}
+
 	std::shared_ptr<DataVector<int>> ParseCells(string filename)
 	{
 		steady_clock::time_point begin = steady_clock::now();
@@ -260,6 +234,7 @@ public:
 					dataCells->ReserveData(totalDataIndices);
 					continue;
 				}
+
 				if (currentLine[0] == startOfData[0])
 				{
 					parsingData = true;
@@ -286,6 +261,65 @@ public:
 		cout << filename << " Parsing = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
 
 		return dataCells;
+	}
+
+	std::shared_ptr<DataVector<int>> ParseBoundary(string filename)
+	{
+		steady_clock::time_point begin = steady_clock::now();
+
+		auto boundaryData = std::make_shared<DataVector<int>>(BOUNDS);
+		
+
+		//FILE PARSING
+		ifstream in(filename);
+		string currentLine;
+
+		string startOfBoundaryData = "(";
+		string startOfDataBlock = "{";
+		string endOfBoundaryData = ")";
+		string endOfNumber = ";";
+
+		int currentChar;
+		bool parsingData = false;
+
+		string number;
+		string nFacesStr = "nFaces";
+		string startFace = "startFace";
+
+		while (std::getline(in, currentLine))
+		{
+			if (currentLine[0] == startOfBoundaryData[0])
+			{
+				parsingData = true;
+				continue;
+			}
+
+			if (parsingData)
+			{
+				if (currentLine[0] == endOfBoundaryData[0])
+					break;
+
+				// avoid "{"
+				if (currentLine[4] == startOfDataBlock[0])
+					continue;
+				
+				if (currentLine.find(nFacesStr) != std::string::npos || currentLine.find(startFace) != std::string::npos)
+				{
+					currentChar = 24;
+					while (currentLine[currentChar] != endOfNumber[0])
+					{
+						number.push_back(currentLine[currentChar]);
+						currentChar++;
+					}
+					boundaryData->SetData(stoi(number));
+					number.clear();
+					continue;
+				}
+
+			}
+			
+		}
+		return boundaryData;
 	}
 
 

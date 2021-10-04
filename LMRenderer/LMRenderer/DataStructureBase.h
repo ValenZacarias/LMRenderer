@@ -5,7 +5,7 @@
 
 #include "Globals.h"
 
-enum DATATYPE { POINT, VECTOR, NORMAL, INDEX, CENTROID, INTVAL, FLOATVAL, POLYINDX, FACE};
+enum DATATYPE { POINT, VECTOR, NORMAL, INDEX, CENTROID, INTVAL, FLOATVAL, POLYINDX, FACE, CELL, BOUNDS};
 
 //El contador general de ids se puede poner como static aca, para no tirarselo a globals
 //Puede quedar la Base para el tema de IDS

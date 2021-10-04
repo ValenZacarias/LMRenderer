@@ -22,9 +22,14 @@ public:
 	}
 
 	void ReserveData(int count) { data.reserve(count); }
-	T GetData(int i) { return data[i]; }
+	T& GetData(int i) { return data[i]; }
 	auto GetFullData() { return data.data(); }
 	void SetData(T d) { data.push_back(d); }
 	int GetSize(){ return data.size(); }
+	
+	T operator[](int i)
+	{
+		return this->GetData(i);
+	}
 };
 
