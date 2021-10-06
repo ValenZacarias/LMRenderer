@@ -214,5 +214,11 @@
     <ClInclude Include="PAReconstructCells.h">
       <Filter>Header Files\ProcessingAlgorithms</Filter>
     </ClInclude>
+    <ClInclude Include="PACalcCellVolume.h">
+      <Filter>Header Files\ProcessingAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="PACreateFaceData.h">
+      <Filter>Header Files\ProcessingAlgorithms</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

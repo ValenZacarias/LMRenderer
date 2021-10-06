@@ -15,42 +15,38 @@ public:
 	template <class T>
 	void Process(T& faceData, T& reconstructedFaceData, DataVector<Cell>& cellData)
 	{
-		int cellFaceCount;
-		int firstFaceIndex;
-		int faceIndex;
-		int faceSide;
+		int cellIndex;
+		int firstFace;
+		int existingFaceIndex;
+		bool existingFaceSide;
 
 		//for (int i = 0; i < cellData.GetSize(); i += 7)
 		for (int i = 0; i < cellData.GetSize(); i += 1)
 		{
-			cellFaceCount = 0;
+			cellIndex = i;
 
-			firstFaceIndex = cellData.GetData(i).GetFaceIndex();
-			faceIndex = firstFaceIndex;
-			faceSide = cellData.GetData(i).GetSide();
+			firstFace = cellData.GetData(cellIndex).GetFaceIndex();
+			reconstructedFaceData.SetData(faceData.GetData(firstFace));
 
-			reconstructedFaceData.SetData(faceData.GetData(faceIndex));
+			existingFaceIndex = faceData.GetData(firstFace).GetNextRIndex(); // Owned face is always at right
+			existingFaceSide = faceData.GetData(firstFace).GetNextRSide();
+			reconstructedFaceData.SetData(faceData.GetData(existingFaceIndex));
 
-			while (cellFaceCount < 6)
+			while (existingFaceIndex != firstFace)
 			{
-				//cout << "Cell " << i << " Face " << cellFaceCount << ": " << faceIndex << endl;
-				// Follow the sides of every face
-				if (!faceSide) // false is right side
+				if (!existingFaceSide) // right side
 				{
-					if (faceIndex == -1) break;
-					faceSide = faceData.GetData(faceIndex).GetNextRSide();
-					faceIndex = faceData.GetData(faceIndex).GetNextRIndex();
+					existingFaceSide = faceData.GetData(existingFaceIndex).GetNextRSide();
+					existingFaceIndex = faceData.GetData(existingFaceIndex).GetNextRIndex();
 				}
-				else
+				else // left side
 				{
-					if (faceIndex == -1) break;
-					faceSide = faceData.GetData(faceIndex).GetNextLSide();
-					faceIndex = faceData.GetData(faceIndex).GetNextLIndex();
+					existingFaceSide = faceData.GetData(existingFaceIndex).GetNextLSide();
+					existingFaceIndex = faceData.GetData(existingFaceIndex).GetNextLIndex();
 				}
-				if (faceIndex == -1) break;
-				reconstructedFaceData.SetData(faceData.GetData(faceIndex));
-				cellFaceCount++;
+				reconstructedFaceData.SetData(faceData.GetData(existingFaceIndex));
 			}
+
 
 		}
 	}

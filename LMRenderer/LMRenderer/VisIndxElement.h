@@ -27,6 +27,7 @@
 #include "PACalcCDF.h"
 #include "PAGenerateCells.h"
 #include "PAReconstructCells.h"
+#include "PACreateFaceData.h"
 
 template <typename TVertex, typename TIndex, typename TOwner, typename TNeighbour, typename TBounds>
 class VisIndxElement : public VisBase
@@ -53,6 +54,7 @@ private:
 	PACalcCDF calcCDF;
 	PAGenerateCells generateCells;
 	PAReconstructCells reconstructCells;
+	PACreateFaceData createFaces;
 
 	Shader shader;
 public:
@@ -119,6 +121,8 @@ public:
 		DataVector<Face> _faceIndexData(FACE);
 		auto faceIndexData = make_shared<DataVector<Face>>(_faceIndexData);
 
+		createFaces.Process(*ownerData, *faceIndexData);
+
 		DataVector<Cell> _cellData(CELL);
 		auto cellData = make_shared<DataVector<Cell>>(_cellData);
 
@@ -144,7 +148,7 @@ public:
 	
 		// UNIFORM SAMPLING
 		//uniformSample.Process(*faceIndexData, *faceIndexSample, 1.0); //UNIFORM
-		uniformSample.Process(*cellData, *cellSample, 0.1); //UNIFORM CELL SAMPLING
+		uniformSample.Process(*cellData, *cellSample, 0.05); //UNIFORM CELL SAMPLING
 		//map<float, int> histo = uniformSample.Process_DebugHistogram(*faceIndexData, *faceIndexSample, 0.1, faceAreaData);
 		
 		// INVERSE TRANSFORM SAMPLING

@@ -9,7 +9,11 @@ public:
 
 	// Overload that calculate face areas and face index
 	template <typename TVertex, typename TIndex>
-	void Process(TVertex& vertex, TIndex& elemIndxVector, DataVector<glm::vec3>& trisVertex, DataVector<Face>& faceIndex, DataVector<float>& faceArea)
+	void Process(TVertex& vertex, 
+				 TIndex& elemIndxVector, 
+				 DataVector<glm::vec3>& trisVertex, 
+				 DataVector<Face>& faceIndex, 
+				 DataVector<float>& faceArea)
 	{
 		int vertexCount = 0;
 		int trisPerPoly = 1;
@@ -50,11 +54,8 @@ public:
 			case 4:
 				for (int j = 0; j < indxData.GetSize(); j += 4)
 				{
-					//trisVertex.GetSize() != 0 ? faceData.SetP0(trisVertex.GetSize()) : faceData.SetP0(0);
 					trisVertex.GetSize() != 0 ? faceIndex.GetData((int)j / 4).SetP0(trisVertex.GetSize()) : faceIndex.GetData((int)j / 4).SetP0(0);
-					
-					//faceData.SetCount(6);
-					//faceIndex.SetData(faceData);
+
 					faceIndex.GetData((int)j / 4).SetCount(6);
 					
 					AddTri(vertex, indxData, trisVertex, j, 0, 1, 2);

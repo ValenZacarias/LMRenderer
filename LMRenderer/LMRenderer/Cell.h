@@ -4,10 +4,10 @@ class Cell
 {
 public:
 	int faceIndex;
-	int side;
+	bool side;
 
 	void SetFaceIndex(int fi) { faceIndex = fi; }
-	void SetSide(int s) { side = s; }
+	void SetSide(bool s) { side = s; }
 	int GetFaceIndex() { return faceIndex; }
-	int GetSide() { return side; }
+	bool GetSide() { return side; }
 };

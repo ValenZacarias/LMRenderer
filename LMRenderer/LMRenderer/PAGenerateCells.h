@@ -29,52 +29,45 @@ public:
 
 
 		// Process Owner data -----------
-		Face aux;
-		Face& existingFace = aux;
+		int firstFaceNextIndex;
+		int cellFirstFaceIndex;
+		int newFaceIndex;
 		int cellIndex;
-		int existingFaceIndex;
 
 		for (int i = 0; i < ownerData.GetSize(); i++)
 		{
-			Face newFace;
-			faceData.SetData(newFace);
-
+			newFaceIndex = i;
 			cellIndex = ownerData.GetData(i);
 
 			if (cellData.GetData(cellIndex).GetFaceIndex() == -1)
 			{
 				// INITIALIZE CELL -> SET CURRENT FACE AS CELL.FACEINDEX
-				cellData.GetData(cellIndex).SetFaceIndex(i);
+				cellData.GetData(cellIndex).SetFaceIndex(newFaceIndex);
 				cellData.GetData(cellIndex).SetSide(0); //RightSide
+
+				// CURRENT FACE RIGHT SIDE POINTS ITSELF
+				faceData.GetData(newFaceIndex).SetNextRIndex(newFaceIndex);
+				faceData.GetData(newFaceIndex).SetNextRSide(false);
 			}
 			else
 			{
-				// FIND LAST FACE FROM THE CELL AND CONNECT CURRENT FACE
-				existingFaceIndex = cellData.GetData(cellIndex).GetFaceIndex();
-				while (faceData.GetData(existingFaceIndex).GetNextRIndex() != -1)
-				{
-					existingFaceIndex = faceData.GetData(existingFaceIndex).GetNextRIndex();
-				}
-				faceData.GetData(existingFaceIndex).SetNextRIndex(i);
-				faceData.GetData(existingFaceIndex).SetNextRSide(false);
-			}
+				// Existing face index is the face who is pointing the owned cell's face
+				cellFirstFaceIndex = cellData.GetData(cellIndex).GetFaceIndex();
+				firstFaceNextIndex= faceData.GetData(cellFirstFaceIndex).GetNextRIndex();
 
+				// NEW FACE NOW POINTS WHERE EXISTING FACE WAS POINTING
+				faceData.GetData(newFaceIndex).SetNextRIndex(firstFaceNextIndex);
+				faceData.GetData(newFaceIndex).SetNextRSide(false);
+
+				// FACE POINTED FROM CELL, NOW POINTS TO NEW FACE
+				faceData.GetData(cellFirstFaceIndex).SetNextRIndex(newFaceIndex);
+				faceData.GetData(cellFirstFaceIndex).SetNextRSide(false);
+			}
 		}
 
-		vector<int> cellFaces;
-		int count;
-		for (int i = 0; i < cellData.GetSize(); i++)
-		{
-			existingFaceIndex = cellData.GetData(i).GetFaceIndex();
-			count = 1;
-			while (faceData.GetData(existingFaceIndex).GetNextRIndex() != -1)
-			{
-				existingFaceIndex = faceData.GetData(existingFaceIndex).GetNextRIndex();
-				count++;
-			}
-			cellFaces.push_back(count);
-		}
+	
 
+		
 		// Process Bonudary data -----------
 		int nFaces;
 		int startFace;
@@ -94,117 +87,69 @@ public:
 			}
 		}
 
- 		__nop();
-
 		// Process Neighbour data -----------
-		// Iterate through boundary faces, neighbour data starts at face 0 and ends on the first boundary face
-		bool existingFaceSide;
-		
-		int neighbourCellIndex;
-		int internalFaceIndex;
-		int neighbourIterator = 0;
-
-		int cellFaceIndex;
-		bool cellFaceSide;
-		int currentFaceIndex = -1;
-		bool currentFaceSide;
-
-		int cellFaceCount;
-		bool internalFaceFreeSide;
-
-		int cellFirstFaceIndex;
+		int faceIndex;
+		bool firstFaceNextSide;
 
 		for (int i = 0; i < neighbourData.GetSize(); i++)
 		{
 			if (faceData.GetData(i).isBoundary())
-				break;
+			{
+				i--;
+				continue;
+			}
 
-
-
-			internalFaceIndex = i;
-			neighbourCellIndex = neighbourData.GetData(i);
-
-			if (neighbourCellIndex == 8)
+			if (neighbourData.GetData(i) == 4) 
 				__nop();
 
-			cellFirstFaceIndex = cellData.GetData(neighbourCellIndex).GetFaceIndex();
+			faceIndex = i;
+			cellIndex = neighbourData.GetData(i);
 			
-			cellFaceCount = 1;
-			currentFaceIndex = cellFirstFaceIndex;
-			currentFaceSide = cellData.GetData(neighbourCellIndex).GetSide();
+			// Existing face index is the face who is pointing the owned cell's face
+			cellFirstFaceIndex = cellData.GetData(cellIndex).GetFaceIndex();
+			firstFaceNextIndex = faceData.GetData(cellFirstFaceIndex).GetNextRIndex(); // cells always starts at right
+			firstFaceNextSide = faceData.GetData(cellFirstFaceIndex).GetNextRSide();
 
-			// Look for the last cell in the list
-			while (cellFaceCount < cellFaces[neighbourCellIndex])
-			{
-				// Follow the sides of every face
-				if (!currentFaceSide) // false is right side
-				{
-					if (currentFaceIndex == -1) break;
-					currentFaceSide = faceData.GetData(currentFaceIndex).GetNextRSide();
-					currentFaceIndex = faceData.GetData(currentFaceIndex).GetNextRIndex();
-				}
-				else
-				{
-					if (currentFaceIndex == -1) break;
-					currentFaceSide = faceData.GetData(currentFaceIndex).GetNextLSide();
-					currentFaceIndex = faceData.GetData(currentFaceIndex).GetNextLIndex();
-				}
+			// FACE POINTED FROM CELL, NOW POINTS TO NEW FACE
+			faceData.GetData(cellFirstFaceIndex).SetNextRIndex(faceIndex);
+			faceData.GetData(cellFirstFaceIndex).SetNextRSide(true);
 
-				cellFaceCount++;
-			}
-
-			if (currentFaceIndex == -1)
-				continue;
-
-			if (cellFaceCount == 5)
-			{
-				// The internal face must connect with the first face from the neighbour cell. This face has another owner
-				// and now we set the first face from the neighbour cell to close the list
-				faceData.GetData(internalFaceIndex).SetNextLIndex(cellFirstFaceIndex);
-				faceData.GetData(internalFaceIndex).SetNextLSide(false); // We are connecting to a face owned, so we go Rigth always
-			}
-
-			// Check if list is complete (for tetrahedra) NEEDS TO HANDLE ALL POLIHEDRA
-			if (cellFaceCount == 6)
-				continue;
-
-			// Check for the free side of the current face
-			if (faceData.GetData(currentFaceIndex).GetNextRIndex() == -1)
-			{
-				faceData.GetData(currentFaceIndex).SetNextRIndex(internalFaceIndex);
-
-				// Check for the new inner face (the one who is going to be connected) free slot
-				if (faceData.GetData(internalFaceIndex).GetNextRIndex() == -1)
-				{
-					faceData.GetData(currentFaceIndex).SetNextRSide(false);
-					faceData.GetData(internalFaceIndex).SetNextRIndex(internalFaceIndex);
-				}
-				else
-				{
-					faceData.GetData(currentFaceIndex).SetNextRSide(true);
-					faceData.GetData(internalFaceIndex).SetNextLIndex(internalFaceIndex);
-				}
-			}
-			else
-			{
-				faceData.GetData(currentFaceIndex).SetNextLIndex(internalFaceIndex);
-				if (faceData.GetData(internalFaceIndex).GetNextRIndex() == -1)
-				{
-					faceData.GetData(currentFaceIndex).SetNextLSide(false);
-					faceData.GetData(internalFaceIndex).SetNextRIndex(internalFaceIndex);
-				}
-				else
-				{
-					faceData.GetData(currentFaceIndex).SetNextLSide(true);
-					faceData.GetData(internalFaceIndex).SetNextLIndex(internalFaceIndex);
-				}
-			}
-
-			cellFaces[neighbourCellIndex]++;
+			// NEW FACE NOW POINTS WHERE EXISTING FACENEXT WAS POINTING
+			faceData.GetData(faceIndex).SetNextLIndex(firstFaceNextIndex);
+			faceData.GetData(faceIndex).SetNextLSide(firstFaceNextSide);
 
 		}
 
-		__nop();
+		vector<int> cellFaces;
+		int count;
+		int firstFace;
+		int existingFaceIndex;
+		bool existingFaceSide;
+		for (int i = 0; i < cellData.GetSize(); i++)
+		{
+			cellIndex = i;
+			firstFace = cellData.GetData(cellIndex).GetFaceIndex();
+			existingFaceIndex = faceData.GetData(firstFace).GetNextRIndex(); // Owned face is always at right
+			existingFaceSide = faceData.GetData(firstFace).GetNextRSide();
+			count = 1;
+			while (existingFaceIndex != firstFace)
+			{
+				if (!existingFaceSide) // right side
+				{
+					existingFaceSide = faceData.GetData(existingFaceIndex).GetNextRSide();
+					existingFaceIndex = faceData.GetData(existingFaceIndex).GetNextRIndex();
+				}
+				else // left side
+				{
+					existingFaceSide = faceData.GetData(existingFaceIndex).GetNextLSide();
+					existingFaceIndex = faceData.GetData(existingFaceIndex).GetNextLIndex();
+				}
+				count++;
+			}
+			cellFaces.push_back(count);
+		}
+ 		__nop();
+		
 
 	}
 

@@ -48,8 +48,8 @@ int main()
 
 	//Ahora le damos un ptr a algo que esta en el stack y muere con el main
 	//Si la idea es ir creando y destruyendo a medida que cambiamos, podemos usar smart pointers
-	//ToolFPSCamera cameraTool = ToolFPSCamera(&canvas.currentCamera);
-	ToolOrbitCamera cameraTool = ToolOrbitCamera(&canvas.currentCamera);
+	ToolFPSCamera cameraTool = ToolFPSCamera(&canvas.currentCamera);
+	//ToolOrbitCamera cameraTool = ToolOrbitCamera(&canvas.currentCamera);
 	canvas.SetCurrentTool(&cameraTool);
 	
 	//PARSING AND DATA GENERATION -------------------------------------------------------------------------------------------
@@ -62,19 +62,19 @@ int main()
 	//int cellCount = Parser.ParseCellCount("Meshes/testmesh_45e_owner.txt");
 	//auto DataBoundary = Parser.ParseBoundary("Meshes/testmesh_45e_boundary.txt");
 
-	auto DataIndex = Parser.ParseFaces("Meshes/sphere_3k_faces.txt");
-	auto DataVertex = Parser.ParsePoints("Meshes/sphere_3k_points.txt");
-	auto DataOwner = Parser.ParseCells("Meshes/sphere_3k_owner.txt");
-	auto DataNeighbour = Parser.ParseCells("Meshes/sphere_3k_neighbour.txt");
-	int cellCount = Parser.ParseCellCount("Meshes/sphere_3k_owner.txt");
-	auto DataBoundary = Parser.ParseBoundary("Meshes/sphere_3k_boundary.txt");
+	//auto DataIndex = Parser.ParseFaces("Meshes/sphere_3k_faces.txt");
+	//auto DataVertex = Parser.ParsePoints("Meshes/sphere_3k_points.txt");
+	//auto DataOwner = Parser.ParseCells("Meshes/sphere_3k_owner.txt");
+	//auto DataNeighbour = Parser.ParseCells("Meshes/sphere_3k_neighbour.txt");
+	//int cellCount = Parser.ParseCellCount("Meshes/sphere_3k_owner.txt");
+	//auto DataBoundary = Parser.ParseBoundary("Meshes/sphere_3k_boundary.txt");
 
-	//auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
-	//auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
-	//auto DataOwner = Parser.ParseCells("Meshes/spheroid_45k_owner.txt");
-	//auto DataNeighbour = Parser.ParseCells("Meshes/spheroid_45k_neighbour.txt");
-	//int cellCount = Parser.ParseCellCount("Meshes/spheroid_45k_owner.txt");
-	//auto DataBoundary = Parser.ParseBoundary("Meshes/spheroid_45k_boundary.txt");
+	auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
+	auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
+	auto DataOwner = Parser.ParseCells("Meshes/spheroid_45k_owner.txt");
+	auto DataNeighbour = Parser.ParseCells("Meshes/spheroid_45k_neighbour.txt");
+	int cellCount = Parser.ParseCellCount("Meshes/spheroid_45k_owner.txt");
+	auto DataBoundary = Parser.ParseBoundary("Meshes/spheroid_45k_boundary.txt");
 
 	//auto DataIndex = Parser.ParseFaces("Meshes/flange_mf_282k_faces.txt");
 	//auto DataVertex = Parser.ParsePoints("Meshes/flange_mf_282k_points.txt");
