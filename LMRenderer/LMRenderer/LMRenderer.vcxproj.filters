@@ -220,5 +220,8 @@
     <ClInclude Include="PACreateFaceData.h">
       <Filter>Header Files\ProcessingAlgorithms</Filter>
     </ClInclude>
+    <ClInclude Include="PACalcCellCentroid.h">
+      <Filter>Header Files\ProcessingAlgorithms</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

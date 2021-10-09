@@ -28,6 +28,8 @@
 #include "PAGenerateCells.h"
 #include "PAReconstructCells.h"
 #include "PACreateFaceData.h"
+#include "PACalcCellCentroid.h"
+#include "PACalcCellVolume.h"
 
 template <typename TVertex, typename TIndex, typename TOwner, typename TNeighbour, typename TBounds>
 class VisIndxElement : public VisBase
@@ -55,6 +57,8 @@ private:
 	PAGenerateCells generateCells;
 	PAReconstructCells reconstructCells;
 	PACreateFaceData createFaces;
+	PACalcCellCentroid calcCellCentroid;
+	PACalcCellVolume calcCellVolume;
 
 	Shader shader;
 public:
@@ -132,8 +136,19 @@ public:
 		DataVector<float> faceAreaData(FLOATVAL);
 		triangulate.Process(*vertexData, *indexData, *triVertexData, *faceIndexData, faceAreaData);
 
+		DataVector<glm::vec3> _cellCentoidsData(POINT);
+		auto cellCentroidsData = make_shared<DataVector<glm::vec3>>(_cellCentoidsData);
+
+		// Calculate Cell centroids
+		calcCellCentroid.Process(*faceIndexData, *triVertexData, *cellData, *cellCentroidsData);
+
+		// Calculate Cell Volumes
+		DataVector<float> cellVolumeData(FLOATVAL);
+		calcCellVolume.Process(*faceIndexData, *triVertexData, *cellData, *cellCentroidsData, cellVolumeData);
+
 		//Creating Cumulative Distribution function
-		vector<float> CDFData = calcCDF.Process(faceAreaData);
+		//vector<float> CDFData = calcCDF.Process(faceAreaData);
+		vector<float> CDFData = calcCDF.Process(cellVolumeData);
 
 		// Face index Sampling ---------------------------------------------------------
 		// FaceIndex -> Sampled FaceIndex
@@ -148,11 +163,12 @@ public:
 	
 		// UNIFORM SAMPLING
 		//uniformSample.Process(*faceIndexData, *faceIndexSample, 1.0); //UNIFORM
-		uniformSample.Process(*cellData, *cellSample, 0.05); //UNIFORM CELL SAMPLING
+		//uniformSample.Process(*cellData, *cellSample, 0.05); //UNIFORM CELL SAMPLING
 		//map<float, int> histo = uniformSample.Process_DebugHistogram(*faceIndexData, *faceIndexSample, 0.1, faceAreaData);
 		
 		// INVERSE TRANSFORM SAMPLING
 		//invTransformSample.Process(CDFData, *faceIndexData, *faceIndexSample, 0.5); //INVERSE TRANSFORM
+		invTransformSample.Process(CDFData, *cellData, *cellSample, 0.05); //INVERSE TRANSFORM CELL SAMPLING
 		//map<float, int> histo = invTransformSample.Process_DebugHistogram(CDFData, *faceIndexData, *faceIndexSample, 0.1, faceAreaData);
 
 		// SAMPLED CELL RECONSTRUCTION

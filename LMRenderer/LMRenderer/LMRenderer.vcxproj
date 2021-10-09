@@ -196,6 +196,7 @@
     <ClInclude Include="Face.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="PACalcCDF.h" />
+    <ClInclude Include="PACalcCellCentroid.h" />
     <ClInclude Include="PACalcCellVolume.h" />
     <ClInclude Include="PACalcNormals.h" />
     <ClInclude Include="PACreateFaceData.h" />

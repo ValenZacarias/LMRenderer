@@ -142,6 +142,8 @@ public:
 		}
 	}
 
+
+
 private:
 	glm::vec3 GetPoint(DataVector<float>& vertexData, int index)
 	{

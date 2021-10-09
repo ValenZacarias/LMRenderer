@@ -7,52 +7,58 @@
 #include "Cell.h"
 #include "Face.h"
 
+#include "PAReconstructCells.h"
+
 class PACalcCellVolume
 {
 public:
+	PAReconstructCells reconstructCell;
+
 	PACalcCellVolume() {}
 
-	template <class T>
-	void Process(T& faceData, T& reconstructedFaceData, DataVector<Cell>& cellData)
+	template <class TFace, class TCell, class TVertex, class TCentroid>
+	void Process(TFace& faceData, TVertex& vertexData, TCell& cellData, TCentroid& cellCentoids, DataVector<float>& cellVolumes)
 	{
-		int cellFaceCount;
-		int firstFaceIndex;
-		int faceIndex;
-		int faceSide;
 
-		//for (int i = 0; i < cellData.GetSize(); i += 7)
-		for (int i = 0; i < cellData.GetSize(); i += 1)
+		vector<int> cellFaces;
+		int p0;
+		int count;
+
+		glm::vec3 centroid(0.0f);
+		glm::vec3 qi(0.0f);
+		glm::vec3 qj(0.0f);
+		glm::vec3 qk(0.0f);
+
+		float vol = 0;
+
+		for (int i = 0; i < cellData.GetSize(); i++)
 		{
-			cellFaceCount = 0;
+			reconstructCell.GetCellFaces(faceData, cellData, i, cellFaces);
+			__nop();
 
-			firstFaceIndex = cellData.GetData(i).GetFaceIndex();
-			faceIndex = firstFaceIndex;
-			faceSide = cellData.GetData(i).GetSide();
-
-			reconstructedFaceData.SetData(faceData.GetData(faceIndex));
-
-			while (cellFaceCount < 6)
+			for (int j = 0; j < cellFaces.size(); j++)
 			{
-				//cout << "Cell " << i << " Face " << cellFaceCount << ": " << faceIndex << endl;
-				// Follow the sides of every face
-				if (!faceSide) // false is right side
-				{
-					if (faceIndex == -1) break;
-					faceSide = faceData.GetData(faceIndex).GetNextRSide();
-					faceIndex = faceData.GetData(faceIndex).GetNextRIndex();
-				}
-				else
-				{
-					if (faceIndex == -1) break;
-					faceSide = faceData.GetData(faceIndex).GetNextLSide();
-					faceIndex = faceData.GetData(faceIndex).GetNextLIndex();
-				}
-				if (faceIndex == -1) break;
-				reconstructedFaceData.SetData(faceData.GetData(faceIndex));
-				cellFaceCount++;
-			}
+				p0 = faceData.GetData(cellFaces[j]).GetP0();
+				count = faceData.GetData(cellFaces[j]).GetCount();
 
+				centroid = cellCentoids.GetData(j);
+
+				for (int k = p0; k < p0 + count; k+=3)
+				{
+					qi = vertexData.GetData(k);
+					qj = vertexData.GetData(k + 1);
+					qk = vertexData.GetData(k + 2);
+
+					vol += glm::dot((qi - centroid), glm::cross((qj - centroid), (qk - centroid)));
+					__nop();
+				}
+
+			}
+			cellFaces.clear();
+			cellVolumes.SetData(vol);
+			vol = 0;
 		}
+		__nop();
 	}
 
 };
