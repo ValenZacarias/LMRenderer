@@ -22,7 +22,7 @@
 #include "VisGroup.h"
 #include "VisGrid.h"
 #include "VisPrimitive.h"
-#include "VisIndxElement.h"
+#include "VisCellFacesTesting.h"
 
 #include "DataStructureBase.h"
 #include "DataVector.h"
@@ -30,8 +30,6 @@
 #include "PATriangulate.h"
 
 #include "PMeshParser.h"
-
-
 
 #include "main.h"
 
@@ -69,32 +67,31 @@ int main()
 	//int cellCount = Parser.ParseCellCount("Meshes/sphere_3k_owner.txt");
 	//auto DataBoundary = Parser.ParseBoundary("Meshes/sphere_3k_boundary.txt");
 
-	auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
-	auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
-	auto DataOwner = Parser.ParseCells("Meshes/spheroid_45k_owner.txt");
-	auto DataNeighbour = Parser.ParseCells("Meshes/spheroid_45k_neighbour.txt");
-	int cellCount = Parser.ParseCellCount("Meshes/spheroid_45k_owner.txt");
-	auto DataBoundary = Parser.ParseBoundary("Meshes/spheroid_45k_boundary.txt");
+	//auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
+	//auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
+	//auto DataOwner = Parser.ParseCells("Meshes/spheroid_45k_owner.txt");
+	//auto DataNeighbour = Parser.ParseCells("Meshes/spheroid_45k_neighbour.txt");
+	//int cellCount = Parser.ParseCellCount("Meshes/spheroid_45k_owner.txt");
+	//auto DataBoundary = Parser.ParseBoundary("Meshes/spheroid_45k_boundary.txt");
 
-	//auto DataIndex = Parser.ParseFaces("Meshes/flange_mf_282k_faces.txt");
-	//auto DataVertex = Parser.ParsePoints("Meshes/flange_mf_282k_points.txt");
-	//auto DataOwner = Parser.ParseCells("Meshes/flange_mf_282k_owner.txt");
-	//auto DataNeighbour = Parser.ParseCells("Meshes/flange_mf_282k_neighbour.txt");
-	//int cellCount = Parser.ParseCellCount("Meshes/flange_mf_282k_owner.txt");
-	//auto DataBoundary = Parser.ParseBoundary("Meshes/flange_mf_282k_boundary.txt");
+	auto DataIndex = Parser.ParseFaces("Meshes/flange_mf_282k_faces.txt");
+	auto DataVertex = Parser.ParsePoints("Meshes/flange_mf_282k_points.txt");
+	auto DataOwner = Parser.ParseCells("Meshes/flange_mf_282k_owner.txt");
+	auto DataNeighbour = Parser.ParseCells("Meshes/flange_mf_282k_neighbour.txt");
+	int cellCount = Parser.ParseCellCount("Meshes/flange_mf_282k_owner.txt");
+	auto DataBoundary = Parser.ParseBoundary("Meshes/flange_mf_282k_boundary.txt");
 
 	//VISUALIZATIONS-----------------------------------------------------------------------------------------------------------
-	//VisIndxElement<shared_ptr<DataVector<float>>, shared_ptr<vector<DataVector<int>>>> vizElement(DataVertex, DataIndex);
-	VisIndxElement<	shared_ptr<DataVector<float>>,
+	VisCellFacesTesting<	shared_ptr<DataVector<float>>,
 					shared_ptr<vector<DataVector<int>>>,
 					shared_ptr<DataVector<int>>,
 					shared_ptr<DataVector<int>>,
-					shared_ptr<DataVector<int>>> vizElement(DataVertex, DataIndex, DataOwner, DataNeighbour, DataBoundary, cellCount);
+					shared_ptr<DataVector<int>>> VisCellFacesTesting(DataVertex, DataIndex, DataOwner, DataNeighbour, DataBoundary, cellCount);
 
 	VisGrid vizGrid = VisGrid();
 
 	VisGroup MainGroupViz = VisGroup();
-	MainGroupViz.visualizations.push_back(&vizElement);
+	MainGroupViz.visualizations.push_back(&VisCellFacesTesting);
 	MainGroupViz.visualizations.push_back(&vizGrid);
 	canvas.SetupContext(&MainGroupViz);
 

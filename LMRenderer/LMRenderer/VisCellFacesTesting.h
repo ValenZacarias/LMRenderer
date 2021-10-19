@@ -32,7 +32,7 @@
 #include "PACalcCellVolume.h"
 
 template <typename TVertex, typename TIndex, typename TOwner, typename TNeighbour, typename TBounds>
-class VisIndxElement : public VisBase
+class VisCellFacesTesting : public VisBase
 {
 private:
 
@@ -63,7 +63,7 @@ private:
 	Shader shader;
 public:
 
-	VisIndxElement(TVertex v, TIndex i, TOwner o, TNeighbour n, TBounds b, int cc)
+	VisCellFacesTesting(TVertex v, TIndex i, TOwner o, TNeighbour n, TBounds b, int cc)
 	{
 		this->vertexData = v;
 		this->indexData = i;
@@ -78,7 +78,7 @@ public:
 		GenerateBuffers();
 	}
 	
-	~VisIndxElement()
+	~VisCellFacesTesting()
 	{
 		glDeleteVertexArrays(1, &VAO);
 		glDeleteBuffers(1, &VBO);
@@ -112,7 +112,6 @@ public:
 
 		glBindVertexArray(VAO);
 
-		//FIX: hay que variabilizar la cantidad de triangulos segun la malla
 		glDrawArrays(GL_TRIANGLES, 0, trisCount);
 
 	}
@@ -163,12 +162,12 @@ public:
 	
 		// UNIFORM SAMPLING
 		//uniformSample.Process(*faceIndexData, *faceIndexSample, 1.0); //UNIFORM
-		//uniformSample.Process(*cellData, *cellSample, 0.05); //UNIFORM CELL SAMPLING
+		uniformSample.Process(*cellData, *cellSample, 0.05); //UNIFORM CELL SAMPLING
 		//map<float, int> histo = uniformSample.Process_DebugHistogram(*faceIndexData, *faceIndexSample, 0.1, faceAreaData);
 		
 		// INVERSE TRANSFORM SAMPLING
 		//invTransformSample.Process(CDFData, *faceIndexData, *faceIndexSample, 0.5); //INVERSE TRANSFORM
-		invTransformSample.Process(CDFData, *cellData, *cellSample, 0.05); //INVERSE TRANSFORM CELL SAMPLING
+		//invTransformSample.Process(CDFData, *cellData, *cellSample, 0.001); //INVERSE TRANSFORM CELL SAMPLING
 		//map<float, int> histo = invTransformSample.Process_DebugHistogram(CDFData, *faceIndexData, *faceIndexSample, 0.1, faceAreaData);
 
 		// SAMPLED CELL RECONSTRUCTION

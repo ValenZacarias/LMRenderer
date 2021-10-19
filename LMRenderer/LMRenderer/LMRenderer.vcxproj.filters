@@ -63,6 +63,9 @@
     <ClCompile Include="VisGrid.cpp">
       <Filter>Source Files\Visualization</Filter>
     </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="difusse_fragment_shader.txt">
@@ -175,7 +178,7 @@
     <ClInclude Include="ToolOrbitCamera.h">
       <Filter>Header Files\Tool</Filter>
     </ClInclude>
-    <ClInclude Include="VisIndxElement.h">
+    <ClInclude Include="VisCellFacesTesting.h">
       <Filter>Header Files\Visualization</Filter>
     </ClInclude>
     <ClInclude Include="VisGroup.h">
@@ -222,6 +225,9 @@
     </ClInclude>
     <ClInclude Include="PACalcCellCentroid.h">
       <Filter>Header Files\ProcessingAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

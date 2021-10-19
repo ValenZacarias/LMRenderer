@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="GLFWCanvas.cpp" />
     <ClCompile Include="Globals.cpp" />
@@ -211,10 +212,11 @@
     <ClInclude Include="Tool.h" />
     <ClInclude Include="ToolFPSCamera.h" />
     <ClInclude Include="ToolOrbitCamera.h" />
+    <ClInclude Include="Debug.h" />
     <ClInclude Include="VisBase.h" />
     <ClInclude Include="VisGrid.h" />
     <ClInclude Include="VisGroup.h" />
-    <ClInclude Include="VisIndxElement.h" />
+    <ClInclude Include="VisCellFacesTesting.h" />
     <ClInclude Include="VisPrimitive.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

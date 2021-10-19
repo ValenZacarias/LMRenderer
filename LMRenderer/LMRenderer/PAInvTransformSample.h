@@ -50,25 +50,6 @@ public:
 				}
 			}
 		}
-
-
-		/*for (int i = 0; i < sampleSize; i++)
-		{
-			rnd = dist(engine);
-
-			if (rnd <= CDF[0]/normFactor)
-				sampledSet.SetData(dataSet.GetData(0));
-			else
-			{
-				for (int j = 1; j < CDF.size(); j++)
-				{
-					lowBound = CDF[j - 1] / normFactor;
-					upBound = CDF[j] / normFactor;
-					if ( lowBound < rnd && rnd < upBound)
-						sampledSet.SetData(dataSet.GetData(j));
-				}
-			}
-		}*/
 	}
 
 	template <class T>

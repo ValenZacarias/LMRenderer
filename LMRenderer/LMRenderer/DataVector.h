@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <glm/glm.hpp> 
+#include "Debug.h"
 using namespace std;
 
 template <class T> class DataVector : public DataStructureBase
@@ -22,7 +23,7 @@ public:
 	}
 
 	void ReserveData(int count) { data.reserve(count); }
-	T& GetData(int i) { return data[i]; }
+	T& GetData(int i) { _expects(i >= 0); _expects(i < data.size()); return data[i]; } // hacer un expect >= 0 
 	auto GetFullData() { return data.data(); }
 	void SetData(T d) { data.push_back(d); }
 	int GetSize(){ return data.size(); }

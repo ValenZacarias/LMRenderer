@@ -15,5 +15,5 @@ glm::vec3 lightPosition = glm::vec3(0.0f, 5.0f, 5.0f);
 int DataStructureCurrentIndex = 0;
 
 float CAMERA_SPEED = 6.25f;
-//float CAMERA_SPEED = 0.25f;
+//float CAMERA_SPEED = 0.05f;
 bool firstMouse = true;

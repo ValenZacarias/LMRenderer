@@ -8,6 +8,6 @@ public:
 
 	void SetFaceIndex(int fi) { faceIndex = fi; }
 	void SetSide(bool s) { side = s; }
-	int GetFaceIndex() { return faceIndex; }
+	int GetFaceIndex() { return faceIndex; } //hacer un expect
 	bool GetSide() { return side; }
 };

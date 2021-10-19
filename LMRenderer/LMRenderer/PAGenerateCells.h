@@ -28,7 +28,7 @@ public:
 		}
 
 
-		// Process Owner data -----------
+		// 1. Process Owner data -----------
 		int firstFaceNextIndex;
 		int cellFirstFaceIndex;
 		int newFaceIndex;
@@ -65,10 +65,7 @@ public:
 			}
 		}
 
-	
-
-		
-		// Process Bonudary data -----------
+		// 2. Process Bonudary data -----------
 		int nFaces;
 		int startFace;
 		int firstBoundaryFace;
@@ -87,70 +84,64 @@ public:
 			}
 		}
 
-		// Process Neighbour data -----------
+		// 3. Process Neighbour data -----------
 		int faceIndex;
 		bool firstFaceNextSide;
 
 		for (int i = 0; i < neighbourData.GetSize(); i++)
 		{
-			if (faceData.GetData(i).isBoundary())
-			{
-				i--;
-				continue;
-			}
+			if (faceData.GetData(i).isBoundary()) { i--; continue; }
 
-			if (neighbourData.GetData(i) == 4) 
-				__nop();
-
-			faceIndex = i;
+			newFaceIndex = i;
+			//Face& newFace = faceData.GetData(newFaceIndex);
 			cellIndex = neighbourData.GetData(i);
-			
-			// Existing face index is the face who is pointing the owned cell's face
-			cellFirstFaceIndex = cellData.GetData(cellIndex).GetFaceIndex();
-			firstFaceNextIndex = faceData.GetData(cellFirstFaceIndex).GetNextRIndex(); // cells always starts at right
-			firstFaceNextSide = faceData.GetData(cellFirstFaceIndex).GetNextRSide();
+			//Cell& cell = cellData.GetData(cellIndex);
 
-			// FACE POINTED FROM CELL, NOW POINTS TO NEW FACE
-			faceData.GetData(cellFirstFaceIndex).SetNextRIndex(faceIndex);
-			faceData.GetData(cellFirstFaceIndex).SetNextRSide(true);
-
-			// NEW FACE NOW POINTS WHERE EXISTING FACENEXT WAS POINTING
-			faceData.GetData(faceIndex).SetNextLIndex(firstFaceNextIndex);
-			faceData.GetData(faceIndex).SetNextLSide(firstFaceNextSide);
-
-		}
-
-		vector<int> cellFaces;
-		int count;
-		int firstFace;
-		int existingFaceIndex;
-		bool existingFaceSide;
-		for (int i = 0; i < cellData.GetSize(); i++)
-		{
-			cellIndex = i;
-			firstFace = cellData.GetData(cellIndex).GetFaceIndex();
-			existingFaceIndex = faceData.GetData(firstFace).GetNextRIndex(); // Owned face is always at right
-			existingFaceSide = faceData.GetData(firstFace).GetNextRSide();
-			count = 1;
-			while (existingFaceIndex != firstFace)
+			if (cellData.GetData(cellIndex).GetFaceIndex() == -1)
 			{
-				if (!existingFaceSide) // right side
-				{
-					existingFaceSide = faceData.GetData(existingFaceIndex).GetNextRSide();
-					existingFaceIndex = faceData.GetData(existingFaceIndex).GetNextRIndex();
-				}
-				else // left side
-				{
-					existingFaceSide = faceData.GetData(existingFaceIndex).GetNextLSide();
-					existingFaceIndex = faceData.GetData(existingFaceIndex).GetNextLIndex();
-				}
-				count++;
-			}
-			cellFaces.push_back(count);
-		}
- 		__nop();
-		
+				// INITIALIZE CELL -> SET CURRENT FACE AS CELL.FACEINDEX
+				cellData.GetData(cellIndex).SetFaceIndex(newFaceIndex);
+				cellData.GetData(cellIndex).SetSide(true); //LeftSide
 
+				// CURRENT FACE LEFT SIDE POINTS ITSELF
+				faceData.GetData(newFaceIndex).SetNextLIndex(newFaceIndex);
+				faceData.GetData(newFaceIndex).SetNextLSide(true);
+			}
+			else
+			{
+				cellFirstFaceIndex = cellData.GetData(cellIndex).GetFaceIndex();
+				//Face& cellFace = faceData.GetData(cellFirstFaceIndex);
+
+				if (cellData.GetData(cellIndex).GetSide() == false)
+				{
+					firstFaceNextIndex = faceData.GetData(cellFirstFaceIndex).GetNextRIndex();
+					firstFaceNextSide = faceData.GetData(cellFirstFaceIndex).GetNextRSide();
+					//Face& cellFaceNext = faceData.GetData(firstFaceNextIndex);
+
+					// FACE POINTED FROM CELL, NOW POINTS TO NEW FACE
+					faceData.GetData(cellFirstFaceIndex).SetNextRIndex(newFaceIndex);
+					faceData.GetData(cellFirstFaceIndex).SetNextRSide(true);
+
+					// NEW FACE NOW POINTS WHERE EXISTING FACENEXT WAS POINTING
+					faceData.GetData(newFaceIndex).SetNextLIndex(firstFaceNextIndex);
+					faceData.GetData(newFaceIndex).SetNextLSide(firstFaceNextSide);
+				}
+				else
+				{
+					firstFaceNextIndex = faceData.GetData(cellFirstFaceIndex).GetNextLIndex();
+					firstFaceNextSide = faceData.GetData(cellFirstFaceIndex).GetNextLSide();
+					//Face& cellFaceNext = faceData.GetData(firstFaceNextIndex);
+
+					// FACE POINTED FROM CELL, NOW POINTS TO NEW FACE
+					faceData.GetData(cellFirstFaceIndex).SetNextLIndex(newFaceIndex);
+					faceData.GetData(cellFirstFaceIndex).SetNextLSide(true);
+
+					// NEW FACE NOW POINTS WHERE EXISTING FACENEXT WAS POINTING
+					faceData.GetData(newFaceIndex).SetNextLIndex(firstFaceNextIndex);
+					faceData.GetData(newFaceIndex).SetNextLSide(firstFaceNextSide);
+				}
+			}
+		}
 	}
 
 };

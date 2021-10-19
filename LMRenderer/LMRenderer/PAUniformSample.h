@@ -16,6 +16,8 @@ public:
 		// TriangleSampling
 		DataVector<glm::vec3> sampledData(POINT);
 		
+
+		//con rd cada corrida es distinto, se puede evitar
 		std::random_device rd{};
 		std::mt19937 engine{ rd() };
 		std::uniform_int_distribution<long> dist{ 0, ( vertex.GetSize() / 6 - 1 ) };

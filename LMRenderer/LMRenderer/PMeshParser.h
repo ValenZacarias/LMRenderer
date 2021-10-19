@@ -45,6 +45,7 @@ public:
 		string indexSeparation = " ";
 		
 		bool parsingFaces = false;
+		int faceIndex = 0; //index of the face in the faces.txt array, used when triangulating
 		
 		while (std::getline(in, currentLine))
 		{
@@ -66,6 +67,9 @@ public:
 				{
 					faceVertices = (int)currentLine[0] - 48;
 					charPtr = 2;
+
+					dataIndexVector[faceVertices].SetData(faceIndex);
+
 					while (currentLine[charPtr] != endOfIndices[0])
 					{
 						index.push_back(currentLine[charPtr]);
@@ -81,8 +85,8 @@ public:
 
 					dataIndexVector[faceVertices].SetData(stoi(index));
 					index.clear();
+					faceIndex++;
 					continue;
-					__nop();
 				}
 			}
 		}
