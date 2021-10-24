@@ -99,11 +99,14 @@ public:
 		return result;
 	}
 
-	std::shared_ptr<DataVector<float>> ParsePoints(string filename)
+	//std::shared_ptr<DataVector<float>> ParsePoints(string filename)
+	template <class T>
+	std::shared_ptr<T> ParsePoints(string filename)
 	{
 		steady_clock::time_point begin = steady_clock::now();
 
-		auto dataPoints = std::make_shared<DataVector<float>>(FLOATVAL);
+		//auto dataPoints = std::make_shared<DataVector<float>>(FLOATVAL);
+		auto dataPoints = std::make_shared<T>(FLOATVAL);
 
 		//FILE PARSING
 		ifstream in(filename);
@@ -267,12 +270,12 @@ public:
 		return dataCells;
 	}
 
-	std::shared_ptr<DataVector<int>> ParseBoundary(string filename)
+	template <class T>
+	std::shared_ptr<T> ParseBoundary(string filename)
 	{
 		steady_clock::time_point begin = steady_clock::now();
 
-		auto boundaryData = std::make_shared<DataVector<int>>(BOUNDS);
-		
+		auto boundaryData = std::make_shared<T>(BOUNDS);
 
 		//FILE PARSING
 		ifstream in(filename);

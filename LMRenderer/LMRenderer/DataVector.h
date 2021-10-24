@@ -13,14 +13,13 @@ private:
 
 	vector<T> data;
 
-
 public:
-	DataVector() : DataStructureBase(type) { }
+	//DataVector() : DataStructureBase(type) { }
 	DataVector(DATATYPE type) : DataStructureBase(type) { }
-	DataVector(DATATYPE type, const T* rawdata, int count) : DataStructureBase(type)
-	{
-		for(int i = 0; i < count; i++) { data.push_back(rawdata[i]); }
-	}
+	//DataVector(DATATYPE type, const T* rawdata, int count) : DataStructureBase(type)
+	//{
+	//	for(int i = 0; i < count; i++) { data.push_back(rawdata[i]); }
+	//}
 
 	void ReserveData(int count) { data.reserve(count); }
 	T& GetData(int i) { _expects(i >= 0); _expects(i < data.size()); return data[i]; } // hacer un expect >= 0 

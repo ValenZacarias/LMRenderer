@@ -10,7 +10,7 @@ enum DATATYPE { POINT, VECTOR, NORMAL, INDEX, CENTROID, INTVAL, FLOATVAL, POLYIN
 //El contador general de ids se puede poner como static aca, para no tirarselo a globals
 //Puede quedar la Base para el tema de IDS
 
-class DataStructureBase
+class  DataStructureBase
 {
 private:
 	int ID;

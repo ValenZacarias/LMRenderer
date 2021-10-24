@@ -118,32 +118,27 @@ public:
 
 	void GenerateBuffers()
 	{
-		DataVector<glm::vec3> _triVertexData(POINT);
-		auto triVertexData = make_shared<DataVector<glm::vec3>>(_triVertexData);
 
-		DataVector<Face> _faceIndexData(FACE);
-		auto faceIndexData = make_shared<DataVector<Face>>(_faceIndexData);
+		// Initialize faceData with null faces
+		auto faceData = make_shared<DataVector<Face>>(FACE);
+		createFaces.Process(*ownerData, *faceData);
 
-		createFaces.Process(*ownerData, *faceIndexData);
-
-		DataVector<Cell> _cellData(CELL);
-		auto cellData = make_shared<DataVector<Cell>>(_cellData);
-
-		generateCells.Process(*ownerData, *neighbourData, *boundaryData, *faceIndexData, *cellData, cellCount);
+		// Generate cells
+		auto cellData = make_shared<DataVector<Cell>>(CELL);
+		generateCells.Process(*ownerData, *neighbourData, *boundaryData, *faceData, *cellData, cellCount);
 
 		//Triangulate with Face data CREATION and Area Calc
+		auto triVertexData = make_shared<DataVector<glm::vec3>>(POINT);
 		DataVector<float> faceAreaData(FLOATVAL);
-		triangulate.Process(*vertexData, *indexData, *triVertexData, *faceIndexData, faceAreaData);
-
-		DataVector<glm::vec3> _cellCentoidsData(POINT);
-		auto cellCentroidsData = make_shared<DataVector<glm::vec3>>(_cellCentoidsData);
+		triangulate.Process(*vertexData, *indexData, *triVertexData, *faceData, faceAreaData);
 
 		// Calculate Cell centroids
-		calcCellCentroid.Process(*faceIndexData, *triVertexData, *cellData, *cellCentroidsData);
+		auto cellCentroidsData = make_shared<DataVector<glm::vec3>>(POINT);
+		calcCellCentroid.Process(*faceData, *triVertexData, *cellData, *cellCentroidsData);
 
 		// Calculate Cell Volumes
 		DataVector<float> cellVolumeData(FLOATVAL);
-		calcCellVolume.Process(*faceIndexData, *triVertexData, *cellData, *cellCentroidsData, cellVolumeData);
+		calcCellVolume.Process(*faceData, *triVertexData, *cellData, *cellCentroidsData, cellVolumeData);
 
 		//Creating Cumulative Distribution function
 		//vector<float> CDFData = calcCDF.Process(faceAreaData);
@@ -151,27 +146,26 @@ public:
 
 		// Face index Sampling ---------------------------------------------------------
 		// FaceIndex -> Sampled FaceIndex
-		DataVector<Face> _faceIndexSample(FACE);
-		auto faceIndexSample = make_shared<DataVector<Face>>(_faceIndexSample);
-
-		DataVector<Cell> _cellSample(CELL);
-		auto cellSample = make_shared<DataVector<Cell>>(_cellSample);
+		auto faceIndexSample = make_shared<DataVector<Face>>(FACE);
+		auto cellSample = make_shared<DataVector<Cell>>(CELL);
 
 		// CELL RECONSTRUCTION TEST
-		//reconstructCells.Process(*faceIndexData, *faceIndexSample, *cellData);
+		//reconstructCells.Process(*faceData, *faceIndexSample, *cellData);
 	
 		// UNIFORM SAMPLING
-		//uniformSample.Process(*faceIndexData, *faceIndexSample, 1.0); //UNIFORM
-		uniformSample.Process(*cellData, *cellSample, 0.05); //UNIFORM CELL SAMPLING
-		//map<float, int> histo = uniformSample.Process_DebugHistogram(*faceIndexData, *faceIndexSample, 0.1, faceAreaData);
+		//uniformSample.Process(*faceData, *faceIndexSample, 1.0); //UNIFORM
+		//uniformSample.Process(*cellData, *cellSample, 0.05); //UNIFORM CELL SAMPLING
+
+		//map<float, int> histo = uniformSample.Process_DebugHistogram(*faceData, *faceIndexSample, 0.1, faceAreaData);
 		
 		// INVERSE TRANSFORM SAMPLING
-		//invTransformSample.Process(CDFData, *faceIndexData, *faceIndexSample, 0.5); //INVERSE TRANSFORM
-		//invTransformSample.Process(CDFData, *cellData, *cellSample, 0.001); //INVERSE TRANSFORM CELL SAMPLING
-		//map<float, int> histo = invTransformSample.Process_DebugHistogram(CDFData, *faceIndexData, *faceIndexSample, 0.1, faceAreaData);
+		//invTransformSample.Process(CDFData, *faceData, *faceIndexSample, 0.5); //INVERSE TRANSFORM
+		invTransformSample.Process(CDFData, *cellData, *cellSample, 0.01); //INVERSE TRANSFORM CELL SAMPLING
+		
+		//map<float, int> histo = invTransformSample.Process_DebugHistogram(CDFData, *faceData, *faceIndexSample, 0.1, faceAreaData);
 
 		// SAMPLED CELL RECONSTRUCTION
-		reconstructCells.Process(*faceIndexData, *faceIndexSample, *cellSample);
+		reconstructCells.Process(*faceData, *faceIndexSample, *cellSample);
 
 		// Sampled FaceIndex -> TriVertexData
 		//DataVector<glm::vec3> triVertexSample = faceIndexTriangulate.Process(*triVertexData, *faceIndexSample);
