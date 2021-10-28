@@ -14,6 +14,7 @@ public:
 		{
 			Face newFace;
 			faceData.SetData(newFace);
+
 		}
 	}
 };

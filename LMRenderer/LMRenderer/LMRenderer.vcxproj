@@ -160,6 +160,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ToolFPSCamera.cpp" />
     <ClCompile Include="ToolOrbitCamera.cpp" />
+    <ClCompile Include=".cpp" />
     <ClCompile Include="VisGrid.cpp" />
     <ClCompile Include="VisGroup.cpp" />
     <ClCompile Include="VisPrimitive.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="ToolOrbitCamera.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="VisBase.h" />
+    <ClInclude Include="VisCell_bin.h" />
     <ClInclude Include="VisGrid.h" />
     <ClInclude Include="VisGroup.h" />
     <ClInclude Include="VisCellFacesTesting.h" />

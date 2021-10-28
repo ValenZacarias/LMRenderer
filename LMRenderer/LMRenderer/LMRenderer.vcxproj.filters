@@ -66,6 +66,9 @@
     <ClCompile Include="Debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include=".cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="difusse_fragment_shader.txt">
@@ -231,6 +234,9 @@
     </ClInclude>
     <ClInclude Include="DataBinFile.h">
       <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="VisCell_bin.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -11,6 +11,7 @@
 
 #include "shader_s.h"
 #include "Globals.h"
+#include "PMeshParser.h"
 
 #include "Tool.h"
 #include "ToolFPSCamera.h"
@@ -23,14 +24,25 @@
 #include "VisGrid.h"
 #include "VisPrimitive.h"
 #include "VisCellFacesTesting.h"
+#include "VisCell_bin.h"
 
 #include "DataStructureBase.h"
 #include "DataVector.h"
 #include "DataBinFile.h"
+#include "Face.h"
+#include "Cell.h"
 
 #include "PATriangulate.h"
-
-#include "PMeshParser.h"
+#include "PACalcNormals.h"
+#include "PAUniformSample.h"
+#include "PAInvTransformSample.h"
+#include "PAFaceIndexTriangulate.h"
+#include "PACalcCDF.h"
+#include "PAGenerateCells.h"
+#include "PAReconstructCells.h"
+#include "PACreateFaceData.h"
+#include "PACalcCellCentroid.h"
+#include "PACalcCellVolume.h"
 
 #include "main.h"
 
@@ -38,9 +50,20 @@ float lastFrame = 0.0f;
 
 GLFWwindow* window = NULL;
 
-
 int main()
 {
+	PATriangulate triangulate;
+	PACalcNormals calcnormals;
+	PAUniformSample uniformSample;
+	PAInvTransformSample invTransformSample;
+	PAFaceIndexTriangulate faceIndexTriangulate;
+	PACalcCDF calcCDF;
+	PAGenerateCells generateCells;
+	PAReconstructCells reconstructCells;
+	PACreateFaceData createFaces;
+	PACalcCellCentroid calcCellCentroid;
+	PACalcCellVolume calcCellVolume;
+
 	//CANVAS SETUP ----------------------------------------------------------------------------------------------------------
 	GLFWCanvas canvas = GLFWCanvas(screenWidth, screenHeight);
 	window = canvas.Init();
@@ -55,31 +78,17 @@ int main()
 	PMeshParser Parser = PMeshParser();
 
 	//auto DataIndex = Parser.ParseFaces("Meshes/testmesh_45e_faces.txt");
-	auto DataVertex = Parser.ParsePoints<DataBinFile<float>>("Meshes/testmesh_45e_points.txt");
-
-	float testfloat0 = DataVertex->GetData(0);
-	float testfloat1 = DataVertex->GetData(1);
-	float testfloat2 = DataVertex->GetData(2);
-	float testfloat3 = DataVertex->GetData(3);
-	float testfloat4 = DataVertex->GetData(4);
-	float testfloat5 = DataVertex->GetData(5);
-	float testfloat6 = DataVertex->GetData(6);
-	float testfloat7 = DataVertex->GetData(7);
-	float testfloat8 = DataVertex->GetData(8);
-	float testfloat9 = DataVertex->GetData(9);
-
-	__nop();
 	//auto DataOwner = Parser.ParseCells("Meshes/testmesh_45e_owner.txt");
 	//auto DataNeighbour= Parser.ParseCells("Meshes/testmesh_45e_neighbour.txt");
 	//int cellCount = Parser.ParseCellCount("Meshes/testmesh_45e_owner.txt");
 	//auto DataBoundary = Parser.ParseBoundary("Meshes/testmesh_45e_boundary.txt");
 
-	//auto DataIndex = Parser.ParseFaces("Meshes/sphere_3k_faces.txt");
-	//auto DataVertex = Parser.ParsePoints("Meshes/sphere_3k_points.txt");
-	//auto DataOwner = Parser.ParseCells("Meshes/sphere_3k_owner.txt");
-	//auto DataNeighbour = Parser.ParseCells("Meshes/sphere_3k_neighbour.txt");
-	//int cellCount = Parser.ParseCellCount("Meshes/sphere_3k_owner.txt");
-	//auto DataBoundary = Parser.ParseBoundary("Meshes/sphere_3k_boundary.txt");
+	auto DataIndex = Parser.ParseFaces("Meshes/sphere_3k_faces.txt");
+	auto DataVertex = Parser.ParsePoints("Meshes/sphere_3k_points.txt");
+	auto DataOwner = Parser.ParseCells("Meshes/sphere_3k_owner.txt");
+	auto DataNeighbour = Parser.ParseCells("Meshes/sphere_3k_neighbour.txt");
+	int cellCount = Parser.ParseCellCount("Meshes/sphere_3k_owner.txt");
+	auto DataBoundary = Parser.ParseBoundary("Meshes/sphere_3k_boundary.txt");
 
 	//auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
 	//auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
@@ -93,22 +102,35 @@ int main()
 	//auto DataOwner = Parser.ParseCells("Meshes/flange_mf_282k_owner.txt");
 	//auto DataNeighbour = Parser.ParseCells("Meshes/flange_mf_282k_neighbour.txt");
 	//int cellCount = Parser.ParseCellCount("Meshes/flange_mf_282k_owner.txt");
-	//auto DataBoundary1 = Parser.ParseBoundary<DataVector<int>>("Meshes/flange_mf_282k_boundary.txt");
-	//auto DataBoundary = Parser.ParseBoundary<DataBinFile<int>>("Meshes/flange_mf_282k_boundary.txt");
+	//auto DataBoundary = Parser.ParseBoundary("Meshes/flange_mf_282k_boundary.txt");
 
-	//int x = DataBoundary1->GetData(0);
+	// Data Processing PIPELINE
 
-	////int size = DataBoundary->GetSize();
-	//for (int i = 0; i < 7; i++)
-	//	cout << "read value = " << (int)DataBoundary->GetData(i) << endl;
+	// Initialize faceData with null faces
+	auto faceData = make_shared<DataVector<Face>>(FACE);
+	createFaces.Process(*DataOwner, *faceData);
 
-	//int test0 = DataBoundary->GetData(0);
-	//int test1 = DataBoundary->GetData(1);
-	//int test2 = DataBoundary->GetData(2);
-	//int test3 = DataBoundary->GetData(3);
-	//int test4 = DataBoundary->GetData(4);
-	//int test5 = DataBoundary->GetData(5);
-	//int test6 = DataBoundary->GetData(6);
+	// Generate cells
+	auto cellData = make_shared<DataVector<Cell>>(CELL);
+	generateCells.Process(*DataOwner, *DataNeighbour, *DataBoundary, *faceData, *cellData, cellCount);
+
+	//Triangulate with Face data CREATION and Area Calc
+	auto triVertexData = make_shared<DataVector<glm::vec3>>(POINT);
+	DataVector<float> faceAreaData(FLOATVAL);
+	triangulate.Process(*DataVertex, *DataIndex, *triVertexData, *faceData, faceAreaData);
+
+	auto faceDataBuffer = make_shared<DataVector<Face>>(FACE);
+
+	reconstructCells.Process(*faceData, *faceDataBuffer, *cellData);
+
+	auto triVertexBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, "bin/trivertex_test.bin");
+
+	if (!triVertexBuffer->FileExists())
+	{
+		faceIndexTriangulate.Process(*triVertexBuffer, *triVertexData, *faceDataBuffer);
+		triVertexBuffer->EndWrite();
+		triVertexBuffer->SaveFile();
+	}
 
 	//VISUALIZATIONS-----------------------------------------------------------------------------------------------------------
 	//VisCellFacesTesting<	shared_ptr<DataVector<float>>,
@@ -117,10 +139,13 @@ int main()
 	//				shared_ptr<DataVector<int>>,
 	//				shared_ptr<DataVector<int>>> VisCellFacesTesting(DataVertex, DataIndex, DataOwner, DataNeighbour, DataBoundary, cellCount);
 
-	VisGrid vizGrid = VisGrid();
+	
+	VisCell_bin<shared_ptr<DataBinFile<glm::vec3>>>VisCell_bin(triVertexBuffer, cellCount);
 
+	VisGrid vizGrid = VisGrid();
 	VisGroup MainGroupViz = VisGroup();
 	//MainGroupViz.visualizations.push_back(&VisCellFacesTesting);
+	MainGroupViz.visualizations.push_back(&VisCell_bin);
 	MainGroupViz.visualizations.push_back(&vizGrid);
 	canvas.SetupContext(&MainGroupViz);
 

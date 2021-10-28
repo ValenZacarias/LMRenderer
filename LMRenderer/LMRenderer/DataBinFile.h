@@ -13,15 +13,53 @@ using namespace std;
 template <class T> class DataBinFile : public DataStructureBase
 {
 private:
-	string filename = "test.bin"; // como puedo hacer para pasarle por parametro al nombre?
-	int testWrite = 74;
-	std::fstream file;
+	string filename;
+	fstream file;
+	bool existingFile = false;
 	int size = 0;
 
 public:
-	DataBinFile(DATATYPE type) : DataStructureBase(type)
+	DataBinFile(DATATYPE type, string name) : DataStructureBase(type)
 	{ 
-		file = std::fstream(filename, std::ios::in | std::ios::out | std::ios::binary);
+		filename = name;
+		file.open(filename, std::ios::out | std::ios::binary);
+
+		if (!file.is_open())
+		{
+			cout << name << " not found!" << endl;
+			file.open(filename, ios::out | ios::binary | ios::trunc);
+
+			if (!file.is_open())
+				cout << "CANT CREATE FILE" << endl;
+		}
+
+	}
+
+	bool FileExists() { return existingFile; }
+
+	void SaveFile()
+	{
+		file.flush();
+	}
+
+	bool EndWrite()
+	{
+		file.close();
+
+		if (!file.is_open())
+			return true;
+
+		return false;
+	}
+
+	bool StartRead()
+	{
+		file.open(filename, std::ios::in | std::ios::binary);
+
+		if (!file.is_open())
+			cout << "Could not open " << filename << " for read" << endl;  return false;
+
+		return true;	
 	}
 
 	void ReserveData(int count) { }
@@ -29,12 +67,6 @@ public:
 	T& GetData(int i) 
 	{ 
 		T dataAux;
-
-		if (!file.is_open())
-		{
-			cout << "FILE DONT EXISTS" << endl;
-			return dataAux;
-		}
 
 		file.seekg(i * sizeof(T));
 		file.read(reinterpret_cast<char*>(&dataAux), sizeof(dataAux));
@@ -51,12 +83,6 @@ public:
 
 	void SetData(T d) 
 	{ 
-		if (!file.is_open())
-		{
-			cout << "FILE DONT EXISTS" << endl;
-			return;
-		}
-
 		file.seekp(size * sizeof(T));
 		file.write(reinterpret_cast<char*>(&d), sizeof(d));
 		size++;

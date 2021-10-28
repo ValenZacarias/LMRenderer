@@ -146,30 +146,30 @@ public:
 
 		// Face index Sampling ---------------------------------------------------------
 		// FaceIndex -> Sampled FaceIndex
-		auto faceIndexSample = make_shared<DataVector<Face>>(FACE);
+		auto faceDataSample = make_shared<DataVector<Face>>(FACE);
 		auto cellSample = make_shared<DataVector<Cell>>(CELL);
 
 		// CELL RECONSTRUCTION TEST
-		//reconstructCells.Process(*faceData, *faceIndexSample, *cellData);
+		//reconstructCells.Process(*faceData, *faceDataSample, *cellData);
 	
 		// UNIFORM SAMPLING
-		//uniformSample.Process(*faceData, *faceIndexSample, 1.0); //UNIFORM
+		//uniformSample.Process(*faceData, *faceDataSample, 1.0); //UNIFORM
 		//uniformSample.Process(*cellData, *cellSample, 0.05); //UNIFORM CELL SAMPLING
 
-		//map<float, int> histo = uniformSample.Process_DebugHistogram(*faceData, *faceIndexSample, 0.1, faceAreaData);
+		//map<float, int> histo = uniformSample.Process_DebugHistogram(*faceData, *faceDataSample, 0.1, faceAreaData);
 		
 		// INVERSE TRANSFORM SAMPLING
-		//invTransformSample.Process(CDFData, *faceData, *faceIndexSample, 0.5); //INVERSE TRANSFORM
+		//invTransformSample.Process(CDFData, *faceData, *faceDataSample, 0.5); //INVERSE TRANSFORM
 		invTransformSample.Process(CDFData, *cellData, *cellSample, 0.01); //INVERSE TRANSFORM CELL SAMPLING
 		
-		//map<float, int> histo = invTransformSample.Process_DebugHistogram(CDFData, *faceData, *faceIndexSample, 0.1, faceAreaData);
+		//map<float, int> histo = invTransformSample.Process_DebugHistogram(CDFData, *faceData, *faceDataSample, 0.1, faceAreaData);
 
 		// SAMPLED CELL RECONSTRUCTION
-		reconstructCells.Process(*faceData, *faceIndexSample, *cellSample);
+		reconstructCells.Process(*faceData, *faceDataSample, *cellSample);
 
 		// Sampled FaceIndex -> TriVertexData
-		//DataVector<glm::vec3> triVertexSample = faceIndexTriangulate.Process(*triVertexData, *faceIndexSample);
-		DataVector<glm::vec3> triVertexSample = faceIndexTriangulate.Process(*triVertexData, *faceIndexSample);
+		//DataVector<glm::vec3> triVertexSample = faceIndexTriangulate.Process(*triVertexData, *faceDataSample);
+		DataVector<glm::vec3> triVertexSample = faceIndexTriangulate.Process(*triVertexData, *faceDataSample);
 		
 		// Non face index sampling ---------------------------------------------------------
 		//DataVector<glm::vec3> triVertexSample = uniformSample.Process(*triVertexData, 0.1f);

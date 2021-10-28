@@ -11,10 +11,18 @@ public:
 		DataVector<glm::vec3> normalData(NORMAL);
 
 		glm::vec3 normal;
+		glm::vec3 v0;
+		glm::vec3 v1;
+		glm::vec3 v2;
 
 		for (int i = 0; i < vertex.GetSize(); i+=3)
 		{
-			normal = glm::cross(vertex.GetData(i + 1) - vertex.GetData(i), vertex.GetData(i + 2) - vertex.GetData(i));
+			v0 = vertex.GetData(i);
+			v1 = vertex.GetData(i + 1);
+			v2 = vertex.GetData(i + 2);
+
+			//normal = glm::cross(vertex.GetData(i + 1) - vertex.GetData(i), vertex.GetData(i + 2) - vertex.GetData(i));
+			normal = glm::cross(v1 - v0, v2 - v0);
 
 			normalData.SetData(normal);
 			normalData.SetData(normal);
