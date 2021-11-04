@@ -17,3 +17,6 @@ int DataStructureCurrentIndex = 0;
 float CAMERA_SPEED = 6.25f;
 //float CAMERA_SPEED = 0.05f;
 bool firstMouse = true;
+bool PERSPECTIVE_CAM = false;
+
+float MESH_SCALE = 1.0f;

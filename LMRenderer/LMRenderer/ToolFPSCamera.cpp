@@ -33,8 +33,8 @@ void ToolFPSCamera::OnMouseMove(double xpos, double ypos)
 	cam->lastX = xpos;
 	cam->lastY = ypos;
 
-	cam->yoffset *= cam->sensitivity;
-	cam->xoffset *= cam->sensitivity;
+	cam->yoffset *= cam->sensitivity * (CAMERA_SPEED * 0.1);
+	cam->xoffset *= cam->sensitivity * (CAMERA_SPEED * 0.1);
 
 	cam->yaw += cam->xoffset;
 	cam->pitch += cam->yoffset;
@@ -49,20 +49,31 @@ void ToolFPSCamera::OnMouseMove(double xpos, double ypos)
 void ToolFPSCamera::OnKeyPress(std::string key)
 {
 	if (key == "W")
-		cam->cameraPos += cam->cameraSpeed * deltaTime * cam->cameraFront;
+	{
+		if (PERSPECTIVE_CAM)
+			cam->cameraPos += CAMERA_SPEED * deltaTime * cam->cameraFront;
+		else
+			cam->FOV -= 0.1 * CAMERA_SPEED;
+
+	}
 
 	if (key == "S")
-		cam->cameraPos -= cam->cameraSpeed * deltaTime * cam->cameraFront;
+	{
+		if(PERSPECTIVE_CAM)
+			cam->cameraPos -= CAMERA_SPEED * deltaTime * cam->cameraFront;
+		else
+			cam->FOV += 0.1 * CAMERA_SPEED;
+	}
 
 	if (key == "A")
-		cam->cameraPos -= glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp)) * cam->cameraSpeed * deltaTime;
+		cam->cameraPos -= glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp)) * CAMERA_SPEED * deltaTime;
 
 	if (key == "D")
-		cam->cameraPos += glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp)) * cam->cameraSpeed * deltaTime;
+		cam->cameraPos += glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp)) * CAMERA_SPEED * deltaTime;
 
 	if (key == "Q")
-		cam->cameraPos -= cam->cameraUp * cam->cameraSpeed * deltaTime;
+		cam->cameraPos -= cam->cameraUp * CAMERA_SPEED * deltaTime;
 
 	if (key == "E")
-		cam->cameraPos += cam->cameraUp * cam->cameraSpeed * deltaTime;
+		cam->cameraPos += cam->cameraUp * CAMERA_SPEED * deltaTime;
 }

@@ -18,8 +18,9 @@ private:
 	GLuint VBO;
 	int lenght;
 	Shader shader;
+	float scale;
 public:
-	VisGrid();
+	VisGrid(float scaleFactor);
 
 	void Render(Camera* cam) override;
 	int GenerateBuffers();

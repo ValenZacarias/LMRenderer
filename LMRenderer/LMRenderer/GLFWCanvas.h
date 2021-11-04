@@ -20,14 +20,23 @@ struct Camera
 	const float sensitivity = 0.1f;
 	const float cameraSpeed = CAMERA_SPEED;
 	float FOV = 45.0f;
+	//float FOV = 5.0f; //ortho close
+	//float FOV = 55.0f; //ortho far
 
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.1f, -0.1f);
-	//glm::vec3 cameraPos = glm::vec3(0.0f, 0.02f, 0.15f);
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	//glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 2.0f);
+	glm::vec3 cameraPos = glm::vec3(0.0f, 0.02f, 0.15f);
+	glm::vec3 cameraFront = glm::vec3(0.0f, -0.5f, -1.0f);
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
 	glm::vec3 direction = glm::vec3(0.0f);
 	glm::vec3 front = glm::vec3(0.0f);
+
+	//glm::mat4 projection = glm::perspective(glm::radians(FOV), 1280.0f / 720.0f, 0.01f, 5000.0f);
+	glm::mat4 projection = glm::ortho(-2.0f * FOV * 0.05f,
+										+2.0f * FOV * 0.05f,
+										-1.5f * FOV * 0.05f,
+										+1.5f * FOV * 0.05f,
+										-100.0f, 100.0f);
 
 	//Camera Pos and Rot settings
 	//float pitch = -45.0f;
@@ -65,6 +74,7 @@ public:
 	void ScrollHandler(double yoffset);
 	void FrameResizeHandler(int width, int height);
 	void KeyboardHandler(GLFWwindow* window);
+	shared_ptr<Camera> GetCurrentCamara();
 
 	GLFWwindow* Init();
 };

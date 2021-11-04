@@ -238,5 +238,11 @@
     <ClInclude Include="VisCell_bin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PACalcBoundingBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawLine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -43,6 +43,7 @@
 #include "PACreateFaceData.h"
 #include "PACalcCellCentroid.h"
 #include "PACalcCellVolume.h"
+#include "PACalcBoundingBox.h"
 
 #include "main.h"
 
@@ -63,6 +64,7 @@ int main()
 	PACreateFaceData createFaces;
 	PACalcCellCentroid calcCellCentroid;
 	PACalcCellVolume calcCellVolume;
+	PACalcBoundingBox calcBoundingBox;
 
 	//CANVAS SETUP ----------------------------------------------------------------------------------------------------------
 	GLFWCanvas canvas = GLFWCanvas(screenWidth, screenHeight);
@@ -78,24 +80,25 @@ int main()
 	PMeshParser Parser = PMeshParser();
 
 	//auto DataIndex = Parser.ParseFaces("Meshes/testmesh_45e_faces.txt");
+	//auto DataVertex = Parser.ParsePoints("Meshes/testmesh_45e_points.txt");
 	//auto DataOwner = Parser.ParseCells("Meshes/testmesh_45e_owner.txt");
 	//auto DataNeighbour= Parser.ParseCells("Meshes/testmesh_45e_neighbour.txt");
 	//int cellCount = Parser.ParseCellCount("Meshes/testmesh_45e_owner.txt");
 	//auto DataBoundary = Parser.ParseBoundary("Meshes/testmesh_45e_boundary.txt");
 
-	auto DataIndex = Parser.ParseFaces("Meshes/sphere_3k_faces.txt");
-	auto DataVertex = Parser.ParsePoints("Meshes/sphere_3k_points.txt");
-	auto DataOwner = Parser.ParseCells("Meshes/sphere_3k_owner.txt");
-	auto DataNeighbour = Parser.ParseCells("Meshes/sphere_3k_neighbour.txt");
-	int cellCount = Parser.ParseCellCount("Meshes/sphere_3k_owner.txt");
-	auto DataBoundary = Parser.ParseBoundary("Meshes/sphere_3k_boundary.txt");
+	//auto DataIndex = Parser.ParseFaces("Meshes/sphere_3k_faces.txt");
+	//auto DataVertex = Parser.ParsePoints("Meshes/sphere_3k_points.txt");
+	//auto DataOwner = Parser.ParseCells("Meshes/sphere_3k_owner.txt");
+	//auto DataNeighbour = Parser.ParseCells("Meshes/sphere_3k_neighbour.txt");
+	//int cellCount = Parser.ParseCellCount("Meshes/sphere_3k_owner.txt");
+	//auto DataBoundary = Parser.ParseBoundary("Meshes/sphere_3k_boundary.txt");
 
-	//auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
-	//auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
-	//auto DataOwner = Parser.ParseCells("Meshes/spheroid_45k_owner.txt");1
-	//auto DataNeighbour = Parser.ParseCells("Meshes/spheroid_45k_neighbour.txt");
-	//int cellCount = Parser.ParseCellCount("Meshes/spheroid_45k_owner.txt");
-	//auto DataBoundary = Parser.ParseBoundary("Meshes/spheroid_45k_boundary.txt");
+	auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
+	auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
+	auto DataOwner = Parser.ParseCells("Meshes/spheroid_45k_owner.txt");
+	auto DataNeighbour = Parser.ParseCells("Meshes/spheroid_45k_neighbour.txt");
+	int cellCount = Parser.ParseCellCount("Meshes/spheroid_45k_owner.txt");
+	auto DataBoundary = Parser.ParseBoundary("Meshes/spheroid_45k_boundary.txt");
 
 	//auto DataIndex = Parser.ParseFaces("Meshes/flange_mf_282k_faces.txt");
 	//auto DataVertex = Parser.ParsePoints("Meshes/flange_mf_282k_points.txt");
@@ -114,14 +117,22 @@ int main()
 	auto cellData = make_shared<DataVector<Cell>>(CELL);
 	generateCells.Process(*DataOwner, *DataNeighbour, *DataBoundary, *faceData, *cellData, cellCount);
 
-	//Triangulate with Face data CREATION and Area Calc
+	// Triangulate with Face data CREATION and Area Calc
 	auto triVertexData = make_shared<DataVector<glm::vec3>>(POINT);
 	DataVector<float> faceAreaData(FLOATVAL);
 	triangulate.Process(*DataVertex, *DataIndex, *triVertexData, *faceData, faceAreaData);
 
-	auto faceDataBuffer = make_shared<DataVector<Face>>(FACE);
+	// Calc Bounding Box
+	vector<glm::vec3> BBVertices{};
+	calcBoundingBox.Process(*DataVertex, BBVertices);
 
-	reconstructCells.Process(*faceData, *faceDataBuffer, *cellData);
+	// First sample
+	auto faceDataBuffer = make_shared<DataVector<Face>>(FACE);
+	auto cellDataSample = make_shared<DataVector<Cell>>(CELL);
+
+	uniformSample.Process(cellData, cellDataSample, 0.25);
+
+	reconstructCells.Process(*faceData, *faceDataBuffer, *cellDataSample);
 
 	auto triVertexBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, "bin/trivertex_test.bin");
 
@@ -131,29 +142,55 @@ int main()
 		triVertexBuffer->EndWrite();
 		triVertexBuffer->SaveFile();
 	}
+	VisCell_bin<shared_ptr<DataBinFile<glm::vec3>>> Vis_Sample_1(triVertexBuffer, cellCount, BBVertices);
 
-	//VISUALIZATIONS-----------------------------------------------------------------------------------------------------------
-	//VisCellFacesTesting<	shared_ptr<DataVector<float>>,
-	//				shared_ptr<vector<DataVector<int>>>,
-	//				shared_ptr<DataVector<int>>,
-	//				shared_ptr<DataVector<int>>,
-	//				shared_ptr<DataVector<int>>> VisCellFacesTesting(DataVertex, DataIndex, DataOwner, DataNeighbour, DataBoundary, cellCount);
+	//// Second sample
+	//auto faceDataBuffer2 = make_shared<DataVector<Face>>(FACE);
+	//auto cellDataSample2 = make_shared<DataVector<Cell>>(CELL);
+	//uniformSample.Process(cellData, cellDataSample2, 0.1);
 
-	
-	VisCell_bin<shared_ptr<DataBinFile<glm::vec3>>>VisCell_bin(triVertexBuffer, cellCount);
+	//reconstructCells.Process(*faceData, *faceDataBuffer2, *cellDataSample2);
+	////reconstructCells.Process(*faceData, *faceDataBuffer2, *cellData);
 
-	VisGrid vizGrid = VisGrid();
+	//auto triVertexBuffer2 = make_shared<DataBinFile<glm::vec3>>(POINT, "bin/trivertex_2_test.bin");
+
+	//if (!triVertexBuffer2->FileExists())
+	//{
+	//	faceIndexTriangulate.Process(*triVertexBuffer2, *triVertexData, *faceDataBuffer2);
+	//	triVertexBuffer2->EndWrite();
+	//	triVertexBuffer2->SaveFile();
+	//}
+
+	//VisCell_bin<shared_ptr<DataBinFile<glm::vec3>>> Vis_Sample_2(triVertexBuffer2, cellCount);
+
+	float gridScale = glm::length(BBVertices[1] - BBVertices[0]);
+	VisGrid vizGrid = VisGrid(gridScale);
 	VisGroup MainGroupViz = VisGroup();
-	//MainGroupViz.visualizations.push_back(&VisCellFacesTesting);
-	MainGroupViz.visualizations.push_back(&VisCell_bin);
+	MainGroupViz.visualizations.push_back(&Vis_Sample_1);
+	//MainGroupViz.visualizations.push_back(&Vis_Sample_2);
 	MainGroupViz.visualizations.push_back(&vizGrid);
 	canvas.SetupContext(&MainGroupViz);
 
+	//VISUALIZATIONS-----------------------------------------------------------------------------------------------------------
+//VisCellFacesTesting<	shared_ptr<DataVector<float>>,
+//				shared_ptr<vector<DataVector<int>>>,
+//				shared_ptr<DataVector<int>>,
+//				shared_ptr<DataVector<int>>,
+//				shared_ptr<DataVector<int>>> VisCellFacesTesting(DataVertex, DataIndex, DataOwner, DataNeighbour, DataBoundary, cellCount);
+	//MainGroupViz.visualizations.push_back(&VisCellFacesTesting);
+
+
 	float currentFrame = 0.0f;
+	float timer = 0.0f;
 	std::stringstream ss;
 	int nbFrames = 0;
 	double fps;
-	char title_string[11] = "LMRenderer";
+	char title_string[100] = "LMRenderer";
+
+	bool LoadOnce = true;
+	bool SendToGPUOnce = true;
+	bool UnloadFromGPUOnce = true;
+	bool UnloadFromRAMOnce = true;
 
 	//RENDER LOOP! -----------------------------------------------------------------------------------------
 	while (!glfwWindowShouldClose(window))
@@ -161,6 +198,54 @@ int main()
 		currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+		timer += deltaTime;
+		
+		
+
+		//cout << Vis_Sample_1.actualState << endl;
+
+		if ((int)timer > 0)
+		{
+			// Vis State change test
+			if ((int)timer%3 == 0 && LoadOnce)
+			{
+				//Vis_Sample_1.LoadFileData();
+				Vis_Sample_1.actualState = LOADED;
+
+				LoadOnce = false;
+			}
+
+			if ((int)timer%15 == 0 && SendToGPUOnce)
+			{
+				//Vis_Sample_1.RenderBuffers();
+				//Vis_Sample_2.LoadFileData();
+				Vis_Sample_1.actualState = RENDER;
+				cout << "VIS SAMPLE 1 SENT BUFFERS TO GPU" << endl;
+				//cout << "VIS SAMPLE 2 LOADED BUFFERS TRIS COUNT = " << Vis_Sample_2.GetTrisCount() << endl;
+
+				SendToGPUOnce = false;
+			}
+
+			//if ((int)timer%11 == 0 && UnloadFromGPUOnce)
+			//{
+			//	//Vis_Sample_1.DeleteGPUBuffers();
+			//	//Vis_Sample_2.RenderBuffers();
+			//	Vis_Sample_1.actualState = UNLOADED;
+			//	cout << "VIS SAMPLE 1 UNLOADED GPU BUFFERS" << endl;
+
+			//	UnloadFromGPUOnce = false;
+			//}
+
+			//if ((int)timer % 15 == 0 && UnloadFromRAMOnce)
+			//{
+			//	Vis_Sample_1.DeleteMemoryBuffers();
+			//	cout << "VIS SAMPLE 1 UNLOADED GPU BUFFERS - BUFFER SIZE: " << Vis_Sample_1.GetTrisCount() << endl;
+
+			//	UnloadFromRAMOnce = false;
+			//}
+		}
+		
+		//Vis_Sample_1.Update(&canvas.currentCamera);
 
 		canvas.KeyboardHandler(window);
 		canvas.Render();
@@ -172,7 +257,7 @@ int main()
 		if (deltaTime > 0.015)
 		{
 			fps = round((double)nbFrames / deltaTime);
-			sprintf_s(title_string, "FPS: %.1f", fps);
+			sprintf_s(title_string, "FPS: %.1f - time: %.2i", fps, (int)timer);
 			glfwSetWindowTitle(window, title_string);
 			lastFrame = currentFrame;
 			nbFrames = 0;

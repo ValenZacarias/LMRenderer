@@ -32,6 +32,7 @@ public:
 		return normalData;
 	}
 
+
 	template <class TVertex>
 	TVertex Process(TVertex &vertex)
 	{

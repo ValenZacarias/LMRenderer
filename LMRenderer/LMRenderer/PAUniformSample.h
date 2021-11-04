@@ -57,16 +57,16 @@ public:
 
 		std::random_device rd{};
 		std::mt19937 engine{ rd() };
-		std::uniform_int_distribution<long> dist{ 0, (dataSet.GetSize() - 1) };
+		std::uniform_int_distribution<long> dist{ 0, (dataSet->GetSize() - 1) };
 
 		long rnd;
-		long sampleSize = ceil(dataSet.GetSize() * reductionFactor);
-		sampledSet.ReserveData(sampleSize);
+		long sampleSize = ceil(dataSet->GetSize() * reductionFactor);
+		sampledSet->ReserveData(sampleSize);
 
 		for (int i = 0; i < sampleSize; i++)
 		{
 			rnd = dist(engine);
-			sampledSet.SetData(dataSet.GetData(rnd));
+			sampledSet->SetData(dataSet->GetData(rnd));
 		}
 	}
 

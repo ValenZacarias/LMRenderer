@@ -196,10 +196,12 @@
     <ClInclude Include="DataBinFile.h" />
     <ClInclude Include="DataStructureBase.h" />
     <ClInclude Include="DataVector.h" />
+    <ClInclude Include="DrawLine.h" />
     <ClInclude Include="GLFWCanvas.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="PACalcBoundingBox.h" />
     <ClInclude Include="PACalcCDF.h" />
     <ClInclude Include="PACalcCellCentroid.h" />
     <ClInclude Include="PACalcCellVolume.h" />

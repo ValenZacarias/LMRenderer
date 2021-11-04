@@ -77,11 +77,18 @@ GLFWwindow* GLFWCanvas::Init()
 
 	return window;
 }
+
 void GLFWCanvas::SetupContext(VisGroup* viz)
 {
 	currentViz = viz;
 	glEnable(GL_DEPTH_TEST);
 }
+
+shared_ptr<Camera> GLFWCanvas::GetCurrentCamara()
+{
+	return make_shared<Camera>(currentCamera);
+}
+
 void GLFWCanvas::Render()
 {
 	//Rendering config --------------------------------------------------------------------------------------
@@ -90,6 +97,7 @@ void GLFWCanvas::Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	currentViz->Render(&currentCamera);
+
 }
 
 void GLFWCanvas::SetCurrentTool(Tool* tool)
@@ -156,4 +164,22 @@ void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
 		
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		currentTool->OnKeyPress("E");
+
+	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+	{
+		CAMERA_SPEED += 0.5;
+		cout << "CAM SPEED = " << CAMERA_SPEED << endl;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+	{
+		CAMERA_SPEED -= 0.5;
+		cout << "CAM SPEED = " << CAMERA_SPEED << endl;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+	{
+		currentCamera.cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
+		cout << "RESET CAMERA POS" << endl;
+	}
 }

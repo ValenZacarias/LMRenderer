@@ -11,10 +11,12 @@
 #include "VisGrid.h"
 #include "GLFWCanvas.h"
 
-VisGrid::VisGrid()
+VisGrid::VisGrid(float s)
 {
     Shader lightShader("light_vertex_shader.txt", "light_fragment_shader.txt");
     this->shader = lightShader;
+    this->scale = s;
+
 	GenerateBuffers();
 }
 
@@ -22,7 +24,7 @@ void VisGrid::Render(Camera* cam)
 {
 	glBindVertexArray(VAO);
     shader.use();
-    shader.setVec3("lightColor", 0.9f, 0.9f, 0.9f);
+    shader.setVec3("lightColor", 0.3f, 0.3f, 0.4f);
     
     glm::mat4 view;
     view = glm::lookAt(cam->cameraPos, cam->cameraPos + cam->cameraFront, cam->cameraUp);
@@ -30,14 +32,22 @@ void VisGrid::Render(Camera* cam)
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
     glm::mat4 projection;
-    projection = glm::perspective(glm::radians(cam->FOV), 1280.0f / 720.0f, 0.005f, 1000.0f);
+    if (PERSPECTIVE_CAM)
+        projection = glm::perspective(glm::radians(cam->FOV), 1280.0f / 720.0f, 0.01f, 5000.0f);
+    else
+        projection = glm::ortho(-2.0f * cam->FOV * 0.05f,
+                                +2.0f * cam->FOV * 0.05f,
+                                -1.15f * cam->FOV * 0.05f,
+                                +1.15f * cam->FOV * 0.05f,
+                                -100.0f, 100.0f);
+
     unsigned int projectionLoc = glGetUniformLocation(shader.ID, "projection");
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 model = glm::mat4(1.0f * MESH_SCALE);
     unsigned int modelLoc = glGetUniformLocation(shader.ID, "model");
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
+    glLineWidth(1.0f);
 	glDrawElements(GL_LINES, lenght, GL_UNSIGNED_INT, NULL);
 
 	glBindVertexArray(0);
@@ -45,8 +55,8 @@ void VisGrid::Render(Camera* cam)
 
 int VisGrid::GenerateBuffers()
 {
-    int slices = 20;
-    float size = 10;
+    int slices = 15;
+    float size = 5 * scale;
     std::vector<glm::vec3> vertices;
     std::vector<glm::uvec4> indices;
 
@@ -76,6 +86,7 @@ int VisGrid::GenerateBuffers()
 
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), glm::value_ptr(vertices[0]), GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);

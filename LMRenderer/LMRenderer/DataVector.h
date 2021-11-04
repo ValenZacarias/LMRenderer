@@ -16,6 +16,7 @@ private:
 public:
 	//DataVector() : DataStructureBase(type) { }
 	DataVector(DATATYPE type) : DataStructureBase(type) { }
+	~DataVector() { data.clear(); }
 	//DataVector(DATATYPE type, const T* rawdata, int count) : DataStructureBase(type)
 	//{
 	//	for(int i = 0; i < count; i++) { data.push_back(rawdata[i]); }

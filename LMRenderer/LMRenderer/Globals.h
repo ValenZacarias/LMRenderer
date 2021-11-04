@@ -12,4 +12,6 @@ extern glm::vec3 lightPosition;
 extern int DataStructureCurrentIndex;
 
 extern float CAMERA_SPEED;
+extern float MESH_SCALE;
+extern bool	PERSPECTIVE_CAM;
 extern bool firstMouse;

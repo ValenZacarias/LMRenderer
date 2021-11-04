@@ -55,8 +55,8 @@ void ToolOrbitCamera::OnMouseMove(double xpos, double ypos)
 void ToolOrbitCamera::OnKeyPress(std::string key)
 {
 	if (key == "W")
-		cam->cameraPos += cam->cameraSpeed * deltaTime * cam->cameraFront;
+		cam->cameraPos += CAMERA_SPEED * deltaTime * cam->cameraFront;
 
 	if (key == "S")
-		cam->cameraPos -= cam->cameraSpeed * deltaTime * cam->cameraFront;
+		cam->cameraPos -= CAMERA_SPEED * deltaTime * cam->cameraFront;
 }
