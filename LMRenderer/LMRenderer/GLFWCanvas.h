@@ -31,17 +31,23 @@ struct Camera
 	glm::vec3 direction = glm::vec3(0.0f);
 	glm::vec3 front = glm::vec3(0.0f);
 
+	float ortho_zfar_fixed = 100;
+	float ortho_znear_fixed = -100;
+
+	float ortho_zfar = 100;
+	float ortho_znear = -100;
+
+	vector<float> ortho_frustrum = { -2.0f * FOV * 0.05f,	// left
+									+2.0f * FOV * 0.05f,	// right
+									-1.15f * FOV * 0.05f,	// bottom
+									+1.15f * FOV * 0.05f,	// top
+									ortho_znear,				// znear
+									ortho_zfar};				// zfar
+
 	//glm::mat4 projection = glm::perspective(glm::radians(FOV), 1280.0f / 720.0f, 0.01f, 5000.0f);
-	glm::mat4 projection = glm::ortho(-2.0f * FOV * 0.05f,
-										+2.0f * FOV * 0.05f,
-										-1.5f * FOV * 0.05f,
-										+1.5f * FOV * 0.05f,
-										-100.0f, 100.0f);
 
 	//Camera Pos and Rot settings
-	//float pitch = -45.0f;
 	float pitch = 0.0f;
-	//float yaw = -90.0f;
 	float yaw = 0.0f;
 	float lastX = 400.0f;
 	float lastY = 300.0f;
@@ -67,6 +73,7 @@ public:
 	GLFWCanvas(int screenWidth, int screenHeigth);
 	~GLFWCanvas() {};
 	void SetupContext(VisGroup* viz);
+	void UpdateFrustrum();
 	void Render();
 	void SetCurrentTool(Tool* tool);
 	void MouseLDragHandler(int button, int action, int mods);

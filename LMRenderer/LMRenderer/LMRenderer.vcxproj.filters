@@ -244,5 +244,8 @@
     <ClInclude Include="DrawLine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VisMeshZone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

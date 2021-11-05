@@ -86,19 +86,19 @@ int main()
 	//int cellCount = Parser.ParseCellCount("Meshes/testmesh_45e_owner.txt");
 	//auto DataBoundary = Parser.ParseBoundary("Meshes/testmesh_45e_boundary.txt");
 
-	//auto DataIndex = Parser.ParseFaces("Meshes/sphere_3k_faces.txt");
-	//auto DataVertex = Parser.ParsePoints("Meshes/sphere_3k_points.txt");
-	//auto DataOwner = Parser.ParseCells("Meshes/sphere_3k_owner.txt");
-	//auto DataNeighbour = Parser.ParseCells("Meshes/sphere_3k_neighbour.txt");
-	//int cellCount = Parser.ParseCellCount("Meshes/sphere_3k_owner.txt");
-	//auto DataBoundary = Parser.ParseBoundary("Meshes/sphere_3k_boundary.txt");
+	auto DataIndex = Parser.ParseFaces("Meshes/sphere_3k_faces.txt");
+	auto DataVertex = Parser.ParsePoints("Meshes/sphere_3k_points.txt");
+	auto DataOwner = Parser.ParseCells("Meshes/sphere_3k_owner.txt");
+	auto DataNeighbour = Parser.ParseCells("Meshes/sphere_3k_neighbour.txt");
+	int cellCount = Parser.ParseCellCount("Meshes/sphere_3k_owner.txt");
+	auto DataBoundary = Parser.ParseBoundary("Meshes/sphere_3k_boundary.txt");
 
-	auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
-	auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
-	auto DataOwner = Parser.ParseCells("Meshes/spheroid_45k_owner.txt");
-	auto DataNeighbour = Parser.ParseCells("Meshes/spheroid_45k_neighbour.txt");
-	int cellCount = Parser.ParseCellCount("Meshes/spheroid_45k_owner.txt");
-	auto DataBoundary = Parser.ParseBoundary("Meshes/spheroid_45k_boundary.txt");
+	//auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
+	//auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
+	//auto DataOwner = Parser.ParseCells("Meshes/spheroid_45k_owner.txt");
+	//auto DataNeighbour = Parser.ParseCells("Meshes/spheroid_45k_neighbour.txt");
+	//int cellCount = Parser.ParseCellCount("Meshes/spheroid_45k_owner.txt");
+	//auto DataBoundary = Parser.ParseBoundary("Meshes/spheroid_45k_boundary.txt");
 
 	//auto DataIndex = Parser.ParseFaces("Meshes/flange_mf_282k_faces.txt");
 	//auto DataVertex = Parser.ParsePoints("Meshes/flange_mf_282k_points.txt");
@@ -215,7 +215,7 @@ int main()
 				LoadOnce = false;
 			}
 
-			if ((int)timer%15 == 0 && SendToGPUOnce)
+			if ((int)timer%7 == 0 && SendToGPUOnce)
 			{
 				//Vis_Sample_1.RenderBuffers();
 				//Vis_Sample_2.LoadFileData();

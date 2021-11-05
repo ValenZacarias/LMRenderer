@@ -89,6 +89,16 @@ shared_ptr<Camera> GLFWCanvas::GetCurrentCamara()
 	return make_shared<Camera>(currentCamera);
 }
 
+void GLFWCanvas::UpdateFrustrum()
+{
+	currentCamera.ortho_frustrum[0] = -2.0f * currentCamera.FOV * 0.05f;
+	currentCamera.ortho_frustrum[1] = +2.0f * currentCamera.FOV * 0.05f;
+	currentCamera.ortho_frustrum[2] = -1.15f * currentCamera.FOV * 0.05f;
+	currentCamera.ortho_frustrum[3] = +1.15f * currentCamera.FOV * 0.05f;
+	currentCamera.ortho_frustrum[4] = currentCamera.ortho_znear;
+	currentCamera.ortho_frustrum[5] = currentCamera.ortho_zfar;
+}
+
 void GLFWCanvas::Render()
 {
 	//Rendering config --------------------------------------------------------------------------------------
@@ -134,6 +144,7 @@ void GLFWCanvas::MousePosHandler(double xpos, double ypos)
 void GLFWCanvas::ScrollHandler(double yoffset)
 {
 	currentTool->OnScroll(yoffset);
+	UpdateFrustrum();
 }
 
 void GLFWCanvas::FrameResizeHandler(int width, int height)
@@ -148,10 +159,16 @@ void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
 		glfwSetWindowShouldClose(window, true);
 	
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{ 
 		currentTool->OnKeyPress("W");
+		UpdateFrustrum();
+	}
 		
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
 		currentTool->OnKeyPress("S");
+		UpdateFrustrum();
+	}
 		
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		currentTool->OnKeyPress("A");
@@ -178,8 +195,19 @@ void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
-	{
 		currentCamera.cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
-		cout << "RESET CAMERA POS" << endl;
+
+	/*if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		currentCamera.ortho_znear += 1.0f;
+		UpdateFrustrum();
+		cout << "CAMERA ZFAR = " << currentCamera.ortho_zfar << endl;
 	}
+
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		currentCamera.ortho_znear -= 1.0f;
+		UpdateFrustrum();
+		cout << "CAMERA ZFAR = " << currentCamera.ortho_zfar << endl;
+	}*/
 }

@@ -224,6 +224,7 @@
     <ClInclude Include="VisGrid.h" />
     <ClInclude Include="VisGroup.h" />
     <ClInclude Include="VisCellFacesTesting.h" />
+    <ClInclude Include="VisMeshZone.h" />
     <ClInclude Include="VisPrimitive.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
