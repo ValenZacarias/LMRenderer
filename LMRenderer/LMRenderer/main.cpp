@@ -12,6 +12,8 @@
 #include "shader_s.h"
 #include "Globals.h"
 #include "PMeshParser.h"
+#include "DrawLine.h"
+#include "DrawPoint.h"
 
 #include "Tool.h"
 #include "ToolFPSCamera.h"
@@ -25,6 +27,7 @@
 #include "VisPrimitive.h"
 #include "VisCellFacesTesting.h"
 #include "VisCell_bin.h"
+#include "VisMeshZone.h"
 
 #include "DataStructureBase.h"
 #include "DataVector.h"
@@ -164,21 +167,16 @@ int main()
 	//VisCell_bin<shared_ptr<DataBinFile<glm::vec3>>> Vis_Sample_2(triVertexBuffer2, cellCount);
 
 	float gridScale = glm::length(BBVertices[1] - BBVertices[0]);
-	VisGrid vizGrid = VisGrid(gridScale);
+	
+	VisGrid VisGrid_1 = VisGrid(gridScale);
+	VisMeshZone VisZone_1(BBVertices);
 	VisGroup MainGroupViz = VisGroup();
+
+	MainGroupViz.visualizations.push_back(&VisZone_1);
 	MainGroupViz.visualizations.push_back(&Vis_Sample_1);
-	//MainGroupViz.visualizations.push_back(&Vis_Sample_2);
-	MainGroupViz.visualizations.push_back(&vizGrid);
+	MainGroupViz.visualizations.push_back(&VisGrid_1);
+
 	canvas.SetupContext(&MainGroupViz);
-
-	//VISUALIZATIONS-----------------------------------------------------------------------------------------------------------
-//VisCellFacesTesting<	shared_ptr<DataVector<float>>,
-//				shared_ptr<vector<DataVector<int>>>,
-//				shared_ptr<DataVector<int>>,
-//				shared_ptr<DataVector<int>>,
-//				shared_ptr<DataVector<int>>> VisCellFacesTesting(DataVertex, DataIndex, DataOwner, DataNeighbour, DataBoundary, cellCount);
-	//MainGroupViz.visualizations.push_back(&VisCellFacesTesting);
-
 
 	float currentFrame = 0.0f;
 	float timer = 0.0f;
@@ -192,6 +190,25 @@ int main()
 	bool UnloadFromGPUOnce = true;
 	bool UnloadFromRAMOnce = true;
 
+	// ORIGIN LINES
+	DrawLine xAxis(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 3.0f, glm::vec3(0.9, 0.1, 0.1));
+	DrawLine yAxis(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 3.0f, glm::vec3(0.1, 0.9, 0.1));
+	DrawLine zAxis(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), 3.0f, glm::vec3(0.1, 0.1, 0.9));
+
+
+	DrawPoint p0 = DrawPoint(BBVertices[0], 20.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	DrawPoint p1 = DrawPoint(BBVertices[1], 20.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	DrawPoint p2 = DrawPoint(BBVertices[2], 20.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+	DrawPoint p3 = DrawPoint(BBVertices[3], 20.0f, glm::vec3(0.5f, 0.5f, 0.5f));
+	DrawPoint p4 = DrawPoint(BBVertices[4], 20.0f, glm::vec3(0.0f, 1.0f, 1.0f));
+	DrawPoint p5 = DrawPoint(BBVertices[5], 20.0f, glm::vec3(1.0f, 0.0f, 1.0f));
+	DrawPoint p6 = DrawPoint(BBVertices[6], 20.0f, glm::vec3(1.0f, 1.0f, 0.0f));
+	DrawPoint p7 = DrawPoint(BBVertices[7], 20.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	//DrawLine xAxis(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f), 1.0f, glm::vec3(0.9, 0.1, 0.1));
+	//DrawLine yAxis(glm::vec3(0.0f, -10.0f, 0.0f), glm::vec3(0.0f, 10.0f, 0.0f), 1.0f, glm::vec3(0.1, 0.9, 0.1));
+	//DrawLine zAxis(glm::vec3(0.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 10.0f), 1.0f, glm::vec3(0.1, 0.1, 0.9));
+
 	//RENDER LOOP! -----------------------------------------------------------------------------------------
 	while (!glfwWindowShouldClose(window))
 	{
@@ -199,8 +216,6 @@ int main()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		timer += deltaTime;
-		
-		
 
 		//cout << Vis_Sample_1.actualState << endl;
 
@@ -210,7 +225,7 @@ int main()
 			if ((int)timer%3 == 0 && LoadOnce)
 			{
 				//Vis_Sample_1.LoadFileData();
-				Vis_Sample_1.actualState = LOADED;
+				//Vis_Sample_1.actualState = LOADED;
 
 				LoadOnce = false;
 			}
@@ -219,8 +234,8 @@ int main()
 			{
 				//Vis_Sample_1.RenderBuffers();
 				//Vis_Sample_2.LoadFileData();
-				Vis_Sample_1.actualState = RENDER;
-				cout << "VIS SAMPLE 1 SENT BUFFERS TO GPU" << endl;
+				//Vis_Sample_1.actualState = RENDER;
+				//cout << "VIS SAMPLE 1 SENT BUFFERS TO GPU" << endl;
 				//cout << "VIS SAMPLE 2 LOADED BUFFERS TRIS COUNT = " << Vis_Sample_2.GetTrisCount() << endl;
 
 				SendToGPUOnce = false;
@@ -249,6 +264,20 @@ int main()
 
 		canvas.KeyboardHandler(window);
 		canvas.Render();
+
+		p0.Render(&canvas.currentCamera);
+		p1.Render(&canvas.currentCamera);
+		p2.Render(&canvas.currentCamera);
+		p3.Render(&canvas.currentCamera);
+		p4.Render(&canvas.currentCamera);
+		p5.Render(&canvas.currentCamera);
+		p6.Render(&canvas.currentCamera);
+		p7.Render(&canvas.currentCamera);
+
+		// DRAW ORIGIN LINES
+		xAxis.Render(&canvas.currentCamera);
+		yAxis.Render(&canvas.currentCamera);
+		zAxis.Render(&canvas.currentCamera);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

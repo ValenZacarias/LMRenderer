@@ -26,28 +26,14 @@ void VisGrid::Render(Camera* cam)
     shader.use();
     shader.setVec3("lightColor", 0.3f, 0.3f, 0.4f);
     
-    glm::mat4 view;
-    view = glm::lookAt(cam->cameraPos, cam->cameraPos + cam->cameraFront, cam->cameraUp);
     unsigned int viewLoc = glGetUniformLocation(shader.ID, "view");
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(cam->view_matrix));
 
     glm::mat4 projection;
     if (PERSPECTIVE_CAM)
-        projection = glm::perspective(glm::radians(cam->FOV), 1280.0f / 720.0f, 0.01f, 5000.0f);
+        projection = cam->perspective_matrix;
     else
-    {
-        /*projection = glm::ortho(-2.0f * cam->FOV * 0.05f,
-                                +2.0f * cam->FOV * 0.05f,
-                                -1.15f * cam->FOV * 0.05f,
-                                +1.15f * cam->FOV * 0.05f,
-                                -100.0f, 100.0f);*/
-        projection = glm::ortho(cam->ortho_frustrum[0],
-                                cam->ortho_frustrum[1],
-                                cam->ortho_frustrum[2],
-                                cam->ortho_frustrum[3],
-                                cam->ortho_znear_fixed, 
-								cam->ortho_zfar_fixed);
-    }
+        projection = cam->ortho_matrix;
 
     unsigned int projectionLoc = glGetUniformLocation(shader.ID, "projection");
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));

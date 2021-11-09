@@ -11,6 +11,8 @@
 
 #include "shader_s.h"
 #include "GLFWCanvas.h"
+#include "DrawLine.h"
+#include "DrawPoint.h"
 
 #include "VisBase.h"
 #include "VisCell_bin.h"
@@ -23,13 +25,14 @@
 #include "PATriangulate.h"
 #include "PACalcNormals.h"
 
-enum STATE { FAR, NEAR, VISIBLE };
+enum ZONE_STATE { FAR, NEAR, VISIBLE };
 
 class VisMeshZone : public VisBase
 {
 private:
 
-	vector<shared_ptr<VisCell_bin<float>>>Sub_Visualizations;
+	//vector<shared_ptr<VisCell_bin<float>>>Sub_Visualizations;
+	std::vector<VisBase*> subVisualizations{};
 
 	long zoneTrisCount;
 	long renderedTrisCount;
@@ -42,29 +45,48 @@ private:
 	PACalcNormals calcnormals;
 
 	Shader shader_bb;
-	int lenght_bb;
+	int vertexCount_bb;
+
+	DrawPoint p4;
+	//DrawPoint p5;
+	//DrawPoint p6;
+	//DrawPoint p7;
+
+	float frus_dist_left = 0.0f;
+	float frus_dist_right = 0.0f;
+	float frus_dist_bottom = 0.0f;
+	float frus_dist_top = 0.0f;
 
 public:
 
-	STATE actualState;
+	ZONE_STATE actualState;
 
-	VisMeshZone()
+	VisMeshZone(vector<glm::vec3> bb)
 	{
-		//this->triVertexData = v;
-		//this->cellCount = cc;
 
-		//actualState = UNLOADED;
+		actualState = FAR;
 
-		//Shader diffuseShader("difusse_vertex_shader.txt", "difusse_fragment_shader.txt");
-		//this->shader = diffuseShader;
+		Shader standardShader("light_vertex_shader.txt", "light_fragment_shader.txt");
+		this->shader_bb = standardShader;
 
-		//Shader standardShader("light_vertex_shader.txt", "light_fragment_shader.txt");
-		//this->shader_bb = standardShader;
+		BoundingBox = bb;
 
-		//triVertexData->StartRead();
+		//glm::vec3 debugPoint = bb[6];
 
-		//BoundingBox = bb;
-		//RenderBuffers_BB();
+		//debugLine = DrawLine(BoundingBox[0], BoundingBox[0] + glm::vec3(0.001f, 0.0f, 0.0f), 4.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+		//p4 = DrawPoint(glm::vec3(0.0f), 20.0f, glm::vec3(1.0f, 0.0f, 1.0f));
+		//p4.setColor(glm::vec3(0.0f, 1.0f, 1.0f));
+
+		//p5 = DrawPoint(BoundingBox[5], 20.0f, glm::vec3(1.0f, 0.0f, 1.0f));
+		//p5.setColor(glm::vec3(1.0f, 0.0f, 1.0f));
+
+		//p6 = DrawPoint(BoundingBox[6], 20.0f, glm::vec3(1.0f, 1.0f, 0.0f));
+		//p6.setColor(glm::vec3(1.0f,1.0f, 0.0f));
+
+		//p7 = DrawPoint(BoundingBox[7], 20.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+		//p7.setColor(glm::vec3(1.0f,1.0f, 1.0f));
+
+		RenderBuffers_BB();
 
 	}
 
@@ -76,6 +98,41 @@ public:
 		cout << "VIS DELETED" << endl;
 	}
 
+	bool isInsidefrustum(Camera* cam)
+	{
+		//cout << glm::dot(BoundingBox[0] - cam->cameraPos, cam->frustum_leftPlane_normal) << " | "
+		//	 << glm::dot(BoundingBox[0] - cam->cameraPos, cam->frustum_rightPlane_normal) << " | "
+		//	 << glm::dot(BoundingBox[0] - cam->cameraPos, cam->frustum_bottomPlane_normal) << " | "
+		//	 << glm::dot(BoundingBox[0] - cam->cameraPos, cam->frustum_topPlane_normal) << endl;
+
+
+
+		for (int i = 0; i < BoundingBox.size(); i++)
+		{
+			frus_dist_left = glm::dot(cam->frustum_leftPlane_normal, BoundingBox[i] - cam->cameraPos) - cam->frustum_leftPlane_distance;
+			frus_dist_right = glm::dot(cam->frustum_rightPlane_normal, BoundingBox[i] - cam->cameraPos) - cam->frustum_rightPlane_distance;
+			frus_dist_bottom = glm::dot(cam->frustum_bottomPlane_normal, BoundingBox[i] - cam->cameraPos) - cam->frustum_bottomPlane_distance;
+			frus_dist_top = glm::dot(cam->frustum_topPlane_normal, BoundingBox[i] - cam->cameraPos) - cam->frustum_topPlane_distance;
+
+			//if (i == 0)
+			//	cout << "P" << i << ": l = " << frus_dist_left 
+			//					<< " | r = " << frus_dist_right 
+			//					<< " | b = " << frus_dist_bottom 
+			//					<< " | t = " << frus_dist_top << endl;
+
+			if ( frus_dist_left < 0.0f && frus_dist_right < 0.0f && frus_dist_bottom < 0.0f && frus_dist_top < 0.0f)
+			{
+				cout << "P" << i << ": l = " << frus_dist_left
+					<< " | r = " << frus_dist_right
+					<< " | b = " << frus_dist_bottom
+					<< " | t = " << frus_dist_top << endl;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	long GetTrisCount()
 	{
 		//return trisCount;
@@ -83,21 +140,32 @@ public:
 
 	void Render(Camera* cam)
 	{
+		//p4.Render(cam);
+		//p5.Render(cam);
+		//p6.Render(cam);
+		//p7.Render(cam);
+
+		if (isInsidefrustum(cam))
+			actualState = VISIBLE;
+		else
+			actualState = NEAR;
+
 		Render_BB(cam);
 
-		switch (actualState)
-		{
-		case FAR:
 
-			break;
-		case NEAR:
+		//switch (actualState)
+		//{
+		//case FAR:
 
-			break;
-		case VISIBLE:
+		//	break;
+		//case NEAR:
 
-		default:
-			_impossible(true);
-		}
+		//	break;
+		//case VISIBLE:
+
+		//default:
+		//	_impossible(true);
+		//}
 	}
 
 
@@ -166,30 +234,20 @@ public:
 		glBindBuffer(GL_ARRAY_BUFFER, VBO_BB);
 
 		shader_bb.use();
-		shader_bb.setVec3("lightColor", 0.3f, 0.6f, 0.1f);
 
-		glm::mat4 view_bb;
-		view_bb = glm::lookAt(cam->cameraPos, cam->cameraPos + cam->cameraFront, cam->cameraUp);
+		if(actualState != VISIBLE)
+			shader_bb.setVec3("lightColor", BB_COLOR_HIDDEN.r, BB_COLOR_HIDDEN.g, BB_COLOR_HIDDEN.b);
+		else
+			shader_bb.setVec3("lightColor", BB_COLOR_VISIBLE.r, BB_COLOR_VISIBLE.g, BB_COLOR_VISIBLE.b);
+
 		unsigned int viewLoc_bb = glGetUniformLocation(shader_bb.ID, "view");
-		glUniformMatrix4fv(viewLoc_bb, 1, GL_FALSE, glm::value_ptr(view_bb));
+		glUniformMatrix4fv(viewLoc_bb, 1, GL_FALSE, glm::value_ptr(cam->view_matrix));
 
 		glm::mat4 projection;
 		if (PERSPECTIVE_CAM)
-			projection = glm::perspective(glm::radians(cam->FOV), 1280.0f / 720.0f, 0.01f, 5000.0f);
+			projection = cam->perspective_matrix;
 		else
-		{
-			/*projection = glm::ortho(-2.0f * cam->FOV * 0.05f,
-									+2.0f * cam->FOV * 0.05f,
-									-1.15f * cam->FOV * 0.05f,
-									+1.15f * cam->FOV * 0.05f,
-									-100.0f, 100.0f);*/
-			projection = glm::ortho(cam->ortho_frustrum[0],
-									cam->ortho_frustrum[1],
-									cam->ortho_frustrum[2],
-									cam->ortho_frustrum[3],
-									cam->ortho_frustrum[4],
-									cam->ortho_frustrum[5]);
-		}
+			projection = cam->ortho_matrix;
 
 		unsigned int projectionLoc_bb = glGetUniformLocation(shader_bb.ID, "projection");
 		glUniformMatrix4fv(projectionLoc_bb, 1, GL_FALSE, glm::value_ptr(projection));
@@ -201,7 +259,7 @@ public:
 		glBindVertexArray(VAO_BB);
 
 		glLineWidth(2.0f);
-		glDrawElements(GL_LINES, lenght_bb, GL_UNSIGNED_INT, NULL);
+		glDrawElements(GL_LINES, vertexCount_bb, GL_UNSIGNED_INT, NULL);
 
 	}
 
@@ -235,7 +293,7 @@ public:
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		lenght_bb = indices.size();
+		vertexCount_bb = indices.size();
 
 		return 0;
 	}

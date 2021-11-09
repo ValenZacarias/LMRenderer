@@ -17,38 +17,43 @@ using namespace glm;
 
 //struct Camera;
 
-class DrawLine 
+class DrawPoint
 {
     Shader shader;
     GLuint VBO, VAO;
     vector<float> vertices;
     vec3 startPoint;
-    vec3 endPoint;
-    vec3 lineColor;
-    float lineWidth;
+    //vec3 endPoint;
+    vec3 pointColor;
+    float pointSize;
 
 public:
-    DrawLine() {};
-    DrawLine(vec3 start, vec3 end, float width, vec3 color = vec3(1.0f, 0.0f, 1.0f))
+    DrawPoint() {};
+    DrawPoint(vec3 start, float size, vec3 color = vec3(1.0f, 0.0f, 1.0f))
     {
-        glDeleteVertexArrays(1, &VAO);
-        glDeleteBuffers(1, &VBO);
 
         startPoint = start;
-        endPoint = end;
-        lineColor = color;
-        lineWidth = width;
+        //endPoint = end;
+        pointColor = color;
+        pointSize = size;
 
-        Shader lineShader("light_vertex_shader.txt", "light_fragment_shader.txt");
-        this->shader = lineShader;
+        Shader pointShader("light_vertex_shader.txt", "light_fragment_shader.txt");
+        this->shader = pointShader;
 
-        vertices = 
+        vertices =
         {
-             start.x, start.y, start.z,
-             end.x, end.y, end.z,
+             start.x, start.y, start.z
+             //end.x, end.y, end.z,
         };
 
         GenerateBuffers();
+    }
+
+    ~DrawPoint() {
+
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteBuffers(1, &VBO);
+        //glDeleteProgram(shaderProgram);
     }
 
     void GenerateBuffers()
@@ -67,11 +72,11 @@ public:
         glBindVertexArray(0);
     }
 
-    void Render(Camera* cam) 
+    void Render(Camera* cam)
     {
 
         shader.use();
-        shader.setVec3("lightColor", lineColor.r, lineColor.g, lineColor.b);
+        shader.setVec3("lightColor", pointColor.r, pointColor.g, pointColor.b);
 
         unsigned int viewLoc = glGetUniformLocation(shader.ID, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(cam->view_matrix));
@@ -92,19 +97,18 @@ public:
         //glUseProgram(shaderProgram);
         //glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "MVP"), 1, GL_FALSE, &MVP[0][0]);
         //glUniform3fv(glGetUniformLocation(shaderProgram, "color"), 1, &lineColor[0]);
-        glLineWidth(lineWidth);
+        //glLineWidth(lineWidth);
+        glPointSize(pointSize);
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_LINES, 0, 2);
+        glDrawArrays(GL_POINTS, 0, 1);
         //glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, NULL);
 
         //glBindVertexArray(0);
     }
 
-    ~DrawLine() {
 
-        glDeleteVertexArrays(1, &VAO);
-        glDeleteBuffers(1, &VBO);
-        //glDeleteProgram(shaderProgram);
+    void setColor(vec3 color) {
+        pointColor = color;
     }
 };

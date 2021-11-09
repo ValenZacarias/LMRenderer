@@ -15,3 +15,6 @@ extern float CAMERA_SPEED;
 extern float MESH_SCALE;
 extern bool	PERSPECTIVE_CAM;
 extern bool firstMouse;
+
+extern glm::vec3 BB_COLOR_HIDDEN;
+extern glm::vec3 BB_COLOR_VISIBLE;

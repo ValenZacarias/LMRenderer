@@ -19,8 +19,8 @@ public:
 	Shader(const char* vertexPath, const char* fragmentPath)
 	{
 
-		std::cout << "VS Path: " << vertexPath << std::endl;
-		std::cout << "FS Path: " << fragmentPath << std::endl;
+		//std::cout << "VS Path: " << vertexPath << std::endl;
+		//std::cout << "FS Path: " << fragmentPath << std::endl;
 
 		//Get the shaders source code from filepath
 		std::string vertexCode;

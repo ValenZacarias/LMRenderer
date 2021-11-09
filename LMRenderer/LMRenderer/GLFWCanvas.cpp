@@ -75,6 +75,8 @@ GLFWwindow* GLFWCanvas::Init()
 	glViewport(0, 0, width, heigth);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	
+
 	return window;
 }
 
@@ -89,14 +91,78 @@ shared_ptr<Camera> GLFWCanvas::GetCurrentCamara()
 	return make_shared<Camera>(currentCamera);
 }
 
-void GLFWCanvas::UpdateFrustrum()
+void GLFWCanvas::UpdateViewMatrix()
 {
-	currentCamera.ortho_frustrum[0] = -2.0f * currentCamera.FOV * 0.05f;
-	currentCamera.ortho_frustrum[1] = +2.0f * currentCamera.FOV * 0.05f;
-	currentCamera.ortho_frustrum[2] = -1.15f * currentCamera.FOV * 0.05f;
-	currentCamera.ortho_frustrum[3] = +1.15f * currentCamera.FOV * 0.05f;
-	currentCamera.ortho_frustrum[4] = currentCamera.ortho_znear;
-	currentCamera.ortho_frustrum[5] = currentCamera.ortho_zfar;
+	currentCamera.view_matrix = glm::lookAt(currentCamera.cameraPos,
+		currentCamera.cameraPos + currentCamera.cameraFront,
+		currentCamera.cameraUp);
+}
+
+void GLFWCanvas::UpdatefrustumPlanes()
+{
+	//cout << "Camera Front: " << currentCamera.cameraFront.x << " " << currentCamera.cameraFront.y << " " << currentCamera.cameraFront.z << endl;
+	if (PERSPECTIVE_CAM)
+	{
+
+		currentCamera.halfVSide = currentCamera.perspective_zfar * tanf(currentCamera.FOV * 0.5f);
+		currentCamera.halfHSide = currentCamera.halfVSide * (screenWidth / screenHeight);
+		currentCamera.frontMultFar = currentCamera.perspective_zfar * currentCamera.cameraFront;
+
+		currentCamera.frustum_leftPlane_normal =  glm::cross(
+			currentCamera.frontMultFar - (currentCamera.cameraRight * currentCamera.halfHSide),
+			currentCamera.cameraUp);
+
+		currentCamera.frustum_rightPlane_normal = glm::cross(
+			currentCamera.cameraUp,
+			currentCamera.frontMultFar + (currentCamera.cameraRight * currentCamera.halfHSide));
+
+		currentCamera.frustum_bottomPlane_normal = glm::cross(
+			currentCamera.frontMultFar + (currentCamera.cameraUp * currentCamera.halfVSide),
+			currentCamera.cameraRight);
+
+		currentCamera.frustum_topPlane_normal = glm::cross(
+			currentCamera.cameraRight,
+			currentCamera.frontMultFar - (currentCamera.cameraUp * currentCamera.halfVSide));
+
+		//currentCamera.frustum_leftPlane_distance	= glm::dot(currentCamera.cameraPos, currentCamera.frustum_leftPlane_normal);
+		//currentCamera.frustum_rightPlane_distance	= glm::dot(currentCamera.cameraPos, currentCamera.frustum_rightPlane_normal);
+		//currentCamera.frustum_bottomPlane_distance	= glm::dot(currentCamera.cameraPos, currentCamera.frustum_bottomPlane_normal);
+		//currentCamera.frustum_topPlane_distance		= glm::dot(currentCamera.cameraPos, currentCamera.frustum_topPlane_normal);
+		
+		// Funciona solamente en z- y x-
+		currentCamera.frustum_leftPlane_distance	= glm::distance(currentCamera.cameraPos, glm::vec3(0.0f));
+		currentCamera.frustum_rightPlane_distance	= glm::distance(currentCamera.cameraPos, glm::vec3(0.0f));
+		currentCamera.frustum_bottomPlane_distance	= glm::distance(currentCamera.cameraPos, glm::vec3(0.0f));
+		currentCamera.frustum_topPlane_distance		= glm::distance(currentCamera.cameraPos, glm::vec3(0.0f));
+	}
+}
+
+void GLFWCanvas::Updatefrustum()
+{
+
+	// ORTHOGONAL
+	currentCamera.ortho_frustum[0] = -2.0f * currentCamera.FOV * 0.05f;
+	currentCamera.ortho_frustum[1] = +2.0f * currentCamera.FOV * 0.05f;
+	currentCamera.ortho_frustum[2] = -1.15f * currentCamera.FOV * 0.05f;
+	currentCamera.ortho_frustum[3] = +1.15f * currentCamera.FOV * 0.05f;
+	currentCamera.ortho_frustum[4] = currentCamera.ortho_znear;
+	currentCamera.ortho_frustum[5] = currentCamera.ortho_zfar;
+
+	currentCamera.ortho_matrix = glm::ortho(currentCamera.ortho_frustum[0],
+											currentCamera.ortho_frustum[1],
+											currentCamera.ortho_frustum[2],
+											currentCamera.ortho_frustum[3],
+											currentCamera.ortho_frustum[4],
+											currentCamera.ortho_frustum[5]);
+
+	// PERSPECTIVE
+	currentCamera.perspective_matrix = glm::perspective(glm::radians(currentCamera.FOV), 
+														(float)screenWidth / (float)screenHeight, 
+														currentCamera.perspective_znear, 
+														currentCamera.perspective_zfar);
+	
+	UpdatefrustumPlanes();
+
 }
 
 void GLFWCanvas::Render()
@@ -106,6 +172,9 @@ void GLFWCanvas::Render()
 	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	
+	UpdatefrustumPlanes();
+
 	currentViz->Render(&currentCamera);
 
 }
@@ -127,29 +196,30 @@ void GLFWCanvas::MouseLDragHandler(int button, int action, int mods)
 	{
 		currentTool->OnDrag(RELEASE);
 	}
+	UpdateViewMatrix();
 }
 
 void GLFWCanvas::MousePosHandler(double xpos, double ypos)
 {
-	if (this == nullptr)
-	{
-		std::cout << "CANVAS NULL" << std::endl;
-		return;
-	}
 
 	if(currentTool != nullptr)
 		currentTool->OnMouseMove(xpos, ypos);
+
+	UpdateViewMatrix();
+	UpdatefrustumPlanes();
 }
 
 void GLFWCanvas::ScrollHandler(double yoffset)
 {
 	currentTool->OnScroll(yoffset);
-	UpdateFrustrum();
+	Updatefrustum();
+	UpdatefrustumPlanes();
 }
 
 void GLFWCanvas::FrameResizeHandler(int width, int height)
 {
 	glViewport(0, 0, width, height);
+	UpdatefrustumPlanes();
 }
 
 void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
@@ -161,13 +231,13 @@ void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{ 
 		currentTool->OnKeyPress("W");
-		UpdateFrustrum();
+		Updatefrustum();
 	}
 		
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		currentTool->OnKeyPress("S");
-		UpdateFrustrum();
+		Updatefrustum();
 	}
 		
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -197,17 +267,29 @@ void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
 		currentCamera.cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	/*if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-		currentCamera.ortho_znear += 1.0f;
-		UpdateFrustrum();
-		cout << "CAMERA ZFAR = " << currentCamera.ortho_zfar << endl;
+			PERSPECTIVE_CAM = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+	{
+		PERSPECTIVE_CAM = false;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		currentCamera.ortho_znear += 0.1f;
+		Updatefrustum();
+		//cout << "CAMERA ZFAR = " << currentCamera.ortho_zfar << endl;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 	{
-		currentCamera.ortho_znear -= 1.0f;
-		UpdateFrustrum();
-		cout << "CAMERA ZFAR = " << currentCamera.ortho_zfar << endl;
-	}*/
+		currentCamera.ortho_znear -= 0.1f;
+		Updatefrustum();
+		//cout << "CAMERA ZFAR = " << currentCamera.ortho_zfar << endl;
+	}
+
+	UpdateViewMatrix();
+	Updatefrustum();
 }
