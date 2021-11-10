@@ -38,6 +38,7 @@ private:
 	long renderedTrisCount;
 
 	vector<glm::vec3> BoundingBox;
+	glm::vec3 Centroid;
 	GLuint VBO_BB;
 	GLuint VAO_BB;
 	GLuint EBO_BB;
@@ -71,20 +72,11 @@ public:
 
 		BoundingBox = bb;
 
-		//glm::vec3 debugPoint = bb[6];
-
-		//debugLine = DrawLine(BoundingBox[0], BoundingBox[0] + glm::vec3(0.001f, 0.0f, 0.0f), 4.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-		//p4 = DrawPoint(glm::vec3(0.0f), 20.0f, glm::vec3(1.0f, 0.0f, 1.0f));
-		//p4.setColor(glm::vec3(0.0f, 1.0f, 1.0f));
-
-		//p5 = DrawPoint(BoundingBox[5], 20.0f, glm::vec3(1.0f, 0.0f, 1.0f));
-		//p5.setColor(glm::vec3(1.0f, 0.0f, 1.0f));
-
-		//p6 = DrawPoint(BoundingBox[6], 20.0f, glm::vec3(1.0f, 1.0f, 0.0f));
-		//p6.setColor(glm::vec3(1.0f,1.0f, 0.0f));
-
-		//p7 = DrawPoint(BoundingBox[7], 20.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-		//p7.setColor(glm::vec3(1.0f,1.0f, 1.0f));
+		for (int i = 0; i < BoundingBox.size(); i++)
+		{
+			Centroid = Centroid + BoundingBox[i];
+		}
+		Centroid /= 8;
 
 		RenderBuffers_BB();
 
@@ -100,32 +92,13 @@ public:
 
 	bool isInsidefrustum(Camera* cam)
 	{
-		//cout << glm::dot(BoundingBox[0] - cam->cameraPos, cam->frustum_leftPlane_normal) << " | "
-		//	 << glm::dot(BoundingBox[0] - cam->cameraPos, cam->frustum_rightPlane_normal) << " | "
-		//	 << glm::dot(BoundingBox[0] - cam->cameraPos, cam->frustum_bottomPlane_normal) << " | "
-		//	 << glm::dot(BoundingBox[0] - cam->cameraPos, cam->frustum_topPlane_normal) << endl;
-
-
+		if (cam->pIsInsideFrustrum(Centroid))
+			return true;
 
 		for (int i = 0; i < BoundingBox.size(); i++)
 		{
-			frus_dist_left = glm::dot(cam->frustum_leftPlane_normal, BoundingBox[i] - cam->cameraPos) - cam->frustum_leftPlane_distance;
-			frus_dist_right = glm::dot(cam->frustum_rightPlane_normal, BoundingBox[i] - cam->cameraPos) - cam->frustum_rightPlane_distance;
-			frus_dist_bottom = glm::dot(cam->frustum_bottomPlane_normal, BoundingBox[i] - cam->cameraPos) - cam->frustum_bottomPlane_distance;
-			frus_dist_top = glm::dot(cam->frustum_topPlane_normal, BoundingBox[i] - cam->cameraPos) - cam->frustum_topPlane_distance;
-
-			//if (i == 0)
-			//	cout << "P" << i << ": l = " << frus_dist_left 
-			//					<< " | r = " << frus_dist_right 
-			//					<< " | b = " << frus_dist_bottom 
-			//					<< " | t = " << frus_dist_top << endl;
-
-			if ( frus_dist_left < 0.0f && frus_dist_right < 0.0f && frus_dist_bottom < 0.0f && frus_dist_top < 0.0f)
+			if ( cam->pIsInsideFrustrum(BoundingBox[i]))
 			{
-				cout << "P" << i << ": l = " << frus_dist_left
-					<< " | r = " << frus_dist_right
-					<< " | b = " << frus_dist_bottom
-					<< " | t = " << frus_dist_top << endl;
 				return true;
 			}
 		}

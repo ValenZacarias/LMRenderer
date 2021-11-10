@@ -21,12 +21,14 @@ void ToolFPSCamera::OnDrag(MouseState state)
 
 void ToolFPSCamera::OnMouseMove(double xpos, double ypos)
 {
+
 	if (firstMouse) // initially set to true 
 	{
 		cam->lastX = xpos;
 		cam->lastY = ypos;
 		firstMouse = false;
 	}
+
 	cam->xoffset = xpos - cam->lastX;
 	cam->yoffset = cam->lastY - ypos;
 
@@ -39,11 +41,15 @@ void ToolFPSCamera::OnMouseMove(double xpos, double ypos)
 	cam->yaw += cam->xoffset;
 	cam->pitch += cam->yoffset;
 
-	cam->front.x = cos(glm::radians(cam->yaw)) * cos(glm::radians(cam->pitch));
-	cam->front.y = sin(glm::radians(cam->pitch));
-	cam->front.z = sin(glm::radians(cam->yaw)) * cos(glm::radians(cam->pitch));
+	// Calcular right y front aca, no hacerlos atributos de camera
 
-	cam->cameraFront = glm::normalize(cam->front);
+	float front_x = cos(glm::radians(cam->yaw)) * cos(glm::radians(cam->pitch));
+	float front_y = sin(glm::radians(cam->pitch));
+	float front_z = sin(glm::radians(cam->yaw)) * cos(glm::radians(cam->pitch));
+
+	cam->cameraFront = glm::normalize(glm::vec3(front_x, front_y, front_z));
+	cam->cameraRight = glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp));
+	cam->cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
 void ToolFPSCamera::OnKeyPress(std::string key)
@@ -66,10 +72,12 @@ void ToolFPSCamera::OnKeyPress(std::string key)
 	}
 
 	if (key == "A")
-		cam->cameraPos -= glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp)) * CAMERA_SPEED * deltaTime;
+		cam->cameraPos -= cam->cameraRight * CAMERA_SPEED * deltaTime;
+		//cam->cameraPos -= glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp)) * CAMERA_SPEED * deltaTime;
 
 	if (key == "D")
-		cam->cameraPos += glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp)) * CAMERA_SPEED * deltaTime;
+		cam->cameraPos += cam->cameraRight * CAMERA_SPEED * deltaTime;
+		//cam->cameraPos += glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp)) * CAMERA_SPEED * deltaTime;
 
 	if (key == "Q")
 		cam->cameraPos -= cam->cameraUp * CAMERA_SPEED * deltaTime;

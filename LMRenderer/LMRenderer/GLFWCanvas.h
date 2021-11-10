@@ -23,19 +23,15 @@ struct Camera
 	//float FOV = 5.0f; //ortho close
 	//float FOV = 55.0f; //ortho far
 
-	//glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 2.0f);
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.02f, 0.15f);
+	glm::vec3 cameraPos = glm::vec3(0.0f, 3.0f, 6.0f);
+	//glm::vec3 cameraPos = glm::vec3(0.0f, 0.02f, 0.15f);
 	glm::vec3 cameraFront = glm::vec3(0.0f, -0.5f, -1.0f);
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
-	glm::vec3 direction = glm::vec3(0.0f);
-	glm::vec3 front = glm::vec3(0.0f);
+	//glm::vec3 front = glm::vec3(0.0f);
 
 	// MATRIX
 	glm::mat4 view_matrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-
-	float ortho_zfar_fixed = 100;
-	float ortho_znear_fixed = -100;
 
 	float ortho_zfar = 100;
 	float ortho_znear = -100;
@@ -47,8 +43,8 @@ struct Camera
 									+2.0f * FOV * 0.05f,	// right
 									-1.15f * FOV * 0.05f,	// bottom
 									+1.15f * FOV * 0.05f,	// top
-									ortho_znear,				// znear
-									ortho_zfar};				// zfar
+									ortho_znear,			// znear
+									ortho_zfar};			// zfar
 
 	glm::mat4 ortho_matrix = glm::ortho(ortho_frustum[0],
 										ortho_frustum[1],
@@ -60,27 +56,29 @@ struct Camera
 	glm::mat4 perspective_matrix = glm::perspective(glm::radians(FOV), (float)screenWidth / (float)screenHeight, perspective_znear, perspective_zfar);
 
 	// frustum
-	float halfVSide = 0.0f;
-	float halfHSide = 0.0f;
-	glm::vec3 frontMultFar = perspective_zfar * cameraFront;
-
 	glm::vec3 frustum_leftPlane_normal = glm::vec3(0.0f);
 	glm::vec3 frustum_rightPlane_normal = glm::vec3(0.0f);
 	glm::vec3 frustum_bottomPlane_normal = glm::vec3(0.0f);
 	glm::vec3 frustum_topPlane_normal = glm::vec3(0.0f);
 
-	float frustum_leftPlane_distance = 0.0f;
-	float frustum_rightPlane_distance = 0.0f;
-	float frustum_bottomPlane_distance = 0.0f;
-	float frustum_topPlane_distance = 0.0f;
-
 	//Camera Pos and Rot settings
-	float pitch = 0.0f;
-	float yaw = 0.0f;
-	float lastX = 400.0f;
-	float lastY = 300.0f;
+	float pitch = -26.5f;
+	float yaw = -90.0f;
+	float lastX = 0.0f;
+	float lastY = 0.0f;
 	float xoffset = 0.0f;
 	float yoffset = 0.0f;
+
+	bool pIsInsideFrustrum(glm::vec3 point)
+	{
+		if (glm::dot(frustum_leftPlane_normal, point - cameraPos) < 0.0f &&
+			glm::dot(frustum_rightPlane_normal, point - cameraPos) < 0.0f &&
+			glm::dot(frustum_bottomPlane_normal, point - cameraPos) < 0.0f &&
+			glm::dot(frustum_topPlane_normal, point - cameraPos) < 0.0f)
+			return true;
+		else
+			return false;
+	}
 };
 
 class GLFWCanvas
@@ -103,7 +101,7 @@ public:
 	void SetupContext(VisGroup* viz);
 	void UpdateViewMatrix();
 	void UpdatefrustumPlanes();
-	void Updatefrustum();
+	void UpdatefrustumMatrix();
 	void Render();
 	void SetCurrentTool(Tool* tool);
 	void MouseLDragHandler(int button, int action, int mods);

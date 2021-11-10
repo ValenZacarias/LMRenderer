@@ -100,44 +100,25 @@ void GLFWCanvas::UpdateViewMatrix()
 
 void GLFWCanvas::UpdatefrustumPlanes()
 {
-	//cout << "Camera Front: " << currentCamera.cameraFront.x << " " << currentCamera.cameraFront.y << " " << currentCamera.cameraFront.z << endl;
-	if (PERSPECTIVE_CAM)
-	{
+	glm::vec3 camRight = glm::normalize(glm::cross(currentCamera.cameraFront, currentCamera.cameraUp));
+	glm::vec3 camUp = glm::normalize(glm::cross(currentCamera.cameraFront, camRight));
+	float scaleCorrection = 1.7f;
 
-		currentCamera.halfVSide = currentCamera.perspective_zfar * tanf(currentCamera.FOV * 0.5f);
-		currentCamera.halfHSide = currentCamera.halfVSide * (screenWidth / screenHeight);
-		currentCamera.frontMultFar = currentCamera.perspective_zfar * currentCamera.cameraFront;
+	float halfVSide = currentCamera.perspective_zfar * tanf(glm::radians(currentCamera.FOV) * 0.5f) * scaleCorrection;
+	float halfHSide = halfVSide * (screenWidth / screenHeight) * scaleCorrection;
+	glm::vec3 frontMultFar = currentCamera.perspective_zfar * currentCamera.cameraFront;
 
-		currentCamera.frustum_leftPlane_normal =  glm::cross(
-			currentCamera.frontMultFar - (currentCamera.cameraRight * currentCamera.halfHSide),
-			currentCamera.cameraUp);
+	currentCamera.frustum_leftPlane_normal = - glm::cross( camUp, frontMultFar - (camRight * halfVSide));
 
-		currentCamera.frustum_rightPlane_normal = glm::cross(
-			currentCamera.cameraUp,
-			currentCamera.frontMultFar + (currentCamera.cameraRight * currentCamera.halfHSide));
+	currentCamera.frustum_rightPlane_normal = - glm::cross( frontMultFar + (camRight * halfVSide), camUp);
 
-		currentCamera.frustum_bottomPlane_normal = glm::cross(
-			currentCamera.frontMultFar + (currentCamera.cameraUp * currentCamera.halfVSide),
-			currentCamera.cameraRight);
+	currentCamera.frustum_bottomPlane_normal = glm::cross( frontMultFar + (camUp * halfHSide), camRight);
 
-		currentCamera.frustum_topPlane_normal = glm::cross(
-			currentCamera.cameraRight,
-			currentCamera.frontMultFar - (currentCamera.cameraUp * currentCamera.halfVSide));
+	currentCamera.frustum_topPlane_normal = glm::cross( camRight, frontMultFar - (camUp * halfHSide));
 
-		//currentCamera.frustum_leftPlane_distance	= glm::dot(currentCamera.cameraPos, currentCamera.frustum_leftPlane_normal);
-		//currentCamera.frustum_rightPlane_distance	= glm::dot(currentCamera.cameraPos, currentCamera.frustum_rightPlane_normal);
-		//currentCamera.frustum_bottomPlane_distance	= glm::dot(currentCamera.cameraPos, currentCamera.frustum_bottomPlane_normal);
-		//currentCamera.frustum_topPlane_distance		= glm::dot(currentCamera.cameraPos, currentCamera.frustum_topPlane_normal);
-		
-		// Funciona solamente en z- y x-
-		currentCamera.frustum_leftPlane_distance	= glm::distance(currentCamera.cameraPos, glm::vec3(0.0f));
-		currentCamera.frustum_rightPlane_distance	= glm::distance(currentCamera.cameraPos, glm::vec3(0.0f));
-		currentCamera.frustum_bottomPlane_distance	= glm::distance(currentCamera.cameraPos, glm::vec3(0.0f));
-		currentCamera.frustum_topPlane_distance		= glm::distance(currentCamera.cameraPos, glm::vec3(0.0f));
-	}
 }
 
-void GLFWCanvas::Updatefrustum()
+void GLFWCanvas::UpdatefrustumMatrix()
 {
 
 	// ORTHOGONAL
@@ -160,23 +141,16 @@ void GLFWCanvas::Updatefrustum()
 														(float)screenWidth / (float)screenHeight, 
 														currentCamera.perspective_znear, 
 														currentCamera.perspective_zfar);
-	
-	UpdatefrustumPlanes();
-
 }
 
 void GLFWCanvas::Render()
 {
 	//Rendering config --------------------------------------------------------------------------------------
-
 	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
-	UpdatefrustumPlanes();
-
 	currentViz->Render(&currentCamera);
-
 }
 
 void GLFWCanvas::SetCurrentTool(Tool* tool)
@@ -196,6 +170,8 @@ void GLFWCanvas::MouseLDragHandler(int button, int action, int mods)
 	{
 		currentTool->OnDrag(RELEASE);
 	}
+	UpdatefrustumPlanes();
+	UpdatefrustumMatrix();
 	UpdateViewMatrix();
 }
 
@@ -205,21 +181,25 @@ void GLFWCanvas::MousePosHandler(double xpos, double ypos)
 	if(currentTool != nullptr)
 		currentTool->OnMouseMove(xpos, ypos);
 
-	UpdateViewMatrix();
 	UpdatefrustumPlanes();
+	UpdatefrustumMatrix();
+	UpdateViewMatrix();
 }
 
 void GLFWCanvas::ScrollHandler(double yoffset)
 {
 	currentTool->OnScroll(yoffset);
-	Updatefrustum();
 	UpdatefrustumPlanes();
+	UpdatefrustumMatrix();
+	UpdateViewMatrix();
 }
 
 void GLFWCanvas::FrameResizeHandler(int width, int height)
 {
 	glViewport(0, 0, width, height);
 	UpdatefrustumPlanes();
+	UpdatefrustumMatrix();
+	UpdateViewMatrix();
 }
 
 void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
@@ -231,13 +211,11 @@ void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{ 
 		currentTool->OnKeyPress("W");
-		Updatefrustum();
 	}
 		
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		currentTool->OnKeyPress("S");
-		Updatefrustum();
 	}
 		
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -279,17 +257,16 @@ void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 	{
 		currentCamera.ortho_znear += 0.1f;
-		Updatefrustum();
 		//cout << "CAMERA ZFAR = " << currentCamera.ortho_zfar << endl;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 	{
 		currentCamera.ortho_znear -= 0.1f;
-		Updatefrustum();
 		//cout << "CAMERA ZFAR = " << currentCamera.ortho_zfar << endl;
 	}
 
+	UpdatefrustumPlanes();
+	UpdatefrustumMatrix();
 	UpdateViewMatrix();
-	Updatefrustum();
 }
