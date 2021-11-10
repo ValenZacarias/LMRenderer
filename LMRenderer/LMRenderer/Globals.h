@@ -11,10 +11,14 @@ extern glm::vec3 lightPosition;
 
 extern int DataStructureCurrentIndex;
 
-extern float CAMERA_SPEED;
-extern float MESH_SCALE;
 extern bool	PERSPECTIVE_CAM;
+extern bool	CAM_ENABLED;
+extern float CAMERA_SPEED;
+
+extern float MOUSE_SENSITIVITY;
 extern bool firstMouse;
+
+extern float MESH_SCALE;
 
 extern glm::vec3 BB_COLOR_HIDDEN;
 extern glm::vec3 BB_COLOR_VISIBLE;

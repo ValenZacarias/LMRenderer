@@ -9,6 +9,10 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 #include "shader_s.h"
 #include "Globals.h"
 #include "PMeshParser.h"
@@ -89,19 +93,19 @@ int main()
 	//int cellCount = Parser.ParseCellCount("Meshes/testmesh_45e_owner.txt");
 	//auto DataBoundary = Parser.ParseBoundary("Meshes/testmesh_45e_boundary.txt");
 
-	auto DataIndex = Parser.ParseFaces("Meshes/sphere_3k_faces.txt");
-	auto DataVertex = Parser.ParsePoints("Meshes/sphere_3k_points.txt");
-	auto DataOwner = Parser.ParseCells("Meshes/sphere_3k_owner.txt");
-	auto DataNeighbour = Parser.ParseCells("Meshes/sphere_3k_neighbour.txt");
-	int cellCount = Parser.ParseCellCount("Meshes/sphere_3k_owner.txt");
-	auto DataBoundary = Parser.ParseBoundary("Meshes/sphere_3k_boundary.txt");
+	//auto DataIndex = Parser.ParseFaces("Meshes/sphere_3k_faces.txt");
+	//auto DataVertex = Parser.ParsePoints("Meshes/sphere_3k_points.txt");
+	//auto DataOwner = Parser.ParseCells("Meshes/sphere_3k_owner.txt");
+	//auto DataNeighbour = Parser.ParseCells("Meshes/sphere_3k_neighbour.txt");
+	//int cellCount = Parser.ParseCellCount("Meshes/sphere_3k_owner.txt");
+	//auto DataBoundary = Parser.ParseBoundary("Meshes/sphere_3k_boundary.txt");
 
-	//auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
-	//auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
-	//auto DataOwner = Parser.ParseCells("Meshes/spheroid_45k_owner.txt");
-	//auto DataNeighbour = Parser.ParseCells("Meshes/spheroid_45k_neighbour.txt");
-	//int cellCount = Parser.ParseCellCount("Meshes/spheroid_45k_owner.txt");
-	//auto DataBoundary = Parser.ParseBoundary("Meshes/spheroid_45k_boundary.txt");
+	auto DataIndex = Parser.ParseFaces("Meshes/spheroid_45k_faces.txt");
+	auto DataVertex = Parser.ParsePoints("Meshes/spheroid_45k_points.txt");
+	auto DataOwner = Parser.ParseCells("Meshes/spheroid_45k_owner.txt");
+	auto DataNeighbour = Parser.ParseCells("Meshes/spheroid_45k_neighbour.txt");
+	int cellCount = Parser.ParseCellCount("Meshes/spheroid_45k_owner.txt");
+	auto DataBoundary = Parser.ParseBoundary("Meshes/spheroid_45k_boundary.txt");
 
 	//auto DataIndex = Parser.ParseFaces("Meshes/flange_mf_282k_faces.txt");
 	//auto DataVertex = Parser.ParsePoints("Meshes/flange_mf_282k_points.txt");
@@ -133,7 +137,7 @@ int main()
 	auto faceDataBuffer = make_shared<DataVector<Face>>(FACE);
 	auto cellDataSample = make_shared<DataVector<Cell>>(CELL);
 
-	uniformSample.Process(cellData, cellDataSample, 0.25);
+	uniformSample.Process(cellData, cellDataSample, 0.1);
 
 	reconstructCells.Process(*faceData, *faceDataBuffer, *cellDataSample);
 
@@ -226,8 +230,6 @@ int main()
 		lastFrame = currentFrame;
 		timer += deltaTime;
 
-		//cout << Vis_Sample_1.actualState << endl;
-
 		if ((int)timer > 0)
 		{
 			// Vis State change test
@@ -239,7 +241,7 @@ int main()
 				LoadOnce = false;
 			}
 
-			if ((int)timer%7 == 0 && SendToGPUOnce)
+			if ((int)timer%6 == 0 && SendToGPUOnce)
 			{
 				//Vis_Sample_1.RenderBuffers();
 				//Vis_Sample_2.LoadFileData();
@@ -303,6 +305,8 @@ int main()
 
 		nbFrames++;
 	}
+
+	//canvas.~GLFWCanvas();
 
 	glfwTerminate();
 	return 0;

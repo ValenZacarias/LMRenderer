@@ -17,12 +17,12 @@
 struct Camera
 {
 	//Camera settings
-	const float sensitivity = 0.1f;
 	const float cameraSpeed = CAMERA_SPEED;
 	float FOV = 45.0f;
 	//float FOV = 5.0f; //ortho close
 	//float FOV = 55.0f; //ortho far
 
+	glm::vec3 cameraRestartPos = glm::vec3(0.0f, 3.0f, 6.0f);
 	glm::vec3 cameraPos = glm::vec3(0.0f, 3.0f, 6.0f);
 	//glm::vec3 cameraPos = glm::vec3(0.0f, 0.02f, 0.15f);
 	glm::vec3 cameraFront = glm::vec3(0.0f, -0.5f, -1.0f);
@@ -62,6 +62,9 @@ struct Camera
 	glm::vec3 frustum_topPlane_normal = glm::vec3(0.0f);
 
 	//Camera Pos and Rot settings
+	float restartPitch = -26.5f;
+	float restartYaw = -90.0f;
+
 	float pitch = -26.5f;
 	float yaw = -90.0f;
 	float lastX = 0.0f;
@@ -97,12 +100,14 @@ public:
 	Camera currentCamera;
 
 	GLFWCanvas(int screenWidth, int screenHeigth);
-	~GLFWCanvas() {};
+	~GLFWCanvas();
 	void SetupContext(VisGroup* viz);
+	void SetupUI();
 	void UpdateViewMatrix();
 	void UpdatefrustumPlanes();
 	void UpdatefrustumMatrix();
 	void Render();
+	void UIRender();
 	void SetCurrentTool(Tool* tool);
 	void MouseLDragHandler(int button, int action, int mods);
 	void MousePosHandler(double xpos, double ypos);

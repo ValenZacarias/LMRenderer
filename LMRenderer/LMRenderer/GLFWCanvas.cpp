@@ -6,6 +6,10 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 #include "Globals.h"
 #include "Tool.h"
 #include "ToolFPSCamera.h"
@@ -17,6 +21,14 @@ GLFWCanvas::GLFWCanvas(int screenWidth, int screenHeigth)
 	width = screenWidth;
 	heigth = screenHeigth;
 }
+GLFWCanvas::~GLFWCanvas()
+{
+	// Deletes all ImGUI instances
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+}
+
 
 GLFWwindow* GLFWCanvas::Init()
 {
@@ -75,7 +87,13 @@ GLFWwindow* GLFWCanvas::Init()
 	glViewport(0, 0, width, heigth);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	
+	// Initialize ImGUI
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsClassic();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
 
 	return window;
 }
@@ -143,6 +161,34 @@ void GLFWCanvas::UpdatefrustumMatrix()
 														currentCamera.perspective_zfar);
 }
 
+
+void GLFWCanvas::UIRender()
+{
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::Begin("Guia de comandos");
+	ImGui::Text("1. Mover camara - W, A, S, D, Q, E\n"
+				"2. Resetear la posicion de la camara - R\n"
+				"3. Camara Perspectiva - 1\n"
+				"4. Camara Isometrica - 2\n"
+				"5. Velocidad de camara -/+ - K, L\n"
+				"6. Activar/Desactivar Cursor - P, O\n"
+				"");
+
+	
+	ImGui::End();
+
+	ImGui::Begin("Opciones");
+	ImGui::SliderFloat("Camera Speed", &CAMERA_SPEED, 0.0f, 10.0f);
+	ImGui::SliderFloat("Mouse Speed", &MOUSE_SENSITIVITY, 0.0f, 0.5f);
+	ImGui::End();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
 void GLFWCanvas::Render()
 {
 	//Rendering config --------------------------------------------------------------------------------------
@@ -151,6 +197,7 @@ void GLFWCanvas::Render()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
 	currentViz->Render(&currentCamera);
+	UIRender();
 }
 
 void GLFWCanvas::SetCurrentTool(Tool* tool)
@@ -177,13 +224,16 @@ void GLFWCanvas::MouseLDragHandler(int button, int action, int mods)
 
 void GLFWCanvas::MousePosHandler(double xpos, double ypos)
 {
+	if (CAM_ENABLED)
+	{
+		if (currentTool != nullptr)
+			currentTool->OnMouseMove(xpos, ypos);
 
-	if(currentTool != nullptr)
-		currentTool->OnMouseMove(xpos, ypos);
-
-	UpdatefrustumPlanes();
-	UpdatefrustumMatrix();
-	UpdateViewMatrix();
+		UpdatefrustumPlanes();
+		UpdatefrustumMatrix();
+		UpdateViewMatrix();
+	}
+	
 }
 
 void GLFWCanvas::ScrollHandler(double yoffset)
@@ -232,18 +282,29 @@ void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
 
 	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
 	{
-		CAMERA_SPEED += 0.5;
+		CAMERA_SPEED += 0.25;
 		cout << "CAM SPEED = " << CAMERA_SPEED << endl;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
 	{
-		CAMERA_SPEED -= 0.5;
+		if (CAMERA_SPEED < 0.1)
+			return;
+
+		CAMERA_SPEED -= 0.25;
 		cout << "CAM SPEED = " << CAMERA_SPEED << endl;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
-		currentCamera.cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	{
+		currentCamera.cameraPos = currentCamera.cameraRestartPos;
+		currentCamera.pitch = currentCamera.restartPitch;
+		currentCamera.yaw = currentCamera.restartYaw;
+		currentCamera.xoffset = 0.0f;
+		currentCamera.yoffset = 0.0f;
+		currentTool->OnMouseMove(0, 0);
+		firstMouse = true;
+	}
 
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
@@ -254,16 +315,16 @@ void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
 		PERSPECTIVE_CAM = false;
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
 	{
-		currentCamera.ortho_znear += 0.1f;
-		//cout << "CAMERA ZFAR = " << currentCamera.ortho_zfar << endl;
+		CAM_ENABLED = true;
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);	
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
 	{
-		currentCamera.ortho_znear -= 0.1f;
-		//cout << "CAMERA ZFAR = " << currentCamera.ortho_zfar << endl;
+		CAM_ENABLED = false;
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 
 	UpdatefrustumPlanes();

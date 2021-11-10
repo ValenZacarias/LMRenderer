@@ -62,6 +62,8 @@ public:
 
 		triVertexData->StartRead();
 
+		
+
 	}
 
 	~VisCell_bin()
@@ -107,7 +109,6 @@ public:
 					RenderBuffers();
 				else
 					Draw(cam); // Drawcall
-
 				break;
 
 			default:

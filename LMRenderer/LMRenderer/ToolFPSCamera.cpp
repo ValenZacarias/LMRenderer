@@ -35,8 +35,8 @@ void ToolFPSCamera::OnMouseMove(double xpos, double ypos)
 	cam->lastX = xpos;
 	cam->lastY = ypos;
 
-	cam->yoffset *= cam->sensitivity * (CAMERA_SPEED * 0.1);
-	cam->xoffset *= cam->sensitivity * (CAMERA_SPEED * 0.1);
+	cam->yoffset *= MOUSE_SENSITIVITY;
+	cam->xoffset *= MOUSE_SENSITIVITY;
 
 	cam->yaw += cam->xoffset;
 	cam->pitch += cam->yoffset;
