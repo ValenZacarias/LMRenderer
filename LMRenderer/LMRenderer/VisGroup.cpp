@@ -25,6 +25,13 @@ void VisGroup::Render(Camera* cam)
 {
 	for (int i = 0; i < visualizations.size(); i++)
 	{
-		visualizations[i]->Render(cam); //Recursion
+		//visualizations[i]->Render(cam); //Recursion
+		//shared_visualizations[i]->Render(cam); //Recursion
+	}
+
+	for (int i = 0; i < shared_visualizations.size(); i++)
+	{
+		//visualizations[i]->Render(cam); //Recursion
+		shared_visualizations[i]->Render(cam); //Recursion
 	}
 }

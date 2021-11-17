@@ -177,13 +177,20 @@ void GLFWCanvas::UIRender()
 				"6. Activar/Desactivar Cursor - P, O\n"
 				"");
 
-	
 	ImGui::End();
 
 	ImGui::Begin("Opciones");
 	ImGui::SliderFloat("Camera Speed", &CAMERA_SPEED, 0.0f, 10.0f);
 	ImGui::SliderFloat("Mouse Speed", &MOUSE_SENSITIVITY, 0.0f, 0.5f);
 	ImGui::End();
+
+	// UI para saber estado de las zonas
+	/*ImGui::Begin("Zone state");
+	ImGui::BeginChild("Scrolling");
+	for (int n = 0; n < currentViz->shared_visualizations.size(); n++)
+		ImGui::Text("%04d: Zona %.2i", n, currentViz->shared_visualizations[n]->);
+	ImGui::EndChild();
+	ImGui::End();*/
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

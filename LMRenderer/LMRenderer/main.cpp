@@ -24,6 +24,7 @@
 #include "ToolOrbitCamera.h"
 
 #include "GLFWCanvas.h"
+#include "ZoneGenerator.h"
 
 #include "VisBase.h"
 #include "VisGroup.h"
@@ -60,6 +61,8 @@ GLFWwindow* window = NULL;
 
 int main()
 {
+	ZoneGenerator zoneGenerator;
+
 	PATriangulate triangulate;
 	PACalcNormals calcnormals;
 	PAUniformSample uniformSample;
@@ -117,7 +120,7 @@ int main()
 	// Data Processing PIPELINE
 
 	// Initialize faceData with null faces
-	auto faceData = make_shared<DataVector<Face>>(FACE);
+	/*auto faceData = make_shared<DataVector<Face>>(FACE);
 	createFaces.Process(*DataOwner, *faceData);
 
 	// Generate cells
@@ -149,7 +152,7 @@ int main()
 		triVertexBuffer->EndWrite();
 		triVertexBuffer->SaveFile();
 	}
-	VisCell_bin<shared_ptr<DataBinFile<glm::vec3>>> Vis_Sample_1(triVertexBuffer, cellCount, BBVertices);
+	VisCell_bin<shared_ptr<DataBinFile<glm::vec3>>> Vis_Sample_1(triVertexBuffer, cellCount, BBVertices);*/
 
 	//// Second sample
 	//auto faceDataBuffer2 = make_shared<DataVector<Face>>(FACE);
@@ -170,15 +173,23 @@ int main()
 
 	//VisCell_bin<shared_ptr<DataBinFile<glm::vec3>>> Vis_Sample_2(triVertexBuffer2, cellCount);
 
-	float gridScale = glm::length(BBVertices[1] - BBVertices[0]);
+	//float gridScale = glm::length(BBVertices[1] - BBVertices[0]);
+
+	auto VisZone_1 = zoneGenerator.GenerateZone("Meshes/spheroid_45k");
+
+	float gridScale = 5.0f;
 	
-	VisGrid VisGrid_1 = VisGrid(gridScale);
-	VisMeshZone VisZone_1(BBVertices);
+	//VisGrid VisGrid_1 = VisGrid(gridScale);
+	auto VisGrid_1 = make_shared<VisGrid>(gridScale);
+	//VisMeshZone VisZone_1(BBVertices);
 	VisGroup MainGroupViz = VisGroup();
 
-	MainGroupViz.visualizations.push_back(&VisZone_1);
-	MainGroupViz.visualizations.push_back(&Vis_Sample_1);
-	MainGroupViz.visualizations.push_back(&VisGrid_1);
+	//MainGroupViz.visualizations.push_back(&VisZone_1);
+	MainGroupViz.shared_visualizations.push_back(VisZone_1);
+	MainGroupViz.shared_visualizations.push_back(VisGrid_1);
+	//MainGroupViz.visualizations.push_back(&Vis_Sample_1);
+	//MainGroupViz.visualizations.push_back(&VisGrid_1);
+	//MainGroupViz.visualizations.push_back(VisZone_1);
 
 	canvas.SetupContext(&MainGroupViz);
 
@@ -201,26 +212,7 @@ int main()
 	DrawLine yAxis(glm::vec3(0.0f, 0.0f, 0.0f), originLinesLenght * glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, glm::vec3(0.1, 0.9, 0.1));
 	DrawLine zAxis(glm::vec3(0.0f, 0.0f, 0.0f), originLinesLenght * glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, glm::vec3(0.1, 0.1, 0.9));
 
-	//glm::vec3 Centroid = glm::vec3(0.0f);
-	//for (int i = 0; i < BBVertices.size(); i++)
-	//{
-	//	Centroid = Centroid + BBVertices[i];
-	//}
-	//Centroid /= 8;
-
-
-	//DrawPoint p0 = DrawPoint(Centroid, 10.0f, glm::vec3(1.0f, 1.0f, 0.0f));
-	//DrawPoint p1 = DrawPoint(BBVertices[1], 20.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	//DrawPoint p2 = DrawPoint(BBVertices[2], 20.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-	//DrawPoint p3 = DrawPoint(BBVertices[3], 20.0f, glm::vec3(0.5f, 0.5f, 0.5f));
-	//DrawPoint p4 = DrawPoint(BBVertices[4], 20.0f, glm::vec3(0.0f, 1.0f, 1.0f));
-	//DrawPoint p5 = DrawPoint(BBVertices[5], 20.0f, glm::vec3(1.0f, 0.0f, 1.0f));
-	//DrawPoint p6 = DrawPoint(BBVertices[6], 20.0f, glm::vec3(1.0f, 1.0f, 0.0f));
-	//DrawPoint p7 = DrawPoint(BBVertices[7], 20.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	//DrawLine xAxis(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f), 1.0f, glm::vec3(0.9, 0.1, 0.1));
-	//DrawLine yAxis(glm::vec3(0.0f, -10.0f, 0.0f), glm::vec3(0.0f, 10.0f, 0.0f), 1.0f, glm::vec3(0.1, 0.9, 0.1));
-	//DrawLine zAxis(glm::vec3(0.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 10.0f), 1.0f, glm::vec3(0.1, 0.1, 0.9));
+	int triangleLimit = 50000;
 
 	//RENDER LOOP! -----------------------------------------------------------------------------------------
 	while (!glfwWindowShouldClose(window))
@@ -233,57 +225,41 @@ int main()
 		if ((int)timer > 0)
 		{
 			// Vis State change test
-			if ((int)timer%3 == 0 && LoadOnce)
+			if ((int)timer%15 == 0 && LoadOnce)
 			{
-				//Vis_Sample_1.LoadFileData();
-				Vis_Sample_1.actualState = LOADED;
+				cout << "try loading 1" << endl;
+				int levelIndex = VisZone_1->GetPossibleLevel(triangleLimit);
+				if ( levelIndex != -1)
+				{
+					VisZone_1->LoadLevel(levelIndex);
+				}
+				else
+				{
+					cout << "Cannot load lv" << levelIndex << endl;
+				}
 
 				LoadOnce = false;
 			}
 
-			if ((int)timer%6 == 0 && SendToGPUOnce)
+			if ((int)timer%25 == 0 && SendToGPUOnce)
 			{
-				//Vis_Sample_1.RenderBuffers();
-				//Vis_Sample_2.LoadFileData();
-				Vis_Sample_1.actualState = RENDER;
-				//cout << "VIS SAMPLE 1 SENT BUFFERS TO GPU" << endl;
-				//cout << "VIS SAMPLE 2 LOADED BUFFERS TRIS COUNT = " << Vis_Sample_2.GetTrisCount() << endl;
+				cout << "try loading 2" << endl;
+				int levelIndex = VisZone_1->GetPossibleLevel(triangleLimit);
+				if (levelIndex != -1)
+				{
+					VisZone_1->LoadLevel(levelIndex);
+				}
+				else
+				{
+					cout << "Cannot load lv" << levelIndex << endl;
+				}
 
 				SendToGPUOnce = false;
 			}
-
-			//if ((int)timer%11 == 0 && UnloadFromGPUOnce)
-			//{
-			//	//Vis_Sample_1.DeleteGPUBuffers();
-			//	//Vis_Sample_2.RenderBuffers();
-			//	Vis_Sample_1.actualState = UNLOADED;
-			//	cout << "VIS SAMPLE 1 UNLOADED GPU BUFFERS" << endl;
-
-			//	UnloadFromGPUOnce = false;
-			//}
-
-			//if ((int)timer % 15 == 0 && UnloadFromRAMOnce)
-			//{
-			//	Vis_Sample_1.DeleteMemoryBuffers();
-			//	cout << "VIS SAMPLE 1 UNLOADED GPU BUFFERS - BUFFER SIZE: " << Vis_Sample_1.GetTrisCount() << endl;
-
-			//	UnloadFromRAMOnce = false;
-			//}
 		}
 		
-		//Vis_Sample_1.Update(&canvas.currentCamera);
-
 		canvas.KeyboardHandler(window);
 		canvas.Render();
-
-		//p0.Render(&canvas.currentCamera);
-		//p1.Render(&canvas.currentCamera);
-		//p2.Render(&canvas.currentCamera);
-		//p3.Render(&canvas.currentCamera);
-		//p4.Render(&canvas.currentCamera);
-		//p5.Render(&canvas.currentCamera);
-		//p6.Render(&canvas.currentCamera);
-		//p7.Render(&canvas.currentCamera);
 
 		// DRAW ORIGIN LINES
 		xAxis.Render(&canvas.currentCamera);
@@ -312,3 +288,7 @@ int main()
 	return 0;
 }
 
+void RenderUI()
+{
+
+}

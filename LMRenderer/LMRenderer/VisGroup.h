@@ -10,11 +10,14 @@
 #include "shader_s.h"
 #include "VisBase.h"
 
+using namespace std;
+
 class VisGroup : public VisBase
 {
 private:
 public:
 	std::vector<VisBase*> visualizations {};
+	std::vector<shared_ptr<VisBase>> shared_visualizations {};
 	VisGroup();
 	~VisGroup();
 	void Render(Camera* cam) override;

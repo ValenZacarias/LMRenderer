@@ -173,6 +173,7 @@
     <ClCompile Include="VisGrid.cpp" />
     <ClCompile Include="VisGroup.cpp" />
     <ClCompile Include="VisPrimitive.cpp" />
+    <ClCompile Include="ZoneGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="difusse_fragment_shader.txt" />
@@ -245,6 +246,7 @@
     <ClInclude Include="VisCellFacesTesting.h" />
     <ClInclude Include="VisMeshZone.h" />
     <ClInclude Include="VisPrimitive.h" />
+    <ClInclude Include="ZoneGenerator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

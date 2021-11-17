@@ -32,7 +32,11 @@ class VisMeshZone : public VisBase
 private:
 
 	//vector<shared_ptr<VisCell_bin<float>>>Sub_Visualizations;
-	std::vector<VisBase*> subVisualizations{};
+	int loadedLevel = -1;
+
+	//vector<shared_ptr<VisBase>> subVisualizations{};
+	vector<shared_ptr<VisCell_bin>> subVisualizations{};
+	vector<int> subVisTrisCount{};
 
 	long zoneTrisCount;
 	long renderedTrisCount;
@@ -49,9 +53,6 @@ private:
 	int vertexCount_bb;
 
 	DrawPoint p4;
-	//DrawPoint p5;
-	//DrawPoint p6;
-	//DrawPoint p7;
 
 	float frus_dist_left = 0.0f;
 	float frus_dist_right = 0.0f;
@@ -62,23 +63,25 @@ public:
 
 	ZONE_STATE actualState;
 
-	VisMeshZone(vector<glm::vec3> bb)
+	VisMeshZone()
 	{
-
-		actualState = FAR;
-
 		Shader standardShader("light_vertex_shader.txt", "light_fragment_shader.txt");
 		this->shader_bb = standardShader;
+	}
 
+	//VisMeshZone( vector<VisBase*> subVis ,vector<glm::vec3> bb)
+	VisMeshZone(vector<glm::vec3> bb)
+	{
+		actualState = FAR;
+
+		//for(int i = 0; subVis.size)
+
+		// Bounding Box Init
+		Shader standardShader("light_vertex_shader.txt", "light_fragment_shader.txt");
+		this->shader_bb = standardShader;
 		BoundingBox = bb;
-
-		for (int i = 0; i < BoundingBox.size(); i++)
-		{
-			Centroid = Centroid + BoundingBox[i];
-		}
-		Centroid /= 8;
-
-		RenderBuffers_BB();
+		CalcCentroid_BB();
+		GenerateBuffers_BB();
 
 	}
 
@@ -88,6 +91,19 @@ public:
 		//glDeleteBuffers(1, &VBO);
 		//glDeleteBuffers(1, &EBO);
 		cout << "VIS DELETED" << endl;
+	}
+
+	void SetBoundingBox(vector<glm::vec3> bb)
+	{
+		BoundingBox = bb;
+		CalcCentroid_BB();
+		GenerateBuffers_BB();
+	}
+
+	void AddSubVisualization(shared_ptr<VisCell_bin> vis)
+	{
+		subVisualizations.push_back(vis);
+		subVisTrisCount.push_back(vis->GetTrisCount());
 	}
 
 	bool isInsidefrustum(Camera* cam)
@@ -106,10 +122,36 @@ public:
 		return false;
 	}
 
-	long GetTrisCount()
+	int GetCurrentLevel()
 	{
-		//return trisCount;
+		return loadedLevel;
 	}
+
+	int GetPossibleLevel(int triCount)
+	{
+		int candidateVisIndex = -1;
+
+		for (int i = 0; i < subVisTrisCount.size(); i++)
+		{
+			if (subVisTrisCount[i] <= triCount)
+				candidateVisIndex = i;
+		}
+
+		if (candidateVisIndex == loadedLevel)
+			return -1;
+
+		return candidateVisIndex;
+	}
+
+	void LoadLevel(int index)
+	{
+		if(index == -1) _impossible(true);
+
+		if (loadedLevel != -1) subVisualizations[loadedLevel]->actualState = UNLOADED;
+		subVisualizations[index]->actualState = LOADED;
+	}
+
+
 
 	void Render(Camera* cam)
 	{
@@ -117,14 +159,17 @@ public:
 		//p5.Render(cam);
 		//p6.Render(cam);
 		//p7.Render(cam);
+		Render_BB(cam);
 
 		if (isInsidefrustum(cam))
 			actualState = VISIBLE;
 		else
 			actualState = NEAR;
 
-		Render_BB(cam);
-
+		for (int i = 0; i < subVisualizations.size(); i++)
+		{
+			subVisualizations[i]->Update(cam);
+		}
 
 		//switch (actualState)
 		//{
@@ -149,50 +194,12 @@ public:
 
 	void Draw(Camera* cam)
 	{
-		/*if (actualState != RENDER) return;
-
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-		shader.use();
-		shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-		shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		shader.setVec3("lightPos", lightPosition.x, lightPosition.y, lightPosition.z);
-
-		glm::mat4 view;
-		view = glm::lookAt(cam->cameraPos, cam->cameraPos + cam->cameraFront, cam->cameraUp);
-		unsigned int viewLoc = glGetUniformLocation(shader.ID, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-		glm::mat4 projection;
-		if (PERSPECTIVE_CAM)
-			projection = glm::perspective(glm::radians(cam->FOV), 1280.0f / 720.0f, 0.01f, 5000.0f);
-		else
-			projection = glm::ortho(-2.0f * cam->FOV * 0.05f,
-				+2.0f * cam->FOV * 0.05f,
-				-1.15f * cam->FOV * 0.05f,
-				+1.15f * cam->FOV * 0.05f,
-				-100.0f, 100.0f);
-
-		unsigned int projectionLoc = glGetUniformLocation(shader.ID, "projection");
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-		glm::mat4 model = glm::mat4(1.0f * MESH_SCALE);
-		unsigned int modelLoc = glGetUniformLocation(shader.ID, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-		glBindVertexArray(VAO);
-
-		glDrawArrays(GL_TRIANGLES, 0, trisCount * 3);*/
 
 	}
 
 	void DeleteGPUBuffers()
 	{
-		//glDeleteVertexArrays(1, &VAO);
-		//glDeleteBuffers(1, &VBO);
-		//GPUBuffersLoaded = false;
-		//__nop();
-		//cout << "GPU BUFFERS DELETED" << endl;
+
 	}
 
 	void DeleteMemoryBuffers()
@@ -236,7 +243,7 @@ public:
 
 	}
 
-	int RenderBuffers_BB()
+	int GenerateBuffers_BB()
 	{
 		std::vector<int> indices{ 0, 1, 1, 5, 5, 4, 4, 0, // Front face
 								  0, 3, 1, 2, 5, 6, 4, 7, // Middle edges
@@ -269,6 +276,15 @@ public:
 		vertexCount_bb = indices.size();
 
 		return 0;
+	}
+
+	void CalcCentroid_BB()
+	{
+		for (int i = 0; i < BoundingBox.size(); i++)
+		{
+			Centroid = Centroid + BoundingBox[i];
+		}
+		Centroid /= 8;
 	}
 };
 

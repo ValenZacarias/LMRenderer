@@ -23,14 +23,15 @@
 #include "PACalcNormals.h"
 
 
-enum STATE { UNLOADED, LOADED, RENDER };
+enum STATE { UNLOADED, LOADED };
 
-template <typename TVertex>
+//template <typename TVertex>
 class VisCell_bin : public VisBase
 {
 private:
 
-	TVertex triVertexData; // File
+	//TVertex triVertexData; // File
+	shared_ptr<DataBinFile<glm::vec3>> triVertexData;
 	int cellCount;
 
 	std::vector<glm::vec3> BufferData{};
@@ -50,10 +51,13 @@ public:
 
 	STATE actualState;
 
-	VisCell_bin(TVertex v, int cc, vector<glm::vec3> bb)
+	//VisCell_bin(TVertex v, int cc)
+	//VisCell_bin(shared_ptr<DataBinFile<glm::vec3>> v, int cc)
+	VisCell_bin(shared_ptr<DataBinFile<glm::vec3>> v)
 	{
 		this->triVertexData = v;
-		this->cellCount = cc;
+		//this->cellCount = cc;
+		this->trisCount = v->GetSize() / 3;
 		
 		actualState = UNLOADED;
 
@@ -61,9 +65,6 @@ public:
 		this->shader = diffuseShader;
 
 		triVertexData->StartRead();
-
-		
-
 	}
 
 	~VisCell_bin()
@@ -79,7 +80,7 @@ public:
 		return trisCount;
 	}
 
-	void Render(Camera* cam)
+	void Update(Camera* cam)
 	{
 		//Render_BB(cam);
 
@@ -93,24 +94,14 @@ public:
 
 				break;
 			case LOADED:
-
-				// Load data to memory, but not to GPU
+				// Load data to memory, then to GPU
 				if (BufferData.size() == 0)
 					LoadFileData();
-
-				if (GPUBuffersLoaded) //??
-					DeleteGPUBuffers();
-
-				break;
-			case RENDER:
-
-				// Load data to from memory to GPU
-				if (!GPUBuffersLoaded)
+				else if (!GPUBuffersLoaded)
 					RenderBuffers();
 				else
 					Draw(cam); // Drawcall
 				break;
-
 			default:
 				_impossible(true);
 		}
@@ -167,7 +158,7 @@ public:
 
 	void Draw(Camera* cam)
 	{
-		if (actualState != RENDER) return;
+		if (actualState != LOADED) return;
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
