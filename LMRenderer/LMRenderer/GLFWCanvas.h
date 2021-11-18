@@ -14,6 +14,7 @@
 
 #include "VisGroup.h"
 
+
 struct Camera
 {
 	//Camera settings

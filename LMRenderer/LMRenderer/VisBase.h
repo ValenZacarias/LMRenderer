@@ -18,4 +18,5 @@ public:
 	//TODO: Agregar IDs
 	VisBase() {};
 	virtual void Render(Camera* cam) {};
+	virtual int GetCurrentLevel() { return -2; };
 };

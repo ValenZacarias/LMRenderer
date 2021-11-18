@@ -19,30 +19,38 @@ private:
 	int size = 0;
 
 public:
+
 	DataBinFile(DATATYPE type, string name) : DataStructureBase(type)
 	{ 
 		filename = name;
-		file.open(filename, std::ios::out | std::ios::binary);
+		file.open(filename, std::ios::in | std::ios::binary);
+		//file(filename);
 
 		if (!file.is_open())
 		{
 			cout << name << " not found!" << endl;
-			file.open(filename, ios::out | ios::binary | ios::trunc);
+			file.open(filename, ios::in | ios::binary | ios::trunc);
 
-			if (!file.is_open())
-				cout << "CANT CREATE FILE" << endl;
+			if (!file) cout << "CANT CREATE FILE" << endl;
+			else cout << filename << "created" << endl;
+		}
+		else
+		{
+			cout << name << " already exists" << endl;
+			
+			file.seekg(0, ios::end);
+			size = file.tellg() / sizeof(T);
+			existingFile = true;
 		}
 
+		file.close();
 	}
 
 	bool FileExists() { return existingFile; }
 
-	void SaveFile()
-	{
-		file.flush();
-	}
+	void SaveFile() { file.flush(); }
 
-	bool EndWrite()
+	bool CloseFile()
 	{
 		file.close();
 
@@ -52,6 +60,17 @@ public:
 		return false;
 	}
 
+	bool StartWrite()
+	{
+		file.open(filename, std::ios::out | std::ios::binary);
+
+		if (!file.is_open())
+			cout << "Could not open " << filename << " for write" << endl;  return false;
+
+		return true;	
+	}
+
+
 	bool StartRead()
 	{
 		file.open(filename, std::ios::in | std::ios::binary);
@@ -59,10 +78,15 @@ public:
 		if (!file.is_open())
 			cout << "Could not open " << filename << " for read" << endl;  return false;
 
-		return true;	
+		return true;
 	}
 
-	void ReserveData(int count) { }
+	void SetData(T d)
+	{
+		file.seekp(size * sizeof(T));
+		file.write(reinterpret_cast<char*>(&d), sizeof(d));
+		size++;
+	}
 
 	T& GetData(int i) 
 	{ 
@@ -76,22 +100,12 @@ public:
 		return dataAux;
 	}
 
-	auto GetFullData() 
-	{ 
-		return data.data(); 
-	}
+	int GetSize() { return size; }
+	
+	void ReserveData(int count) { }
 
-	void SetData(T d) 
-	{ 
-		file.seekp(size * sizeof(T));
-		file.write(reinterpret_cast<char*>(&d), sizeof(d));
-		size++;
-	}
+	auto GetFullData() { return data.data(); }
 
-	int GetSize() 
-	{ 
-		return size;
-	}
 
 };
 

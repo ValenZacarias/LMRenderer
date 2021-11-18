@@ -22,7 +22,7 @@ public:
 	//	for(int i = 0; i < count; i++) { data.push_back(rawdata[i]); }
 	//}
 
-	void ReserveData(int count) { data.reserve(count); }
+	void ReserveData(int count) { _expects(count >= 0); data.reserve(count); }
 	T& GetData(int i) { _expects(i >= 0); _expects(i < data.size()); return data[i]; } // hacer un expect >= 0 
 	auto GetFullData() { return data.data(); }
 	void SetData(T d) { data.push_back(d); }

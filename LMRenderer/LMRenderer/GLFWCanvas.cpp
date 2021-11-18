@@ -16,6 +16,8 @@
 #include "GLFWCanvas.h"
 #include "shader_s.h"
 
+//#include "VisMeshZone.h"
+
 GLFWCanvas::GLFWCanvas(int screenWidth, int screenHeigth)
 {
 	width = screenWidth;
@@ -120,7 +122,7 @@ void GLFWCanvas::UpdatefrustumPlanes()
 {
 	glm::vec3 camRight = glm::normalize(glm::cross(currentCamera.cameraFront, currentCamera.cameraUp));
 	glm::vec3 camUp = glm::normalize(glm::cross(currentCamera.cameraFront, camRight));
-	float scaleCorrection = 1.7f;
+	float scaleCorrection = 1.0f;
 
 	float halfVSide = currentCamera.perspective_zfar * tanf(glm::radians(currentCamera.FOV) * 0.5f) * scaleCorrection;
 	float halfHSide = halfVSide * (screenWidth / screenHeight) * scaleCorrection;
@@ -185,12 +187,22 @@ void GLFWCanvas::UIRender()
 	ImGui::End();
 
 	// UI para saber estado de las zonas
-	/*ImGui::Begin("Zone state");
+	ImGui::Begin("Zone state");
 	ImGui::BeginChild("Scrolling");
 	for (int n = 0; n < currentViz->shared_visualizations.size(); n++)
-		ImGui::Text("%04d: Zona %.2i", n, currentViz->shared_visualizations[n]->);
+	{
+		if(currentViz->shared_visualizations[n]->GetCurrentLevel() != -2)
+			ImGui::Text("Zona %.1i: %.2i", n, currentViz->shared_visualizations[n]->GetCurrentLevel());
+		
+		//shared_ptr<VisBase>& ref = currentViz->shared_visualizations[n];
+		//VisMeshZone* zone = dynamic_cast<VisMeshZone*>(ref.get());
+		//if (zone != NULL)
+		//{
+		//	ImGui::Text("%04d: Zona %.2i", n, zone->GetCurrentLevel());
+		//}
+	}
 	ImGui::EndChild();
-	ImGui::End();*/
+	ImGui::End();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

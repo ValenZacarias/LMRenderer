@@ -63,8 +63,6 @@ public:
 
 		Shader diffuseShader("difusse_vertex_shader.txt", "difusse_fragment_shader.txt");
 		this->shader = diffuseShader;
-
-		triVertexData->StartRead();
 	}
 
 	~VisCell_bin()
@@ -82,8 +80,6 @@ public:
 
 	void Update(Camera* cam)
 	{
-		//Render_BB(cam);
-
 		switch (actualState)
 		{
 			case UNLOADED:
@@ -97,8 +93,8 @@ public:
 				// Load data to memory, then to GPU
 				if (BufferData.size() == 0)
 					LoadFileData();
-				else if (!GPUBuffersLoaded)
-					RenderBuffers();
+				else if (!GPUBuffersLoaded && BufferData.size() == trisCount*6)
+					GenerateBuffers();
 				else
 					Draw(cam); // Drawcall
 				break;
@@ -109,6 +105,10 @@ public:
 
 	void LoadFileData()
 	{
+		_expects(triVertexData->GetSize() > 0);
+
+		triVertexData->StartRead();
+
 		trisCount = triVertexData->GetSize()/3;
 		DataVector<glm::vec3> normaldata = calcnormals.ProcessVec3(*triVertexData);
 
@@ -122,12 +122,17 @@ public:
 
 		__nop();
 
+		if (BufferData.size() == 0)
+		{
+			cout << "VIS SAMPLE CANT LOAD DATA FROM FILE " << endl;
+		}
+
 		actualState = LOADED;
 
-		cout << "VIS SAMPLE 1 LOADED " << trisCount << " TRIANGLES" << endl;
+		cout << "VIS SAMPLE LOADED " << trisCount << " TRIANGLES" << endl;
 	}
 
-	void RenderBuffers()
+	void GenerateBuffers()
 	{
 		_expects(BufferData.size() > 0);
 

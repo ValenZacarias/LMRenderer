@@ -122,7 +122,7 @@ public:
 		return false;
 	}
 
-	int GetCurrentLevel()
+	int GetCurrentLevel() override
 	{
 		return loadedLevel;
 	}
@@ -143,15 +143,19 @@ public:
 		return candidateVisIndex;
 	}
 
+	//int LoadLevel(int index) devuelve la cantidad de triangulos que va a cargar
 	void LoadLevel(int index)
 	{
 		if(index == -1) _impossible(true);
 
-		if (loadedLevel != -1) subVisualizations[loadedLevel]->actualState = UNLOADED;
-		subVisualizations[index]->actualState = LOADED;
+		// EN PRINCIPIO NO DEBERIA SER NECESARIO SACAR EL MAS BAJO
+		// SI EN EL PEOR DE LOS CASOS EL NIVEL N-1 ESTA TOTALMENTE CONTENIDO EN EL SIGUIENTE
+		// 
+		//if (loadedLevel != -1) subVisualizations[loadedLevel]->actualState = UNLOADED;
+		subVisualizations[index]->actualState = LOADED; //este es el estado objetivo
+
+		loadedLevel = index;
 	}
-
-
 
 	void Render(Camera* cam)
 	{

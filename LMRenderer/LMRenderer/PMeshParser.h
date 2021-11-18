@@ -12,6 +12,10 @@
 
 #include "DataVector.h"
 #include "Globals.h"
+#include <cassert>;
+
+#include <iostream>
+
 
 using namespace std;
 using namespace chrono;
@@ -34,6 +38,11 @@ public:
 
 		//FILE PARSING
 		ifstream in(filename);
+
+		assert(in);
+
+		//__M_Assert(in == true, "MyFunction: requires non-null argument");
+
 		string currentLine;
 		
 		int totalFaces;
@@ -94,7 +103,7 @@ public:
 		steady_clock::time_point end = steady_clock::now();
 
 		cout << filename << " Parsing = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
-		
+		in.close();
 		auto result = std::make_shared<vector<DataVector<int>>>(dataIndexVector);
 		return result;
 	}
@@ -171,7 +180,7 @@ public:
 		steady_clock::time_point end = steady_clock::now();
 
 		cout << filename << " Parsing = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
-
+		in.close();
 		return dataPoints;
 	}
 
@@ -264,7 +273,7 @@ public:
 		steady_clock::time_point end = steady_clock::now();
 
 		cout << filename << " Parsing = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
-
+		in.close();
 		return dataCells;
 	}
 
@@ -323,6 +332,7 @@ public:
 			}
 			
 		}
+		in.close();
 		return boundaryData;
 	}
 

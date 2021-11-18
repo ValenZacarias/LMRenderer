@@ -212,7 +212,7 @@ int main()
 	DrawLine yAxis(glm::vec3(0.0f, 0.0f, 0.0f), originLinesLenght * glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, glm::vec3(0.1, 0.9, 0.1));
 	DrawLine zAxis(glm::vec3(0.0f, 0.0f, 0.0f), originLinesLenght * glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, glm::vec3(0.1, 0.1, 0.9));
 
-	int triangleLimit = 50000;
+	int triangleLimit = 100000;
 
 	//RENDER LOOP! -----------------------------------------------------------------------------------------
 	while (!glfwWindowShouldClose(window))
@@ -225,7 +225,7 @@ int main()
 		if ((int)timer > 0)
 		{
 			// Vis State change test
-			if ((int)timer%15 == 0 && LoadOnce)
+			if ((int)timer%7 == 0 && LoadOnce)
 			{
 				cout << "try loading 1" << endl;
 				int levelIndex = VisZone_1->GetPossibleLevel(triangleLimit);
@@ -241,10 +241,10 @@ int main()
 				LoadOnce = false;
 			}
 
-			if ((int)timer%25 == 0 && SendToGPUOnce)
+			if ((int)timer%15 == 0 && SendToGPUOnce)
 			{
 				cout << "try loading 2" << endl;
-				int levelIndex = VisZone_1->GetPossibleLevel(triangleLimit);
+				int levelIndex = VisZone_1->GetPossibleLevel(triangleLimit + 50000);
 				if (levelIndex != -1)
 				{
 					VisZone_1->LoadLevel(levelIndex);

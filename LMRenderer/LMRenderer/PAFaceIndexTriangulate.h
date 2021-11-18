@@ -1,6 +1,10 @@
 #pragma once
 #include <glm/glm.hpp> 
+#include <chrono>
+
 #include "Face.h"
+
+using namespace chrono;
 
 class PAFaceIndexTriangulate
 {
@@ -27,6 +31,8 @@ public:
 	template <typename TOut>
 	void Process(TOut& trisData, DataVector<glm::vec3>& vertex, DataVector<Face>& faces)
 	{
+		steady_clock::time_point begin = steady_clock::now();
+
 		float faceCount = faces.GetSize();
 
 		int p0Index;
@@ -43,6 +49,8 @@ public:
 				trisData.SetData(vertex.GetData(p0Index + j));
 			}
 		}
+		steady_clock::time_point end = steady_clock::now();
+		cout << " Storing data in binary = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
 	}
 
 

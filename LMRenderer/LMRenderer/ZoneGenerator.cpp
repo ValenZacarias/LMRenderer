@@ -1,12 +1,21 @@
+#include <iostream>
+#include <fstream>
+#include <stdio.h>
+
 #include "ZoneGenerator.h"
 #include "Globals.h"
 #include "PMeshParser.h"
+
 using namespace std;
 
 shared_ptr<VisMeshZone> ZoneGenerator::GenerateZone(string meshFilePath)
 {
 	shared_ptr<VisMeshZone> visZone = make_shared<VisMeshZone>();
 	int subVisPerZone = 3;
+	bool forceFileCreation = false;
+	//bool forceFileCreation = true;
+
+	//int subVisPerZone = 1;
 
 	auto DataIndex = Parser.ParseFaces(meshFilePath + "_faces.txt");
 	auto DataVertex = Parser.ParsePoints(meshFilePath + "_points.txt");
@@ -45,19 +54,36 @@ shared_ptr<VisMeshZone> ZoneGenerator::GenerateZone(string meshFilePath)
 
 		string filename = "bin/zone_" + to_string(generatedZones) + "_" + to_string(i);
 
-		auto triVertexBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
-
-		if (!triVertexBuffer->FileExists())
+		if (forceFileCreation)
 		{
-			faceIndexTriangulate.Process(*triVertexBuffer, *triVertexData, *faceDataBuffer);
-			triVertexBuffer->EndWrite();
-			triVertexBuffer->SaveFile();
-		}
-		auto vis = make_shared<VisCell_bin>(triVertexBuffer);
-		visZone->AddSubVisualization(vis);
-	}
+			auto triVertexBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
 
-	__nop();
+			triVertexBuffer->StartWrite();
+			faceIndexTriangulate.Process(*triVertexBuffer, *triVertexData, *faceDataBuffer);
+			triVertexBuffer->SaveFile();
+			triVertexBuffer->CloseFile();
+
+			auto vis = make_shared<VisCell_bin>(triVertexBuffer);
+			visZone->AddSubVisualization(vis);
+		}
+		else
+		{
+			fstream zonefile(filename);
+
+			auto triVertexBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
+
+			if (!triVertexBuffer->FileExists())
+			{
+				triVertexBuffer->StartWrite();
+				faceIndexTriangulate.Process(*triVertexBuffer, *triVertexData, *faceDataBuffer);
+				triVertexBuffer->SaveFile();
+				triVertexBuffer->CloseFile();
+			}
+
+			auto vis = make_shared<VisCell_bin>(triVertexBuffer);
+			visZone->AddSubVisualization(vis);
+		}
+	}
 
 	return visZone;
 }
