@@ -55,5 +55,6 @@ public:
 		Parser = PMeshParser();
 	};
 	shared_ptr<VisMeshZone> GenerateZone(string meshFilePath);
+	vector<shared_ptr<VisMeshZone>> GenerateRepeatedZones(string meshFilePath, int zoneCount, int columns, int rows);
 };
 

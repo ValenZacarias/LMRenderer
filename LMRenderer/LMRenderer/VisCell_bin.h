@@ -15,6 +15,7 @@
 #include "VisBase.h"
 
 #include "DataStructureBase.h"
+#include "DataBinFile.h"
 #include "DataVector.h"
 #include "Face.h"
 #include "Cell.h"

@@ -30,9 +30,9 @@ public:
 		{
 			cout << name << " not found!" << endl;
 			file.open(filename, ios::in | ios::binary | ios::trunc);
-
-			if (!file) cout << "CANT CREATE FILE" << endl;
-			else cout << filename << "created" << endl;
+			cout << filename << "created" << endl;
+			//if (!file) cout << "CANT CREATE FILE" << endl;
+			//else cout << filename << "created" << endl;
 		}
 		else
 		{

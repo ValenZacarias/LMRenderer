@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="DynamicLoadingManager.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="GLFWCanvas.cpp" />
     <ClCompile Include="Globals.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="DataVector.h" />
     <ClInclude Include="DrawLine.h" />
     <ClInclude Include="DrawPoint.h" />
+    <ClInclude Include="DynamicLoadingManager.h" />
     <ClInclude Include="GLFWCanvas.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Face.h" />

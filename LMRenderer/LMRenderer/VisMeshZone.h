@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <memory>
+#include <string>
 #include <map>
 
 #include <glm/glm.hpp>
@@ -125,6 +126,19 @@ public:
 	int GetCurrentLevel() override
 	{
 		return loadedLevel;
+	}
+
+	bool IsVisible() override
+	{
+
+		if (actualState == VISIBLE)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	int GetPossibleLevel(int triCount)

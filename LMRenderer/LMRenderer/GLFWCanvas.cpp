@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
+#include <string>
 
 #include <glm/glm.hpp> 
 #include <glm/gtc/matrix_transform.hpp> 
@@ -15,6 +16,10 @@
 #include "ToolFPSCamera.h"
 #include "GLFWCanvas.h"
 #include "shader_s.h"
+
+//#include "DynamicLoadingManager.h"
+
+
 
 //#include "VisMeshZone.h"
 
@@ -122,10 +127,10 @@ void GLFWCanvas::UpdatefrustumPlanes()
 {
 	glm::vec3 camRight = glm::normalize(glm::cross(currentCamera.cameraFront, currentCamera.cameraUp));
 	glm::vec3 camUp = glm::normalize(glm::cross(currentCamera.cameraFront, camRight));
-	float scaleCorrection = 1.0f;
+	//float scaleCorrection = 0.8f;
 
-	float halfVSide = currentCamera.perspective_zfar * tanf(glm::radians(currentCamera.FOV) * 0.5f) * scaleCorrection;
-	float halfHSide = halfVSide * (screenWidth / screenHeight) * scaleCorrection;
+	float halfVSide = currentCamera.perspective_zfar * tanf(glm::radians(currentCamera.FOV) * 0.5f) * FRUSTRUM_SCALE;
+	float halfHSide = halfVSide * (screenWidth / screenHeight) * FRUSTRUM_SCALE * 1.25;
 	glm::vec3 frontMultFar = currentCamera.perspective_zfar * currentCamera.cameraFront;
 
 	currentCamera.frustum_leftPlane_normal = - glm::cross( camUp, frontMultFar - (camRight * halfVSide));
@@ -169,8 +174,9 @@ void GLFWCanvas::UIRender()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-
+	
 	ImGui::Begin("Guia de comandos");
+	//ImGui::SetWindowFontScale(1.15);
 	ImGui::Text("1. Mover camara - W, A, S, D, Q, E\n"
 				"2. Resetear la posicion de la camara - R\n"
 				"3. Camara Perspectiva - 1\n"
@@ -182,24 +188,27 @@ void GLFWCanvas::UIRender()
 	ImGui::End();
 
 	ImGui::Begin("Opciones");
+	//ImGui::SetWindowFontScale(1.15);
+	ImGui::SliderFloat("Frustrum Scale", &FRUSTRUM_SCALE, 0.01f, 2.0f);
 	ImGui::SliderFloat("Camera Speed", &CAMERA_SPEED, 0.0f, 10.0f);
 	ImGui::SliderFloat("Mouse Speed", &MOUSE_SENSITIVITY, 0.0f, 0.5f);
 	ImGui::End();
 
 	// UI para saber estado de las zonas
 	ImGui::Begin("Zone state");
+	//ImGui::SetWindowFontScale(1.15);
 	ImGui::BeginChild("Scrolling");
 	for (int n = 0; n < currentViz->shared_visualizations.size(); n++)
 	{
-		if(currentViz->shared_visualizations[n]->GetCurrentLevel() != -2)
-			ImGui::Text("Zona %.1i: %.2i", n, currentViz->shared_visualizations[n]->GetCurrentLevel());
-		
-		//shared_ptr<VisBase>& ref = currentViz->shared_visualizations[n];
-		//VisMeshZone* zone = dynamic_cast<VisMeshZone*>(ref.get());
-		//if (zone != NULL)
-		//{
-		//	ImGui::Text("%04d: Zona %.2i", n, zone->GetCurrentLevel());
-		//}
+		if (currentViz->shared_visualizations[n]->GetCurrentLevel() != -2)
+		{
+			bool x = currentViz->shared_visualizations[n]->IsVisible();
+			
+			ImGui::Bullet(); ImGui::SameLine();
+			ImGui::Text("Zona %.1i -", n); ImGui::SameLine();
+			ImGui::Checkbox("", &x); ImGui::SameLine();
+			ImGui::Text(" Lv: %.1i", currentViz->shared_visualizations[n]->GetCurrentLevel());
+		}
 	}
 	ImGui::EndChild();
 	ImGui::End();

@@ -19,6 +19,7 @@ extern float MOUSE_SENSITIVITY;
 extern bool firstMouse;
 
 extern float MESH_SCALE;
+extern float FRUSTRUM_SCALE;
 
 extern glm::vec3 BB_COLOR_HIDDEN;
 extern glm::vec3 BB_COLOR_VISIBLE;

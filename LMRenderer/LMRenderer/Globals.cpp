@@ -20,6 +20,7 @@ float MOUSE_SENSITIVITY = 0.1f;
 bool firstMouse = true;
 bool PERSPECTIVE_CAM = true;
 bool CAM_ENABLED = true;
+float FRUSTRUM_SCALE = 0.7;
 
 float MESH_SCALE = 1.0f;
 

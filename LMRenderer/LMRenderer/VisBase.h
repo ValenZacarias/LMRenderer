@@ -7,6 +7,7 @@
 #include <glm/glm.hpp> 
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp>
+#include <string>
 
 #include "shader_s.h"
 
@@ -19,4 +20,5 @@ public:
 	VisBase() {};
 	virtual void Render(Camera* cam) {};
 	virtual int GetCurrentLevel() { return -2; };
+	virtual bool IsVisible() { return false; };
 };

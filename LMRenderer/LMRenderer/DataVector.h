@@ -28,9 +28,6 @@ public:
 	void SetData(T d) { data.push_back(d); }
 	int GetSize(){ return data.size(); }
 	
-	T operator[](int i)
-	{
-		return this->GetData(i);
-	}
+	void Clear(){ data.clear(); }
 };
 

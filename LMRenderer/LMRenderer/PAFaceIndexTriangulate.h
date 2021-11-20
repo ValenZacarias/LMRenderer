@@ -38,15 +38,30 @@ public:
 		int p0Index;
 		for (int i = 0; i < faces.GetSize(); i++)
 		{
-			//cout << " face loading " << (float)(i / faceCount) << endl;
 			p0Index = faces.GetData(i).GetP0();
 			for (int j = 0; j < faces.GetData(i).GetCount(); j++)
 			{
-				//cout << "x = " << vertex.GetData(p0Index + j).x
-				//	<< "y = " << vertex.GetData(p0Index + j).y
-				//	<< "z = " << vertex.GetData(p0Index + j).z << endl;
-
 				trisData.SetData(vertex.GetData(p0Index + j));
+			}
+		}
+		steady_clock::time_point end = steady_clock::now();
+		cout << " Storing data in binary = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
+	}
+
+	template <typename TOut>
+	void Process_Offset(TOut& trisData, DataVector<glm::vec3>& vertex, DataVector<Face>& faces, glm::vec3 offset)
+	{
+		steady_clock::time_point begin = steady_clock::now();
+
+		float faceCount = faces.GetSize();
+
+		int p0Index;
+		for (int i = 0; i < faces.GetSize(); i++)
+		{
+			p0Index = faces.GetData(i).GetP0();
+			for (int j = 0; j < faces.GetData(i).GetCount(); j++)
+			{
+				trisData.SetData(vertex.GetData(p0Index + j) + offset);
 			}
 		}
 		steady_clock::time_point end = steady_clock::now();

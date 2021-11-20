@@ -13,7 +13,7 @@
 #include "shader_s.h"
 
 #include "VisGroup.h"
-
+//#include "DynamicLoadingManager.h"
 
 struct Camera
 {
@@ -38,7 +38,7 @@ struct Camera
 	float ortho_znear = -100;
 
 	float perspective_zfar = 5000.0f;
-	float perspective_znear = 0.01f;
+	float perspective_znear = 0.1f;
 
 	vector<float> ortho_frustum = { -2.0f * FOV * 0.05f,	// left
 									+2.0f * FOV * 0.05f,	// right
@@ -95,6 +95,8 @@ private:
 	Shader currentShader;
 	glm::vec3 lightPos = glm::vec3(0.0f, 8.0f, 0.0f);
 	glm::vec3 backgroundColor = glm::vec3(0.02f, 0.08f, 0.09f);
+	
+	//DynamicLoadingManager DLManager;
 
 
 public:
@@ -103,7 +105,6 @@ public:
 	GLFWCanvas(int screenWidth, int screenHeigth);
 	~GLFWCanvas();
 	void SetupContext(VisGroup* viz);
-	void SetupUI();
 	void UpdateViewMatrix();
 	void UpdatefrustumPlanes();
 	void UpdatefrustumMatrix();

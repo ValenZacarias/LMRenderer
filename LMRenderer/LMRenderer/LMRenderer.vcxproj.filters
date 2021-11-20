@@ -93,6 +93,9 @@
     <ClCompile Include="ZoneGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DynamicLoadingManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="difusse_fragment_shader.txt">
@@ -302,6 +305,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZoneGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicLoadingManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -175,21 +175,23 @@ int main()
 
 	//float gridScale = glm::length(BBVertices[1] - BBVertices[0]);
 
-	auto VisZone_1 = zoneGenerator.GenerateZone("Meshes/spheroid_45k");
+	//auto VisZone_1 = zoneGenerator.GenerateZone("Meshes/spheroid_45k");
+	//vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/spheroid_45k", 3, 3, 3);
+	vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/sphere_3k", 16, 4, 4);
 
 	float gridScale = 5.0f;
 	
 	//VisGrid VisGrid_1 = VisGrid(gridScale);
 	auto VisGrid_1 = make_shared<VisGrid>(gridScale);
-	//VisMeshZone VisZone_1(BBVertices);
-	VisGroup MainGroupViz = VisGroup();
 
-	//MainGroupViz.visualizations.push_back(&VisZone_1);
-	MainGroupViz.shared_visualizations.push_back(VisZone_1);
+	VisGroup MainGroupViz = VisGroup();
+	
+	for (int i = 0; i < zones.size(); i++)
+	{
+		MainGroupViz.shared_visualizations.push_back(zones[i]);
+	}
+
 	MainGroupViz.shared_visualizations.push_back(VisGrid_1);
-	//MainGroupViz.visualizations.push_back(&Vis_Sample_1);
-	//MainGroupViz.visualizations.push_back(&VisGrid_1);
-	//MainGroupViz.visualizations.push_back(VisZone_1);
 
 	canvas.SetupContext(&MainGroupViz);
 
@@ -212,7 +214,7 @@ int main()
 	DrawLine yAxis(glm::vec3(0.0f, 0.0f, 0.0f), originLinesLenght * glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, glm::vec3(0.1, 0.9, 0.1));
 	DrawLine zAxis(glm::vec3(0.0f, 0.0f, 0.0f), originLinesLenght * glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, glm::vec3(0.1, 0.1, 0.9));
 
-	int triangleLimit = 100000;
+	int triangleLimit = 50000;
 
 	//RENDER LOOP! -----------------------------------------------------------------------------------------
 	while (!glfwWindowShouldClose(window))
@@ -222,21 +224,15 @@ int main()
 		lastFrame = currentFrame;
 		timer += deltaTime;
 
-		if ((int)timer > 0)
+		/*if ((int)timer > 0)
 		{
 			// Vis State change test
 			if ((int)timer%7 == 0 && LoadOnce)
 			{
 				cout << "try loading 1" << endl;
-				int levelIndex = VisZone_1->GetPossibleLevel(triangleLimit);
-				if ( levelIndex != -1)
-				{
-					VisZone_1->LoadLevel(levelIndex);
-				}
-				else
-				{
-					cout << "Cannot load lv" << levelIndex << endl;
-				}
+				int levelIndex = zones[0]->GetPossibleLevel(triangleLimit);
+				if ( levelIndex != -1) { zones[0]->LoadLevel(levelIndex); }
+				else { cout << "Cannot load lv" << levelIndex << endl; }
 
 				LoadOnce = false;
 			}
@@ -244,22 +240,17 @@ int main()
 			if ((int)timer%15 == 0 && SendToGPUOnce)
 			{
 				cout << "try loading 2" << endl;
-				int levelIndex = VisZone_1->GetPossibleLevel(triangleLimit + 50000);
-				if (levelIndex != -1)
-				{
-					VisZone_1->LoadLevel(levelIndex);
-				}
-				else
-				{
-					cout << "Cannot load lv" << levelIndex << endl;
-				}
+				int levelIndex = zones[1]->GetPossibleLevel(triangleLimit);
+				if (levelIndex != -1) { zones[1]->LoadLevel(levelIndex); }
+				else { cout << "Cannot load lv" << levelIndex << endl; }
 
 				SendToGPUOnce = false;
 			}
-		}
+		}*/
 		
 		canvas.KeyboardHandler(window);
 		canvas.Render();
+		
 
 		// DRAW ORIGIN LINES
 		xAxis.Render(&canvas.currentCamera);
