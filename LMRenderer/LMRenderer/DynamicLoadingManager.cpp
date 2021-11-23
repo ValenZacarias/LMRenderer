@@ -1,52 +1,144 @@
 #include "DynamicLoadingManager.h"
 
-DynamicLoadingManager::DynamicLoadingManager()
+using namespace std;
+
+DynamicLoadingManager::DynamicLoadingManager(shared_ptr<VisGroup> zones)
 {
-	//visZones = meshzones;
+	//visZones = zones;
+	//visibleZones.reserve(visZones->visualizations.size());
+	//unloadableZones.reserve(visZones->visualizations.size());
 }
 
-void SetVisualizationZones(VisGroup* root) 
+DynamicLoadingManager::DynamicLoadingManager(vector<shared_ptr<VisMeshZone>> onlyzones)
 {
-	
+	visZones = onlyzones;
+	visibleZones.reserve(visZones.size());
+	unloadableZones.reserve(visZones.size());
 }
 
+// Esto no podriamos hacerlo 1 vez cada x tiempo/frames? o deberia correr frame a frame?
 void DynamicLoadingManager::Update()
 {
-	// Esto no podriamos hacerlo 1 vez cada x tiempo/frames? o deberia correr frame a frame?
-	/*
-	1.1 llenar lista visibleZones
-	1.2 llenar lista unloadableZones (con las no visibles)
+	if (!DYNAMIC_LOADING_ENABLED) return;
 	
-	2. Calcular TrisPerZone
+	//1.1 llenar lista visibleZones
+	//1.2 llenar lista unloadableZones (con las no visibles)
+	//for (int i = 0; i < visZones->shared_visualizations.size() ; i++)
+	for (int i = 0; i < visZones.size() ; i++)
+	{
+		//shared_ptr<VisMeshZone> actualZone;
 
-	3.1 Load
-	3.2 llenar lista unloadableZones (con las visibles cargadas con > trisPerZone)
+		// visualizations[i] is also a sharedptr
 
-	4. Calcular memoria ocupada
+		//if (visZones->shared_visualizations[i]->IsVisible())
+		if (visZones[i]->IsVisible())
+		{
+			//visibleZones.push_back(static_pointer_cast<VisMeshZone>(visZones->shared_visualizations[i]));
+			//actualZone = static_pointer_cast<VisMeshZone>(visZones->shared_visualizations[i]);
+
+			visibleZones.push_back(visZones[i]);
+		}
+		else
+		{
+			//unloadableZones.push_back(static_pointer_cast<VisMeshZone>(visZones->shared_visualizations[i]));
+			//actualZone = static_pointer_cast<VisMeshZone>(visZones->shared_visualizations[i]);
+			//El problema es que esta casteando la visualizacion de grilla como una vis mesh zone llena de basura
+
+			unloadableZones.push_back(visZones[i]);
+		}
+
+		__nop();
+	}
+
+	if (visibleZones.size() > 0)
+		trisPerZone = memoryLimit / visibleZones.size();
+
+	//3.1 Load
+	//3.2 llenar lista unloadableZones (con las visibles cargadas con > trisPerZone)
+	LoadZones();
+
+	//4. Calcular memoria ocupada
+	CalcOcupiedMemory();
+
+	//cout << "OCCUP: " << memoryOcupied << " || NEEDED: " << memoryNeeded << endl;
+
+	int it = 0;
+	while (memoryNeeded + memoryOcupied > memoryLimit)
+	{
+		// estamos teniendo un problema donde pareciera que el nivel cero se carga 2 veces entonces hay visualizaciones que dicen que
+		// no tienen mas nada para descargar dado que lv = -1 pero aun tienen datos cargados osea triCount = 1200
+		memoryOcupied -= unloadableZones[it]->UnloadLastLevel();
+		
+		if (it == unloadableZones.size() - 1)
+			it = 0;
+		else	
+			it++;
+	}
+
+
+	visibleZones.clear();
+	unloadableZones.clear();
+	memoryNeeded = 0;
+	memoryOcupied = 0;
+
+	/*
+	
+
+
 
 	5. mientras occupiedMemory + neededMemory > memLimit -> Descargar
 
 	*/
 }
 
-void DynamicLoadingManager::CalcTrisPerZone()
-{
-	if (visibleZones.size() > 0)
-		trisPerZone = memoryLimit / visibleZones.size();
-}
 
 void DynamicLoadingManager::CalcOcupiedMemory()
 {
 	/*Calcular cuanta memoria hay ocupada -- SUMA DE TRIS LOADED
 		MO = sum(LV[i].cant_cargados) ) + sum(LNV[i].cant_cargados) )*/
+	memoryOcupied = 0;
+	//for (int i = 0; i < visZones->shared_visualizations.size(); i++)
+	for (int i = 0; i < visZones.size(); i++)
+	{
+		//memoryOcupied += static_pointer_cast<VisMeshZone>(visZones->shared_visualizations[i])->GetTrisLoaded();
+		memoryOcupied += visZones[i]->GetTrisLoaded();
+	}
 }
 
 void DynamicLoadingManager::LoadZones()
 {
+	for (int i = 0; i < visibleZones.size(); i++)
+	{
+		if (visibleZones[i]->GetTrisLoaded() > trisPerZone)
+		{
+			// zonas excedidadas
+			unloadableZones.push_back(visibleZones[i]);
+		}
+		else 
+		{
+			int level = visibleZones[i]->GetPossibleLevel(trisPerZone);
+			if (level != -1)
+			{
+				if(level > visibleZones[i]->GetCurrentLevel())
+				{
+					cout << "LOADING ZONE " << i << " LEVEL " << level << endl;
+					visibleZones[i]->LoadLevel(level);
+					memoryNeeded += visibleZones[i]->GetTrisLoaded();
+				}
+			}
+			else
+			{
+				__nop();
+			}
+
+		}
+	}
+
 	/*for each visible
 	{
 		int level = zone_0.GetPossibleLevel(TrisPerZone);
 		int memoriaNecesariaPorZona = zone_0.loadLevel(level);
+		3.2 llenar lista unloadableZones (con las visibles cargadas con > trisPerZone)
 
 		neededMemory += memoriaNecesariaPorZona;
 	}*/

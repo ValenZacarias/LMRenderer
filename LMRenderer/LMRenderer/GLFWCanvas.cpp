@@ -17,11 +17,6 @@
 #include "GLFWCanvas.h"
 #include "shader_s.h"
 
-//#include "DynamicLoadingManager.h"
-
-
-
-//#include "VisMeshZone.h"
 
 GLFWCanvas::GLFWCanvas(int screenWidth, int screenHeigth)
 {
@@ -105,7 +100,7 @@ GLFWwindow* GLFWCanvas::Init()
 	return window;
 }
 
-void GLFWCanvas::SetupContext(VisGroup* viz)
+void GLFWCanvas::SetupContext(shared_ptr<VisGroup> viz)
 {
 	currentViz = viz;
 	glEnable(GL_DEPTH_TEST);
@@ -189,6 +184,8 @@ void GLFWCanvas::UIRender()
 
 	ImGui::Begin("Opciones");
 	//ImGui::SetWindowFontScale(1.15);
+	ImGui::Checkbox("Dynamic Loading", &DYNAMIC_LOADING_ENABLED);
+	ImGui::Text("Triangle limit: %.1i", DYNAMIC_LOADING_LIMIT);
 	ImGui::SliderFloat("Frustrum Scale", &FRUSTRUM_SCALE, 0.01f, 2.0f);
 	ImGui::SliderFloat("Camera Speed", &CAMERA_SPEED, 0.0f, 10.0f);
 	ImGui::SliderFloat("Mouse Speed", &MOUSE_SENSITIVITY, 0.0f, 0.5f);
@@ -207,7 +204,9 @@ void GLFWCanvas::UIRender()
 			ImGui::Bullet(); ImGui::SameLine();
 			ImGui::Text("Zona %.1i -", n); ImGui::SameLine();
 			ImGui::Checkbox("", &x); ImGui::SameLine();
-			ImGui::Text(" Lv: %.1i", currentViz->shared_visualizations[n]->GetCurrentLevel());
+			ImGui::Text(" Lv: %.1i - Loaded Tris: %.2i", 
+					currentViz->shared_visualizations[n]->GetCurrentLevel(),
+					currentViz->shared_visualizations[n]->GetTrisLoaded());
 		}
 	}
 	ImGui::EndChild();
@@ -353,6 +352,15 @@ void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
 	{
 		CAM_ENABLED = false;
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+	{
+		DYNAMIC_LOADING_ENABLED = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+	{
+		DYNAMIC_LOADING_ENABLED = false;
 	}
 
 	UpdatefrustumPlanes();

@@ -1,30 +1,39 @@
 #pragma once
 #include "VisGroup.h"
+#include "Globals.h"
 #include "VisMeshZone.h"
+
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 class DynamicLoadingManager
 {
 private:
-	VisGroup* visZones;
-	std::vector<VisMeshZone> visibleZones;
-	std::vector<VisMeshZone> unloadableZones;
+	//shared_ptr<VisGroup> visZones;
+	vector<shared_ptr<VisMeshZone>> visZones;
+	vector<shared_ptr<VisMeshZone>> visibleZones;
+	//vector<VisMeshZone*>  visibleZones;
+	vector<shared_ptr<VisMeshZone>> unloadableZones;
+	//vector<VisMeshZone*> unloadableZones;
 	
 	int trisPerZone;
 
 	// Estos valores son en cantidad de triangulos, deberian llamarse TrisMemoryLimit, TrisMemoryNeeded etc. ?
-	int memoryLimit;
+	int memoryLimit = DYNAMIC_LOADING_LIMIT;
 	int memoryNeeded;
 	int memoryOcupied;
 
 public:
-	DynamicLoadingManager();
+	DynamicLoadingManager(shared_ptr<VisGroup> zones);
+	DynamicLoadingManager(vector<shared_ptr<VisMeshZone>> onlyzones);
 	//DynamicLoadingManager(VisGroup* meshzones);
-	void SetVisualizationZones(VisGroup* root);
+	//void SetVisualizationZones(VisGroup* root);
 	void Update();
-	void CalcTrisPerZone();
 	void CalcOcupiedMemory();
 	void LoadZones();
 	void UnloadZones();
-
+	int GetMemoryNeeded() { return memoryNeeded; }
+	int GetMemoryOccupied() { return memoryOcupied; }
 };
 

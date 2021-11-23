@@ -13,7 +13,6 @@
 #include "shader_s.h"
 
 #include "VisGroup.h"
-//#include "DynamicLoadingManager.h"
 
 struct Camera
 {
@@ -91,7 +90,7 @@ private:
 	int width;
 	int heigth;
 	Tool* currentTool; //Tool deberia ser un smartpointer a tool
-	VisGroup* currentViz; 
+	shared_ptr<VisGroup> currentViz; 
 	Shader currentShader;
 	glm::vec3 lightPos = glm::vec3(0.0f, 8.0f, 0.0f);
 	glm::vec3 backgroundColor = glm::vec3(0.02f, 0.08f, 0.09f);
@@ -104,7 +103,7 @@ public:
 
 	GLFWCanvas(int screenWidth, int screenHeigth);
 	~GLFWCanvas();
-	void SetupContext(VisGroup* viz);
+	void SetupContext(shared_ptr<VisGroup>);
 	void UpdateViewMatrix();
 	void UpdatefrustumPlanes();
 	void UpdatefrustumMatrix();

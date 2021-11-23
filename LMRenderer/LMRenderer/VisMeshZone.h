@@ -31,16 +31,14 @@ enum ZONE_STATE { FAR, NEAR, VISIBLE };
 class VisMeshZone : public VisBase
 {
 private:
-
+	int ZONE_ID;
 	//vector<shared_ptr<VisCell_bin<float>>>Sub_Visualizations;
 	int loadedLevel = -1;
 
 	//vector<shared_ptr<VisBase>> subVisualizations{};
 	vector<shared_ptr<VisCell_bin>> subVisualizations{};
-	vector<int> subVisTrisCount{};
 
-	long zoneTrisCount;
-	long renderedTrisCount;
+	long loadedTrisCount = 0;
 
 	vector<glm::vec3> BoundingBox;
 	glm::vec3 Centroid;
@@ -48,12 +46,8 @@ private:
 	GLuint VAO_BB;
 	GLuint EBO_BB;
 
-	PACalcNormals calcnormals;
-
 	Shader shader_bb;
 	int vertexCount_bb;
-
-	DrawPoint p4;
 
 	float frus_dist_left = 0.0f;
 	float frus_dist_right = 0.0f;
@@ -68,6 +62,8 @@ public:
 	{
 		Shader standardShader("light_vertex_shader.txt", "light_fragment_shader.txt");
 		this->shader_bb = standardShader;
+		ZONE_ID = VIS_ID_COUNTER;
+		VIS_ID_COUNTER++;
 	}
 
 	//VisMeshZone( vector<VisBase*> subVis ,vector<glm::vec3> bb)
@@ -104,7 +100,7 @@ public:
 	void AddSubVisualization(shared_ptr<VisCell_bin> vis)
 	{
 		subVisualizations.push_back(vis);
-		subVisTrisCount.push_back(vis->GetTrisCount());
+		//subVisTrisCount.push_back(vis->GetTrisCount());
 	}
 
 	bool isInsidefrustum(Camera* cam)
@@ -141,14 +137,24 @@ public:
 		}
 	}
 
-	int GetPossibleLevel(int triCount)
+	int GetPossibleLevel(int triCountLimit)
 	{
-		int candidateVisIndex = -1;
+		// tenemos que acumular los triangulos de cada nivel y compararlos con el limite
+		// iniciamos con el nivel cero, si este ya no cumple con < limit, devolvemos -1 sino seguimos acumulando 
+		// hasta encontrar el nivel que haga que lo acumulado pase el limite, ahi devolvemos como nivel limite de cargado
+		// el anterior que cumplio la condicion
 
-		for (int i = 0; i < subVisTrisCount.size(); i++)
+		int candidateVisIndex = -1;
+		//int accumulatedTriCount = subVisualizations[0]->GetTrisCount();
+		int accumulatedTriCount = 0;
+
+		for (int i = 0; i < subVisualizations.size(); i++)
 		{
-			if (subVisTrisCount[i] <= triCount)
-				candidateVisIndex = i;
+			if (accumulatedTriCount + subVisualizations[i]->GetTrisCount() <= triCountLimit)
+			{
+				accumulatedTriCount += subVisualizations[i]->GetTrisCount();
+				candidateVisIndex++;
+			}
 		}
 
 		if (candidateVisIndex == loadedLevel)
@@ -157,26 +163,66 @@ public:
 		return candidateVisIndex;
 	}
 
-	//int LoadLevel(int index) devuelve la cantidad de triangulos que va a cargar
-	void LoadLevel(int index)
+	int GetTrisLoaded() override
 	{
-		if(index == -1) _impossible(true);
+		return loadedTrisCount;
+	}
+
+	//int LoadLevel(int index) devuelve la cantidad de triangulos que va a cargar
+	void LoadLevel(int highestPossibleLevel)
+	{
+		if(highestPossibleLevel == -1) _impossible(true);
+
+		for (int i = 0; i < highestPossibleLevel; i++)
+		{
+			//subVisualizations[i]->LoadFileData();
+			subVisualizations[i]->actualState = LOADED;
+			loadedTrisCount += subVisualizations[i]->GetTrisCount();
+		}
+
+		loadedLevel = highestPossibleLevel;
 
 		// EN PRINCIPIO NO DEBERIA SER NECESARIO SACAR EL MAS BAJO
 		// SI EN EL PEOR DE LOS CASOS EL NIVEL N-1 ESTA TOTALMENTE CONTENIDO EN EL SIGUIENTE
 		// 
 		//if (loadedLevel != -1) subVisualizations[loadedLevel]->actualState = UNLOADED;
-		subVisualizations[index]->actualState = LOADED; //este es el estado objetivo
+		//subVisualizations[highestLevel]->actualState = LOADED; //este es el estado objetivo
 
-		loadedLevel = index;
+		//loadedLevel = index;
+	}
+
+	int UnloadLastLevel()
+	{
+		//if (loadedLevel == -1 || loadedLevel > 2)
+		//{
+		//	// caso donde la visualizacion es descargable pero no tiene nada cargado
+		//	// de alguna forma llegan visualizaciones con loaded level >2 , parece ser que se llenan de basura
+		//	// se reinicializan todos los datos en ese caso
+
+		//	loadedLevel = -1;
+		//	loadedTrisCount = 0;
+
+		//	return 0;
+		//}
+
+		if (loadedLevel == -1)
+			return 0;
+
+		int trisLoadedBeforeUnload = subVisualizations[loadedLevel]->GetTrisCount();
+		if (loadedTrisCount - trisLoadedBeforeUnload > 0)
+			loadedTrisCount -= trisLoadedBeforeUnload;
+		else
+			loadedTrisCount = 0;
+		//subVisualizations[loadedLevel]->DeleteMemoryBuffers();
+		subVisualizations[loadedLevel]->actualState = UNLOADED;
+		loadedLevel--;
+
+		return trisLoadedBeforeUnload;
 	}
 
 	void Render(Camera* cam)
 	{
-		//p4.Render(cam);
-		//p5.Render(cam);
-		//p6.Render(cam);
-		//p7.Render(cam);
+
 		Render_BB(cam);
 
 		if (isInsidefrustum(cam))
@@ -188,20 +234,6 @@ public:
 		{
 			subVisualizations[i]->Update(cam);
 		}
-
-		//switch (actualState)
-		//{
-		//case FAR:
-
-		//	break;
-		//case NEAR:
-
-		//	break;
-		//case VISIBLE:
-
-		//default:
-		//	_impossible(true);
-		//}
 	}
 
 

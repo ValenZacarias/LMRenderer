@@ -33,15 +33,13 @@ private:
 
 	//TVertex triVertexData; // File
 	shared_ptr<DataBinFile<glm::vec3>> triVertexData;
-	int cellCount;
-
 	std::vector<glm::vec3> BufferData{};
 
 	GLuint VBO;
 	GLuint VAO;
-	GLuint EBO;
-	long trisCount;
+	long trisCount = 0;
 	bool GPUBuffersLoaded = false;
+	bool MemoryBuffersLoaded = false;
 
 	PATriangulate triangulate;
 	PACalcNormals calcnormals;
@@ -70,7 +68,6 @@ public:
 	{
 		glDeleteVertexArrays(1, &VAO);
 		glDeleteBuffers(1, &VBO);
-		glDeleteBuffers(1, &EBO);
 		cout << "VIS DELETED" << endl;
 	}
 
@@ -86,16 +83,17 @@ public:
 			case UNLOADED:
 
 				// Unload data from memory
-				if(BufferData.size() == trisCount)
+				if(MemoryBuffersLoaded)
 					DeleteMemoryBuffers();
 
 				break;
 			case LOADED:
 				// Load data to memory, then to GPU
-				if (BufferData.size() == 0)
+				if (!MemoryBuffersLoaded)
+				{
 					LoadFileData();
-				else if (!GPUBuffersLoaded && BufferData.size() == trisCount*6)
 					GenerateBuffers();
+				}
 				else
 					Draw(cam); // Drawcall
 				break;
@@ -131,6 +129,10 @@ public:
 		actualState = LOADED;
 
 		cout << "VIS SAMPLE LOADED " << trisCount << " TRIANGLES" << endl;
+
+		GenerateBuffers();
+
+		MemoryBuffersLoaded = true;
 	}
 
 	void GenerateBuffers()
@@ -206,7 +208,13 @@ public:
 
 	void DeleteMemoryBuffers()
 	{
+		cout << "VIS SAMPLE UNLOADED " << trisCount << " TRIANGLES" << endl;
 		BufferData.clear();
+		glDeleteVertexArrays(1, &VAO);
+		glDeleteRenderbuffers(1, &VBO);
+		glDeleteBuffers(1, &VBO);
+
+		MemoryBuffersLoaded = false;
 	}
 
 };

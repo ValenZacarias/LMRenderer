@@ -2,6 +2,7 @@
 #include <glm/glm.hpp> 
 using namespace std;
 
+extern int VIS_ID_COUNTER;
 
 extern int screenWidth;
 extern int screenHeight;
@@ -17,6 +18,8 @@ extern float CAMERA_SPEED;
 
 extern float MOUSE_SENSITIVITY;
 extern bool firstMouse;
+extern bool DYNAMIC_LOADING_ENABLED;
+extern int DYNAMIC_LOADING_LIMIT;
 
 extern float MESH_SCALE;
 extern float FRUSTRUM_SCALE;
