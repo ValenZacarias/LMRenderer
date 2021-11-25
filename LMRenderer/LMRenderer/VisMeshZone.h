@@ -173,11 +173,17 @@ public:
 	{
 		if(highestPossibleLevel == -1) _impossible(true);
 
-		for (int i = 0; i < highestPossibleLevel; i++)
+		for (int i = 0; i < highestPossibleLevel + 1; i++)
 		{
 			//subVisualizations[i]->LoadFileData();
-			subVisualizations[i]->actualState = LOADED;
-			loadedTrisCount += subVisualizations[i]->GetTrisCount();
+			//subVisualizations[i]->LoadFileData();
+			//subVisualizations[i]->GenerateBuffers();
+			if (subVisualizations[i]->actualState != LOADED)
+			{
+				subVisualizations[i]->actualState = LOADED;
+				loadedTrisCount += subVisualizations[i]->GetTrisCount();
+			}
+
 		}
 
 		loadedLevel = highestPossibleLevel;

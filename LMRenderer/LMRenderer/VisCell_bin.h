@@ -130,7 +130,7 @@ public:
 
 		cout << "VIS SAMPLE LOADED " << trisCount << " TRIANGLES" << endl;
 
-		GenerateBuffers();
+		//GenerateBuffers();
 
 		MemoryBuffersLoaded = true;
 	}
@@ -197,14 +197,14 @@ public:
 
 	}
 
-	void DeleteGPUBuffers()
-	{
-		glDeleteVertexArrays(1, &VAO);
-		glDeleteBuffers(1, &VBO);
-		GPUBuffersLoaded = false;
-		__nop();
-		cout << "GPU BUFFERS DELETED" << endl;
-	}
+	//void DeleteGPUBuffers()
+	//{
+	//	glDeleteVertexArrays(1, &VAO);
+	//	glDeleteBuffers(1, &VBO);
+	//	GPUBuffersLoaded = false;
+	//	__nop();
+	//	cout << "GPU BUFFERS DELETED" << endl;
+	//}
 
 	void DeleteMemoryBuffers()
 	{

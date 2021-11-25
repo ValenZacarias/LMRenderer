@@ -63,7 +63,7 @@ GLFWwindow* window = NULL;
 
 int main()
 {
-	DYNAMIC_LOADING_LIMIT = 50000;
+	DYNAMIC_LOADING_LIMIT = 16000;
 
 	ZoneGenerator zoneGenerator;
 
@@ -78,7 +78,7 @@ int main()
 	// ZONE GENERATION -------------------------------------------------------------------------------------------------------
 	//auto VisZone_1 = zoneGenerator.GenerateZone("Meshes/spheroid_45k");
 	//vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/spheroid_45k", 3, 3, 3);
-	vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/sphere_3k", 16, 4, 4);
+	vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/sphere_3k", 6, 6, 1);
 
 	// VIS INIT -------------------------------------------------------------------------------------------------------
 	float gridScale = 5.0f;
@@ -114,7 +114,7 @@ int main()
 	DrawLine yAxis(glm::vec3(0.0f, 0.0f, 0.0f), originLinesLenght * glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, glm::vec3(0.1, 0.9, 0.1));
 	DrawLine zAxis(glm::vec3(0.0f, 0.0f, 0.0f), originLinesLenght * glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, glm::vec3(0.1, 0.1, 0.9));
 
-	int triangleLimit = 50000;
+	//int triangleLimit = 50000;
 
 	//RENDER LOOP! -----------------------------------------------------------------------------------------
 	while (!glfwWindowShouldClose(window))

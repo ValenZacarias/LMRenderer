@@ -50,18 +50,22 @@ void DynamicLoadingManager::Update()
 		__nop();
 	}
 
+	if (!visZones[1]->IsVisible())
+		__nop();
+
 	if (visibleZones.size() > 0)
 		trisPerZone = memoryLimit / visibleZones.size();
+
+	//4. Calcular memoria ocupada - PRE LOADING
+	CalcOcupiedMemory();
 
 	//3.1 Load
 	//3.2 llenar lista unloadableZones (con las visibles cargadas con > trisPerZone)
 	LoadZones();
 
-	//4. Calcular memoria ocupada
-	CalcOcupiedMemory();
-
 	//cout << "OCCUP: " << memoryOcupied << " || NEEDED: " << memoryNeeded << endl;
 
+	//5. mientras occupiedMemory + neededMemory > memLimit->Descargar
 	int it = 0;
 	while (memoryNeeded + memoryOcupied > memoryLimit)
 	{
@@ -75,20 +79,11 @@ void DynamicLoadingManager::Update()
 			it++;
 	}
 
-
+	// 6. Clear data
 	visibleZones.clear();
 	unloadableZones.clear();
 	memoryNeeded = 0;
 	memoryOcupied = 0;
-
-	/*
-	
-
-
-
-	5. mientras occupiedMemory + neededMemory > memLimit -> Descargar
-
-	*/
 }
 
 
@@ -98,10 +93,12 @@ void DynamicLoadingManager::CalcOcupiedMemory()
 		MO = sum(LV[i].cant_cargados) ) + sum(LNV[i].cant_cargados) )*/
 	memoryOcupied = 0;
 	//for (int i = 0; i < visZones->shared_visualizations.size(); i++)
+	//for (int i = 0; i < unloadableZones.size(); i++)
 	for (int i = 0; i < visZones.size(); i++)
 	{
 		//memoryOcupied += static_pointer_cast<VisMeshZone>(visZones->shared_visualizations[i])->GetTrisLoaded();
 		memoryOcupied += visZones[i]->GetTrisLoaded();
+		//memoryOcupied += unloadableZones[i]->GetTrisLoaded();
 	}
 }
 
@@ -121,27 +118,16 @@ void DynamicLoadingManager::LoadZones()
 			{
 				if(level > visibleZones[i]->GetCurrentLevel())
 				{
+					int memBeforeLoad = visibleZones[i]->GetTrisLoaded();
 					cout << "LOADING ZONE " << i << " LEVEL " << level << endl;
 					visibleZones[i]->LoadLevel(level);
-					memoryNeeded += visibleZones[i]->GetTrisLoaded();
+					//memoryNeeded += visibleZones[i]->GetTrisLoaded();
+					memoryNeeded += (visibleZones[i]->GetTrisLoaded() - memBeforeLoad);
 				}
 			}
-			else
-			{
-				__nop();
-			}
-
 		}
 	}
 
-	/*for each visible
-	{
-		int level = zone_0.GetPossibleLevel(TrisPerZone);
-		int memoriaNecesariaPorZona = zone_0.loadLevel(level);
-		3.2 llenar lista unloadableZones (con las visibles cargadas con > trisPerZone)
-
-		neededMemory += memoriaNecesariaPorZona;
-	}*/
 }
 
 void DynamicLoadingManager::UnloadZones()
