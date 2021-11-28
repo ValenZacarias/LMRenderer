@@ -21,8 +21,8 @@ private:
 
 	// Estos valores son en cantidad de triangulos, deberian llamarse TrisMemoryLimit, TrisMemoryNeeded etc. ?
 	int memoryLimit = DYNAMIC_LOADING_LIMIT;
-	int memoryNeeded;
-	int memoryOcupied;
+	int memoryNeeded = 0;
+	int memoryOcupied = 0;
 
 public:
 	DynamicLoadingManager(shared_ptr<VisGroup> zones);

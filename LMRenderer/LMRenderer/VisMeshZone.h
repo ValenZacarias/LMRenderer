@@ -56,10 +56,12 @@ private:
 
 public:
 
-	ZONE_STATE actualState;
+	ZONE_STATE actualState = FAR;
 
 	VisMeshZone()
 	{
+		actualState = FAR;
+
 		Shader standardShader("light_vertex_shader.txt", "light_fragment_shader.txt");
 		this->shader_bb = standardShader;
 		ZONE_ID = VIS_ID_COUNTER;

@@ -17,6 +17,7 @@ private:
 	fstream file;
 	bool existingFile = false;
 	int size = 0;
+	T dataAux;
 
 public:
 
@@ -53,6 +54,7 @@ public:
 	bool CloseFile()
 	{
 		file.close();
+		file.clear();
 
 		if (!file.is_open())
 			return true;
@@ -76,7 +78,8 @@ public:
 		file.open(filename, std::ios::in | std::ios::binary);
 
 		if (!file.is_open())
-			cout << "Could not open " << filename << " for read" << endl;  return false;
+			cout << "Could not open " << filename << " for read" << endl;  
+		return false;
 
 		return true;
 	}
@@ -90,8 +93,6 @@ public:
 
 	T& GetData(int i) 
 	{ 
-		T dataAux;
-
 		file.seekg(i * sizeof(T));
 		file.read(reinterpret_cast<char*>(&dataAux), sizeof(dataAux));
 
@@ -104,6 +105,7 @@ public:
 	
 	void ReserveData(int count) { }
 
+	// Trabajar este metodo para que nos devuelva un vector completo con todos los datos levantados del archivo
 	auto GetFullData() { return data.data(); }
 
 

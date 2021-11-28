@@ -31,9 +31,6 @@ public:
     DrawLine() {};
     DrawLine(vec3 start, vec3 end, float width, vec3 color = vec3(1.0f, 0.0f, 1.0f))
     {
-        glDeleteVertexArrays(1, &VAO);
-        glDeleteBuffers(1, &VBO);
-
         startPoint = start;
         endPoint = end;
         lineColor = color;
@@ -69,7 +66,6 @@ public:
 
     void Render(Camera* cam) 
     {
-
         shader.use();
         shader.setVec3("lightColor", lineColor.r, lineColor.g, lineColor.b);
 

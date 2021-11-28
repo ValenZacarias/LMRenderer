@@ -119,6 +119,8 @@ public:
 			BufferData.push_back(normaldata.GetData(i));
 		}
 
+		triVertexData->CloseFile();
+
 		__nop();
 
 		if (BufferData.size() == 0)

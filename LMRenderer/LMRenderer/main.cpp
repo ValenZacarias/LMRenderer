@@ -63,7 +63,7 @@ GLFWwindow* window = NULL;
 
 int main()
 {
-	DYNAMIC_LOADING_LIMIT = 16000;
+	DYNAMIC_LOADING_LIMIT = 30000;
 
 	ZoneGenerator zoneGenerator;
 
@@ -78,7 +78,7 @@ int main()
 	// ZONE GENERATION -------------------------------------------------------------------------------------------------------
 	//auto VisZone_1 = zoneGenerator.GenerateZone("Meshes/spheroid_45k");
 	//vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/spheroid_45k", 3, 3, 3);
-	vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/sphere_3k", 6, 6, 1);
+	vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/sphere_3k", 16, 4, 4);
 
 	// VIS INIT -------------------------------------------------------------------------------------------------------
 	float gridScale = 5.0f;
