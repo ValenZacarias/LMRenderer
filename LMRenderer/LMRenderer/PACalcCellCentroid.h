@@ -47,7 +47,7 @@ public:
 		for (int i = 0; i < cellData.GetSize(); i++)
 		{
 			reconstructCell.GetCellFaces(faceData, cellData, i, cellFaces);
-			__nop();
+			//__nop();
 			for (int j = 0; j < cellFaces.size(); j++)
 			{
 				p0 = faceData.GetData(cellFaces[j]).GetP0();
@@ -57,7 +57,7 @@ public:
 				{
 					//cout << "v" << k << ", ";
 					vertexSet.insert(vertexData.GetData(k));
-					__nop();
+					//__nop();
 				}
 			}
 
@@ -74,7 +74,7 @@ public:
 
 			cellCentoids.SetData(centroid);
 
-			__nop();
+			//__nop();
 
 			//cout << "cent " << i << ": x = " << centroid.x << " // y = " << centroid.y << " // z = " << centroid.z << endl;
 
@@ -85,7 +85,7 @@ public:
 
 		}
 
-		__nop();
+		//__nop();
 	}
 
 };

@@ -34,7 +34,7 @@ public:
 		for (int i = 0; i < cellData.GetSize(); i++)
 		{
 			reconstructCell.GetCellFaces(faceData, cellData, i, cellFaces);
-			__nop();
+			//__nop();
 
 			for (int j = 0; j < cellFaces.size(); j++)
 			{
@@ -50,7 +50,7 @@ public:
 					qk = vertexData.GetData(k + 2);
 
 					vol += glm::dot((qi - centroid), glm::cross((qj - centroid), (qk - centroid)));
-					__nop();
+					//__nop();
 				}
 
 			}
@@ -58,7 +58,7 @@ public:
 			cellVolumes.SetData(vol);
 			vol = 0;
 		}
-		__nop();
+		//__nop();
 	}
 
 };

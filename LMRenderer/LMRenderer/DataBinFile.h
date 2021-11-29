@@ -96,7 +96,7 @@ public:
 		file.seekg(i * sizeof(T));
 		file.read(reinterpret_cast<char*>(&dataAux), sizeof(dataAux));
 
-		__nop();
+		//__nop();
 
 		return dataAux;
 	}
@@ -106,7 +106,13 @@ public:
 	void ReserveData(int count) { }
 
 	// Trabajar este metodo para que nos devuelva un vector completo con todos los datos levantados del archivo
-	auto GetFullData() { return data.data(); }
+	void GetFullData(vector<T>& buffer) 
+	{ 
+		file.seekg(0);
+		// no podemos hacer &buffer dado que eso es un puntero a la clase, no a los datos
+		//para eso usamos buffer.data() que nos da un puntero a la direccion donde almacena
+		file.read(reinterpret_cast<char*>(buffer.data()), buffer.size() * sizeof(T));
+	}
 
 
 };

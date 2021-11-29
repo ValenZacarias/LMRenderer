@@ -63,7 +63,7 @@ GLFWwindow* window = NULL;
 
 int main()
 {
-	DYNAMIC_LOADING_LIMIT = 30000;
+	DYNAMIC_LOADING_LIMIT = 300000;
 
 	ZoneGenerator zoneGenerator;
 

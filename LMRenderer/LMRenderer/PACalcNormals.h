@@ -21,7 +21,6 @@ public:
 			v1 = vertex.GetData(i + 1);
 			v2 = vertex.GetData(i + 2);
 
-			//normal = glm::cross(vertex.GetData(i + 1) - vertex.GetData(i), vertex.GetData(i + 2) - vertex.GetData(i));
 			normal = glm::cross(v1 - v0, v2 - v0);
 
 			normalData.SetData(normal);

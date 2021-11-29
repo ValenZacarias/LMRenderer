@@ -1,4 +1,5 @@
 #pragma once
+#include <chrono>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <vector>
@@ -23,6 +24,7 @@
 #include "PATriangulate.h"
 #include "PACalcNormals.h"
 
+using namespace chrono;
 
 enum STATE { UNLOADED, LOADED };
 
@@ -106,6 +108,8 @@ public:
 	{
 		_expects(triVertexData->GetSize() > 0);
 
+		steady_clock::time_point begin = steady_clock::now();
+
 		triVertexData->StartRead();
 
 		trisCount = triVertexData->GetSize()/3;
@@ -113,24 +117,36 @@ public:
 
 		int n = triVertexData->GetSize();
 
-		for (int i = 0; i < n; i++)
-		{
-			BufferData.push_back(triVertexData->GetData(i));
-			BufferData.push_back(normaldata.GetData(i));
-		}
+		// Normals from file
+		//for (int i = 0; i < n; i++){ BufferData.push_back(triVertexData->GetData(i)); }
+
+		// File full data
+		BufferData.resize(n);
+		triVertexData->GetFullData(BufferData);
+
+		//for (int i = 0; i < n; i++)
+		//{
+		//	BufferData.push_back(triVertexData->GetData(i));
+		//	BufferData.push_back(normaldata.GetData(i));
+		//}
 
 		triVertexData->CloseFile();
 
-		__nop();
+		steady_clock::time_point end = steady_clock::now();
+		//cout << " Data read and Normals Processing = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
+		cout << " Data read = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
+		cout << " Loaded " << triVertexData->GetSize() << " vectors" << endl;
+
+		//__nop();
 
 		if (BufferData.size() == 0)
 		{
-			cout << "VIS SAMPLE CANT LOAD DATA FROM FILE " << endl;
+			//cout << "VIS SAMPLE CANT LOAD DATA FROM FILE " << endl;
 		}
 
 		actualState = LOADED;
 
-		cout << "VIS SAMPLE LOADED " << trisCount << " TRIANGLES" << endl;
+		//cout << "VIS SAMPLE LOADED " << trisCount << " TRIANGLES" << endl;
 
 		//GenerateBuffers();
 
@@ -163,7 +179,7 @@ public:
 
 		GPUBuffersLoaded = true;
 
-		__nop();
+		//__nop();
 	}
 
 	void Draw(Camera* cam)
@@ -204,7 +220,7 @@ public:
 	//	glDeleteVertexArrays(1, &VAO);
 	//	glDeleteBuffers(1, &VBO);
 	//	GPUBuffersLoaded = false;
-	//	__nop();
+	//	//__nop();
 	//	cout << "GPU BUFFERS DELETED" << endl;
 	//}
 

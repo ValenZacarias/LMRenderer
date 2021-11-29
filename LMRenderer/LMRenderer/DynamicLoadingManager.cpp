@@ -47,11 +47,11 @@ void DynamicLoadingManager::Update()
 			unloadableZones.push_back(visZones[i]);
 		}
 
-		__nop();
+		//__nop();
 	}
 
 	if (!visZones[1]->IsVisible())
-		__nop();
+		//__nop();
 
 	if (visibleZones.size() > 0)
 		trisPerZone = memoryLimit / visibleZones.size();
