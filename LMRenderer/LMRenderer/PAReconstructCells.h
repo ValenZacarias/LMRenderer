@@ -51,8 +51,6 @@ public:
 			existingFaceSide = faceData.GetData(cellData.GetData(cellIndex).GetFaceIndex()).GetNextLSide();
 		}
 
-
-		//reconstructedFaceData.SetData(faceData.GetData(existingFaceIndex));
 		cellFaces.push_back(existingFaceIndex);
 
 		while (existingFaceIndex != cellData.GetData(cellIndex).GetFaceIndex())
@@ -67,7 +65,6 @@ public:
 				existingFaceSide = faceData.GetData(existingFaceIndex).GetNextLSide();
 				existingFaceIndex = faceData.GetData(existingFaceIndex).GetNextLIndex();
 			}
-			//reconstructedFaceData.SetData(faceData.GetData(existingFaceIndex));
 			
 			cellFaces.push_back(existingFaceIndex);
 		}

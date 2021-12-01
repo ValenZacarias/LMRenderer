@@ -25,7 +25,7 @@ float FRUSTRUM_SCALE = 0.7;
 
 float MESH_SCALE = 1.0f;
 bool DYNAMIC_LOADING_ENABLED = false;
-int DYNAMIC_LOADING_LIMIT = 0;
+int DYNAMIC_LOADING_LIMIT = 50000;
 
 glm::vec3 BB_COLOR_HIDDEN = glm::vec3(0.1f, 0.3f, 0.9f);
 glm::vec3 BB_COLOR_VISIBLE = glm::vec3(0.1f, 0.9f, 0.2f);

@@ -12,7 +12,6 @@ enum MouseState { PRESS, RELEASE, NONE };
 class Tool
 {
 protected:
-	//MouseState mouseState = NONE;
 public:
 	
 

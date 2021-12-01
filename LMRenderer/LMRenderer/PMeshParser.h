@@ -40,9 +40,6 @@ public:
 		ifstream in(filename);
 
 		assert(in);
-
-		//__M_Assert(in == true, "MyFunction: requires non-null argument");
-
 		string currentLine;
 		
 		int totalFaces;

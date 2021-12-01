@@ -121,8 +121,6 @@ public:
 		{
 			rnd = dist(engine);
 			sampledSet.SetData(dataSet.GetData(rnd));
-
-			
 		}
 
 		return areaCountHistogram;

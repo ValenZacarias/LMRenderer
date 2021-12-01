@@ -28,12 +28,10 @@ using namespace chrono;
 
 enum STATE { UNLOADED, LOADED };
 
-//template <typename TVertex>
 class VisCell_bin : public VisBase
 {
 private:
 
-	//TVertex triVertexData; // File
 	shared_ptr<DataBinFile<glm::vec3>> triVertexData;
 	std::vector<glm::vec3> BufferData{};
 
@@ -50,10 +48,8 @@ private:
 
 public:
 
-	STATE actualState;
+	STATE actualState = UNLOADED;
 
-	//VisCell_bin(TVertex v, int cc)
-	//VisCell_bin(shared_ptr<DataBinFile<glm::vec3>> v, int cc)
 	VisCell_bin(shared_ptr<DataBinFile<glm::vec3>> v)
 	{
 		this->triVertexData = v;
@@ -113,7 +109,7 @@ public:
 		triVertexData->StartRead();
 
 		trisCount = triVertexData->GetSize()/3;
-		DataVector<glm::vec3> normaldata = calcnormals.ProcessVec3(*triVertexData);
+		//DataVector<glm::vec3> normaldata = calcnormals.ProcessVec3(*triVertexData);
 
 		int n = triVertexData->GetSize();
 

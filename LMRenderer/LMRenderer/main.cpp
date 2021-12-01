@@ -63,8 +63,6 @@ GLFWwindow* window = NULL;
 
 int main()
 {
-	DYNAMIC_LOADING_LIMIT = 300000;
-
 	ZoneGenerator zoneGenerator;
 
 	// CANVAS SETUP ----------------------------------------------------------------------------------------------------------
@@ -77,8 +75,12 @@ int main()
 
 	// ZONE GENERATION -------------------------------------------------------------------------------------------------------
 	//auto VisZone_1 = zoneGenerator.GenerateZone("Meshes/spheroid_45k");
-	//vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/spheroid_45k", 3, 3, 3);
+	//vector<shared_ptr<VisMeshZone>> zones = { VisZone_1 };
+
+	// REPEATED ZONE GENERATION ----------------------------------------------------------------------------------------------
+	//vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/spheroid_45k", 9, 3, 3);
 	vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/sphere_3k", 16, 4, 4);
+	//vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/flange_mf_282k", 9, 3, 3);
 
 	// VIS INIT -------------------------------------------------------------------------------------------------------
 	float gridScale = 5.0f;
@@ -91,7 +93,6 @@ int main()
 	canvas.SetupContext(MainGroupViz);
 
 	// MANAGER INIT -----------------------------------------------------------------------------------------------------------
-
 	DynamicLoadingManager DLManager(zones);
 
 	// MISC DATA
@@ -114,8 +115,6 @@ int main()
 	DrawLine yAxis(glm::vec3(0.0f, 0.0f, 0.0f), originLinesLenght * glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, glm::vec3(0.1, 0.9, 0.1));
 	DrawLine zAxis(glm::vec3(0.0f, 0.0f, 0.0f), originLinesLenght * glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, glm::vec3(0.1, 0.1, 0.9));
 
-	//int triangleLimit = 50000;
-
 	//RENDER LOOP! -----------------------------------------------------------------------------------------
 	while (!glfwWindowShouldClose(window))
 	{
@@ -124,37 +123,11 @@ int main()
 		lastFrame = currentFrame;
 		timer += deltaTime;
 
-		/*if ((int)timer > 0)
-		{
-			// Vis State change test
-			if ((int)timer%7 == 0 && LoadOnce)
-			{
-				cout << "try loading 1" << endl;
-				int levelIndex = zones[0]->GetPossibleLevel(triangleLimit);
-				if ( levelIndex != -1) { zones[0]->LoadLevel(levelIndex); }
-				else { cout << "Cannot load lv" << levelIndex << endl; }
-
-				LoadOnce = false;
-			}
-
-			if ((int)timer%15 == 0 && SendToGPUOnce)
-			{
-				cout << "try loading 2" << endl;
-				int levelIndex = zones[1]->GetPossibleLevel(triangleLimit);
-				if (levelIndex != -1) { zones[1]->LoadLevel(levelIndex); }
-				else { cout << "Cannot load lv" << levelIndex << endl; }
-
-				SendToGPUOnce = false;
-			}
-		}*/
-		
 		canvas.KeyboardHandler(window);
 
 		DLManager.Update();
 
 		canvas.Render();
-
-		//RenderDLManagerUI(DLManager.GetMemoryOccupied(), DLManager.GetMemoryNeeded());
 
 		// DRAW ORIGIN LINES
 		xAxis.Render(&canvas.currentCamera);

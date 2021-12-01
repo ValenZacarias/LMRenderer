@@ -56,5 +56,7 @@ public:
 	};
 	shared_ptr<VisMeshZone> GenerateZone(string meshFilePath);
 	vector<shared_ptr<VisMeshZone>> GenerateRepeatedZones(string meshFilePath, int zoneCount, int columns, int rows);
+	void loadSubVisData(shared_ptr<DataBinFile<glm::vec3>> fileDataBuffer, DataVector<glm::vec3>& triVertexData, DataVector<Face>& faceDataBuffer);
+	void loadSubVisDataOffset(shared_ptr<DataBinFile<glm::vec3>> fileDataBuffer, DataVector<glm::vec3>& triVertexData, DataVector<Face>& faceDataBuffer, glm::vec3 offset);
 };
 

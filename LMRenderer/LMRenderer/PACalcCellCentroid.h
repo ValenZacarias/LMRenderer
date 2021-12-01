@@ -55,16 +55,13 @@ public:
 
 				for (int k = p0; k < p0 + count; k++)
 				{
-					//cout << "v" << k << ", ";
 					vertexSet.insert(vertexData.GetData(k));
-					//__nop();
 				}
 			}
 
 			pointCount = vertexSet.size();
 			
 			// Calculate centroid
-
 			for (glm::vec3 v : vertexSet)
 			{
 				centroid += v;
@@ -73,19 +70,12 @@ public:
 			centroid /= pointCount;
 
 			cellCentoids.SetData(centroid);
-
-			//__nop();
-
-			//cout << "cent " << i << ": x = " << centroid.x << " // y = " << centroid.y << " // z = " << centroid.z << endl;
-
 			centroid = glm::vec3(0.0);
 
 			vertexSet.clear();
 			cellFaces.clear();
 
 		}
-
-		//__nop();
 	}
 
 };

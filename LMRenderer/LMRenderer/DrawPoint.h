@@ -94,17 +94,10 @@ public:
         unsigned int modelLoc = glGetUniformLocation(shader.ID, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-        //glUseProgram(shaderProgram);
-        //glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "MVP"), 1, GL_FALSE, &MVP[0][0]);
-        //glUniform3fv(glGetUniformLocation(shaderProgram, "color"), 1, &lineColor[0]);
-        //glLineWidth(lineWidth);
         glPointSize(pointSize);
 
         glBindVertexArray(VAO);
         glDrawArrays(GL_POINTS, 0, 1);
-        //glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, NULL);
-
-        //glBindVertexArray(0);
     }
 
 

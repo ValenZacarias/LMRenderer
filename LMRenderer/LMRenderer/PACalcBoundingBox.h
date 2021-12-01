@@ -18,7 +18,6 @@ public:
 		for (int i = 0; i < vertexData.GetSize(); i+=3)
 		{
 			// Max
-
 			if (vertexData.GetData(i) > maxPos.x)
 				maxPos.x = vertexData.GetData(i);
 
@@ -47,7 +46,5 @@ public:
 		BBVertex.push_back(glm::vec3(maxPos.x, minPos.y, maxPos.z)); // 5
 		BBVertex.push_back(glm::vec3(maxPos.x, maxPos.y, maxPos.z)); // 6
 		BBVertex.push_back(glm::vec3(minPos.x, maxPos.y, maxPos.z)); // 7
-
-		//__nop();
 	}
 };

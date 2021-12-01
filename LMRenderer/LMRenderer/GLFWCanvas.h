@@ -24,11 +24,9 @@ struct Camera
 
 	glm::vec3 cameraRestartPos = glm::vec3(0.0f, 3.0f, 6.0f);
 	glm::vec3 cameraPos = glm::vec3(0.0f, 3.0f, 6.0f);
-	//glm::vec3 cameraPos = glm::vec3(0.0f, 0.02f, 0.15f);
 	glm::vec3 cameraFront = glm::vec3(0.0f, -0.5f, -1.0f);
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
-	//glm::vec3 front = glm::vec3(0.0f);
 
 	// MATRIX
 	glm::mat4 view_matrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);

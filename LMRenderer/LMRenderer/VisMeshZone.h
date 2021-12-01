@@ -32,10 +32,8 @@ class VisMeshZone : public VisBase
 {
 private:
 	int ZONE_ID;
-	//vector<shared_ptr<VisCell_bin<float>>>Sub_Visualizations;
 	int loadedLevel = -1;
 
-	//vector<shared_ptr<VisBase>> subVisualizations{};
 	vector<shared_ptr<VisCell_bin>> subVisualizations{};
 
 	long loadedTrisCount = 0;
@@ -68,12 +66,9 @@ public:
 		VIS_ID_COUNTER++;
 	}
 
-	//VisMeshZone( vector<VisBase*> subVis ,vector<glm::vec3> bb)
 	VisMeshZone(vector<glm::vec3> bb)
 	{
 		actualState = FAR;
-
-		//for(int i = 0; subVis.size)
 
 		// Bounding Box Init
 		Shader standardShader("light_vertex_shader.txt", "light_fragment_shader.txt");
@@ -86,10 +81,7 @@ public:
 
 	~VisMeshZone()
 	{
-		//glDeleteVertexArrays(1, &VAO);
-		//glDeleteBuffers(1, &VBO);
-		//glDeleteBuffers(1, &EBO);
-		cout << "VIS DELETED" << endl;
+		cout << "VIS ZONE DELETED" << endl;
 	}
 
 	void SetBoundingBox(vector<glm::vec3> bb)

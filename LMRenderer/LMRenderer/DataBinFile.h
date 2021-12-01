@@ -25,15 +25,12 @@ public:
 	{ 
 		filename = name;
 		file.open(filename, std::ios::in | std::ios::binary);
-		//file(filename);
 
 		if (!file.is_open())
 		{
 			cout << name << " not found!" << endl;
 			file.open(filename, ios::in | ios::binary | ios::trunc);
 			cout << filename << "created" << endl;
-			//if (!file) cout << "CANT CREATE FILE" << endl;
-			//else cout << filename << "created" << endl;
 		}
 		else
 		{
@@ -105,10 +102,10 @@ public:
 	
 	void ReserveData(int count) { }
 
-	// Trabajar este metodo para que nos devuelva un vector completo con todos los datos levantados del archivo
 	void GetFullData(vector<T>& buffer) 
 	{ 
 		file.seekg(0);
+
 		// no podemos hacer &buffer dado que eso es un puntero a la clase, no a los datos
 		//para eso usamos buffer.data() que nos da un puntero a la direccion donde almacena
 		file.read(reinterpret_cast<char*>(buffer.data()), buffer.size() * sizeof(T));

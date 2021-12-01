@@ -13,9 +13,6 @@ shared_ptr<VisMeshZone> ZoneGenerator::GenerateZone(string meshFilePath)
 	shared_ptr<VisMeshZone> visZone = make_shared<VisMeshZone>();
 	int subVisPerZone = 3;
 	bool forceFileCreation = false;
-	//bool forceFileCreation = true;
-
-	//int subVisPerZone = 1;
 
 	auto DataIndex = Parser.ParseFaces(meshFilePath + "_faces.txt");
 	auto DataVertex = Parser.ParsePoints(meshFilePath + "_points.txt");
@@ -39,54 +36,69 @@ shared_ptr<VisMeshZone> ZoneGenerator::GenerateZone(string meshFilePath)
 	// Calc Bounding Box
 	vector<glm::vec3> BBVertices{};
 	calcBoundingBox.Process(*DataVertex, BBVertices);
-
 	visZone->SetBoundingBox(BBVertices);
+
+	// SUB VIS GENERATION --------------------------------------------------------------------------------------------------
 
 	// First sample
 	auto faceDataBuffer = make_shared<DataVector<Face>>(FACE);
 	auto cellDataSample = make_shared<DataVector<Cell>>(CELL);
 
-	for (int i = 0; i < subVisPerZone; i++)
-	{
-		uniformSample.Process(cellData, cellDataSample, 0.1 + (0.3 * i));
+	int SampleSize = 1000;
+	int sampleGrowFactor = 2;
+	int sampleNumber = 0;
+	float samplePercent = 0;
 
+	int totalPrimitiveSize = cellData->GetSize();
+
+	//for (int i = 0; i < subVisPerZone; i++)
+	while (SampleSize < totalPrimitiveSize)
+	{
+		samplePercent = (float)SampleSize / totalPrimitiveSize;
+		uniformSample.Process(cellData, cellDataSample, samplePercent);
 		reconstructCells.Process(*faceData, *faceDataBuffer, *cellDataSample);
 
-		string filename = "bin/zone_" + to_string(generatedZones) + "_" + to_string(i);
+		string filename = "bin/zone_" + to_string(generatedZones) + "_" + to_string(sampleNumber);
 
 		if (forceFileCreation)
 		{
-			auto triVertexBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
+			auto fileDataBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
+			loadSubVisData(fileDataBuffer, *triVertexData, *faceDataBuffer);
 
-			triVertexBuffer->StartWrite();
-			faceIndexTriangulate.Process(*triVertexBuffer, *triVertexData, *faceDataBuffer);
-			triVertexBuffer->SaveFile();
-			triVertexBuffer->CloseFile();
-
-			auto vis = make_shared<VisCell_bin>(triVertexBuffer);
+			auto vis = make_shared<VisCell_bin>(fileDataBuffer);
 			visZone->AddSubVisualization(vis);
 		}
 		else
 		{
-			fstream zonefile(filename);
+			auto fileDataBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
 
-			auto triVertexBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
-
-			if (!triVertexBuffer->FileExists())
+			if (!fileDataBuffer->FileExists())
 			{
-				triVertexBuffer->StartWrite();
-				faceIndexTriangulate.Process(*triVertexBuffer, *triVertexData, *faceDataBuffer);
-				triVertexBuffer->SaveFile();
-				triVertexBuffer->CloseFile();
+				loadSubVisData(fileDataBuffer, *triVertexData, *faceDataBuffer);
 			}
 
-			auto vis = make_shared<VisCell_bin>(triVertexBuffer);
+			auto vis = make_shared<VisCell_bin>(fileDataBuffer);
 			visZone->AddSubVisualization(vis);
 		}
+
+		sampleNumber++;
+		SampleSize = SampleSize * sampleGrowFactor ^ sampleNumber;
+
+		cellDataSample->Clear();
+		faceDataBuffer->Clear();
 	}
 
-	cellDataSample->Clear();
-	faceDataBuffer->Clear();
+	// LAST VIS: FULL MESH ZONE (NO SAMPLING)
+	string filename = "bin/zone_" + to_string(generatedZones) + "_" + to_string(sampleNumber);
+	auto lastFileDataBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
+	if (!lastFileDataBuffer->FileExists())
+	{
+		reconstructCells.Process(*faceData, *faceDataBuffer, *cellData);
+		loadSubVisData(lastFileDataBuffer, *triVertexData, *faceDataBuffer);
+	}
+	
+	auto vis = make_shared<VisCell_bin>(lastFileDataBuffer);
+	visZone->AddSubVisualization(vis);
 
 	return visZone;
 }
@@ -97,8 +109,6 @@ vector<shared_ptr<VisMeshZone>> ZoneGenerator::GenerateRepeatedZones(string mesh
 
 	int subVisPerZone = 3;
 	bool forceFileCreation = false;
-	//bool forceFileCreation = true;
-	//int subVisPerZone = 1;
 
 	auto DataIndex = Parser.ParseFaces(meshFilePath + "_faces.txt");
 	auto DataVertex = Parser.ParsePoints(meshFilePath + "_points.txt");
@@ -123,7 +133,6 @@ vector<shared_ptr<VisMeshZone>> ZoneGenerator::GenerateRepeatedZones(string mesh
 	vector<glm::vec3> BBVertices{};
 	calcBoundingBox.Process(*DataVertex, BBVertices);
 
-
 	glm::vec3 x_offset = BBVertices[1] - BBVertices[0];
 	glm::vec3 z_offset = BBVertices[4] - BBVertices[0];
 	
@@ -131,97 +140,114 @@ vector<shared_ptr<VisMeshZone>> ZoneGenerator::GenerateRepeatedZones(string mesh
 	auto faceDataBuffer = make_shared<DataVector<Face>>(FACE);
 	auto cellDataSample = make_shared<DataVector<Cell>>(CELL);
 
-	//int columns = 5;
-	//int rows = 5;
-
 	for (int j = 0; j < zoneCount; j++) // Zone loop
 	{
 		shared_ptr<VisMeshZone> visZone = make_shared<VisMeshZone>();
 
-		//glm::vec3 offset = x_offset * (float)j;
-		glm::vec3 offset = (x_offset * (float)(j % columns)) + z_offset * (float)(trunc(j/ rows));
-
 		vector<glm::vec3> BBOffseted;
+		glm::vec3 offset = (x_offset * (float)(j % columns)) + z_offset * (float)(trunc(j/ rows));
 		for (int p = 0; p < BBVertices.size(); p++) { BBOffseted.push_back(BBVertices[p] + offset); }
 		visZone->SetBoundingBox(BBOffseted);
 
-		for (int i = 0; i < subVisPerZone; i++) // Samplings Loop
-		{
-			uniformSample.Process(cellData, cellDataSample, 0.1 + (0.3 * i));
+		int SampleSize = 100;
+		int sampleGrowFactor = 2;
+		int sampleNumber = 0;
+		float samplePercent = 0;
+		int totalPrimitiveSize = cellData->GetSize();
 
+		//for (int i = 0; i < subVisPerZone; i++) // Samplings Loop
+		while (SampleSize < totalPrimitiveSize) // Samplings Loop
+		{
+			samplePercent = (float)SampleSize / totalPrimitiveSize;
+			uniformSample.Process(cellData, cellDataSample, samplePercent);
 			reconstructCells.Process(*faceData, *faceDataBuffer, *cellDataSample);
 
-			string filename = "bin/zone_" + to_string(j) + "_" + to_string(i);
+			string filename = "bin/zone_" + to_string(j) + "_" + to_string(sampleNumber);
 
 			if (forceFileCreation)
 			{
-				DataVector<glm::vec3> triVertexBuffer(POINT);
-				faceIndexTriangulate.Process_Offset(triVertexBuffer, *triVertexData, *faceDataBuffer, offset);
-				
-				DataVector<glm::vec3> triNormalsBuffer = calcnormals.ProcessVec3(triVertexBuffer);
-				
 				auto fileDataBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
 
-				fileDataBuffer->StartWrite();
-				for (int i = 0; i < triVertexBuffer.GetSize(); i++)
-				{
-					fileDataBuffer->SetData(triVertexBuffer.GetData(i));
-					fileDataBuffer->SetData(triNormalsBuffer.GetData(i));
-				}
-				
-				fileDataBuffer->SaveFile();
-				fileDataBuffer->CloseFile();
+				loadSubVisDataOffset(fileDataBuffer, *triVertexData, *faceDataBuffer, offset);
 
 				auto vis = make_shared<VisCell_bin>(fileDataBuffer);
 				visZone->AddSubVisualization(vis);
 			}
 			else
 			{
-				//fstream zonefile(filename);
-
-				//auto triVertexBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
-
-				//if (!triVertexBuffer->FileExists())
-				//{
-				//	triVertexBuffer->StartWrite();
-				//	faceIndexTriangulate.Process_Offset(*triVertexBuffer, *triVertexData, *faceDataBuffer, offset);
-				//	triVertexBuffer->SaveFile();
-				//	triVertexBuffer->CloseFile();
-				//}
-
 				auto fileDataBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
 
 				if (!fileDataBuffer->FileExists())
 				{
-					DataVector<glm::vec3> triVertexBuffer(POINT);
-					faceIndexTriangulate.Process_Offset(triVertexBuffer, *triVertexData, *faceDataBuffer, offset);
-
-					DataVector<glm::vec3> triNormalsBuffer = calcnormals.ProcessVec3(triVertexBuffer);
-
-
-					fileDataBuffer->StartWrite();
-					for (int i = 0; i < triVertexBuffer.GetSize(); i++)
-					{
-						fileDataBuffer->SetData(triVertexBuffer.GetData(i));
-						fileDataBuffer->SetData(triNormalsBuffer.GetData(i));
-					}
-
-					fileDataBuffer->SaveFile();
-					fileDataBuffer->CloseFile();
+					loadSubVisDataOffset(fileDataBuffer, *triVertexData, *faceDataBuffer, offset);
 				}
 
-				//auto vis = make_shared<VisCell_bin>(triVertexBuffer);
 				auto vis = make_shared<VisCell_bin>(fileDataBuffer);
-
 				visZone->AddSubVisualization(vis);
 			}
 
+			sampleNumber++;
+			SampleSize = SampleSize * sampleGrowFactor ^ sampleNumber;
+
 			cellDataSample->Clear();
 			faceDataBuffer->Clear();
-			//__nop();
 		}
+
+		// LAST VIS: FULL MESH ZONE (NO SAMPLING)
+		string filename = "bin/zone_" + to_string(j) + "_" + to_string(sampleNumber);
+		auto lastFileDataBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
+		if (!lastFileDataBuffer->FileExists())
+		{
+			reconstructCells.Process(*faceData, *faceDataBuffer, *cellData);
+			loadSubVisDataOffset(lastFileDataBuffer, *triVertexData, *faceDataBuffer, offset);
+		}
+
+		auto vis = make_shared<VisCell_bin>(lastFileDataBuffer);
+		visZone->AddSubVisualization(vis);
+
 		zones.push_back(visZone);
-		//__nop();
+
+		cellDataSample->Clear();
+		faceDataBuffer->Clear();
 	}
 	return zones;
+}
+
+void ZoneGenerator::loadSubVisData(shared_ptr<DataBinFile<glm::vec3>> fileDataBuffer, DataVector<glm::vec3>& triVertexData, DataVector<Face>& faceDataBuffer)
+{
+	DataVector<glm::vec3> triVertexBuffer(POINT);
+	faceIndexTriangulate.Process(triVertexBuffer, triVertexData, faceDataBuffer);
+
+	DataVector<glm::vec3> triNormalsBuffer = calcnormals.ProcessVec3(triVertexBuffer);
+
+	fileDataBuffer->StartWrite();
+	for (int i = 0; i < triVertexBuffer.GetSize(); i++)
+	{
+		fileDataBuffer->SetData(triVertexBuffer.GetData(i));
+		fileDataBuffer->SetData(triNormalsBuffer.GetData(i));
+	}
+
+	fileDataBuffer->SaveFile();
+	fileDataBuffer->CloseFile();
+}
+
+void ZoneGenerator::loadSubVisDataOffset(shared_ptr<DataBinFile<glm::vec3>> fileDataBuffer, 
+											DataVector<glm::vec3>& triVertexData, 
+											DataVector<Face>& faceDataBuffer, 
+											glm::vec3 offset)
+{
+	DataVector<glm::vec3> triVertexBuffer(POINT);
+	faceIndexTriangulate.Process_Offset(triVertexBuffer, triVertexData, faceDataBuffer, offset);
+
+	DataVector<glm::vec3> triNormalsBuffer = calcnormals.ProcessVec3(triVertexBuffer);
+
+	fileDataBuffer->StartWrite();
+	for (int i = 0; i < triVertexBuffer.GetSize(); i++)
+	{
+		fileDataBuffer->SetData(triVertexBuffer.GetData(i));
+		fileDataBuffer->SetData(triNormalsBuffer.GetData(i));
+	}
+
+	fileDataBuffer->SaveFile();
+	fileDataBuffer->CloseFile();
 }

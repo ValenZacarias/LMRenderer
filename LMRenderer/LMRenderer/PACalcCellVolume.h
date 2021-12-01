@@ -19,7 +19,6 @@ public:
 	template <class TFace, class TCell, class TVertex, class TCentroid>
 	void Process(TFace& faceData, TVertex& vertexData, TCell& cellData, TCentroid& cellCentoids, DataVector<float>& cellVolumes)
 	{
-
 		vector<int> cellFaces;
 		int p0;
 		int count;
@@ -34,7 +33,6 @@ public:
 		for (int i = 0; i < cellData.GetSize(); i++)
 		{
 			reconstructCell.GetCellFaces(faceData, cellData, i, cellFaces);
-			//__nop();
 
 			for (int j = 0; j < cellFaces.size(); j++)
 			{
@@ -50,15 +48,12 @@ public:
 					qk = vertexData.GetData(k + 2);
 
 					vol += glm::dot((qi - centroid), glm::cross((qj - centroid), (qk - centroid)));
-					//__nop();
 				}
-
 			}
 			cellFaces.clear();
 			cellVolumes.SetData(vol);
 			vol = 0;
 		}
-		//__nop();
 	}
 
 };

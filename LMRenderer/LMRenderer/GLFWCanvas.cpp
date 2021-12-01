@@ -186,6 +186,7 @@ void GLFWCanvas::UIRender()
 	//ImGui::SetWindowFontScale(1.15);
 	ImGui::Checkbox("Dynamic Loading", &DYNAMIC_LOADING_ENABLED);
 	ImGui::Text("Triangle limit: %.1i", DYNAMIC_LOADING_LIMIT);
+	ImGui::InputInt("Set Limit: %.1i", &DYNAMIC_LOADING_LIMIT);
 	ImGui::SliderFloat("Frustrum Scale", &FRUSTRUM_SCALE, 0.01f, 2.0f);
 	ImGui::SliderFloat("Camera Speed", &CAMERA_SPEED, 0.0f, 10.0f);
 	ImGui::SliderFloat("Mouse Speed", &MOUSE_SENSITIVITY, 0.0f, 0.5f);
@@ -333,11 +334,11 @@ void GLFWCanvas::KeyboardHandler(GLFWwindow* window)
 		firstMouse = true;
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
 	{
 			PERSPECTIVE_CAM = true;
 	}
-	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
 	{
 		PERSPECTIVE_CAM = false;
 	}
