@@ -192,6 +192,12 @@ void GLFWCanvas::UIRender()
 	ImGui::SliderFloat("Mouse Speed", &MOUSE_SENSITIVITY, 0.0f, 0.5f);
 	ImGui::End();
 
+	ImGui::Begin("Light Position");
+	ImGui::SliderFloat("x", &LIGHT_POS.x, -1000.0f, 1000.0f);
+	ImGui::SliderFloat("y", &LIGHT_POS.y, -1000.0f, 1000.0f);
+	ImGui::SliderFloat("z", &LIGHT_POS.z, -1000.0f, 1000.0f);
+	ImGui::End();
+
 	// UI para saber estado de las zonas
 	ImGui::Begin("Zone state");
 	//ImGui::SetWindowFontScale(1.15);
@@ -205,9 +211,9 @@ void GLFWCanvas::UIRender()
 			ImGui::Bullet(); ImGui::SameLine();
 			ImGui::Text("Zona %.1i -", n); ImGui::SameLine();
 			ImGui::Checkbox("", &x); ImGui::SameLine();
-			ImGui::Text(" Lv: %.1i - Loaded Tris: %.2i", 
+			ImGui::Text(" Lv: %.1i - Loaded Tris: %.2i k", 
 					currentViz->shared_visualizations[n]->GetCurrentLevel(),
-					currentViz->shared_visualizations[n]->GetTrisLoaded());
+					currentViz->shared_visualizations[n]->GetTrisLoaded()/(int)1000);
 		}
 	}
 	ImGui::EndChild();

@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 #include <glm/glm.hpp> 
 #include <glm/gtc/matrix_transform.hpp> 
@@ -57,6 +58,8 @@
 
 #include "main.h"
 
+using namespace std;
+
 float lastFrame = 0.0f;
 
 GLFWwindow* window = NULL;
@@ -73,14 +76,46 @@ int main()
 	//ToolOrbitCamera cameraTool = ToolOrbitCamera(&canvas.currentCamera);
 	canvas.SetCurrentTool(&cameraTool);
 
+	// MULTIPLE ZONE GENERATION -------------------------------------------------------------------------------------------------------
+	ZONE_STARTING_SAMPLE_SIZE = 100000;
+	ZONE_SAMPLE_GROW_FACTOR = 2;
+	
+	vector<shared_ptr<VisMeshZone>> zones = {};
+	
+	string folderName = "aero-plm";
+	const filesystem::path mesh_path{ "Meshes/" + folderName + "/"};
+	int zone_num = 0;
+	string auxFileStr = "_0";
+	for (auto const& dir_entry : filesystem::directory_iterator{ mesh_path })
+	{
+		steady_clock::time_point begin = steady_clock::now();
+		cout << "------------------------------------------------------" << endl;
+		cout << "Reading zone: " << dir_entry.path().string() << endl;
+
+		auto VisZone = zoneGenerator.GenerateZone(dir_entry.path().string() + "/", zone_num);
+		zones.push_back(VisZone);
+		zone_num++;
+
+		steady_clock::time_point end = steady_clock::now();
+		cout << "Total zone generation = " << duration_cast<seconds>(end - begin).count() << "[s]" << endl;
+		cout << " " << endl;
+
+
+		//if (zone_num > 2) break;
+
+		__nop();
+	}
+
+	__nop();
+
 	// ZONE GENERATION -------------------------------------------------------------------------------------------------------
 	//auto VisZone_1 = zoneGenerator.GenerateZone("Meshes/spheroid_45k");
 	//vector<shared_ptr<VisMeshZone>> zones = { VisZone_1 };
 
 	// REPEATED ZONE GENERATION ----------------------------------------------------------------------------------------------
-	//vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/spheroid_45k", 9, 3, 3);
-	vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/sphere_3k", 16, 4, 4);
-	//vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/flange_mf_282k", 9, 3, 3);
+	//vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/spheroid_45k_", 9, 3, 3);
+	//vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/sphere_3k_", 16, 4, 4);
+	//vector<shared_ptr<VisMeshZone>> zones = zoneGenerator.GenerateRepeatedZones("Meshes/flange_mf_282k_", 9, 3, 3);
 
 	// VIS INIT -------------------------------------------------------------------------------------------------------
 	float gridScale = 5.0f;

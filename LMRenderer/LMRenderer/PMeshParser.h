@@ -114,6 +114,8 @@ public:
 
 		//FILE PARSING
 		ifstream in(filename);
+		assert(in);
+
 		string currentLine;
 
 		int totalPoints;
@@ -187,6 +189,8 @@ public:
 
 		//FILE PARSING
 		ifstream in(filename);
+		assert(in);
+
 		string currentLine;
 		string endOfCellCount = "n";
 
@@ -224,6 +228,8 @@ public:
 
 		//FILE PARSING
 		ifstream in(filename);
+		assert(in);
+
 		string currentLine;
 
 		int totalDataIndices;
@@ -282,6 +288,8 @@ public:
 
 		//FILE PARSING
 		ifstream in(filename);
+		assert(in);
+
 		string currentLine;
 
 		string startOfBoundaryData = "(";

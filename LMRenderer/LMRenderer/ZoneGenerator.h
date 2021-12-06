@@ -46,7 +46,7 @@ private:
 	PACalcCellVolume calcCellVolume;
 	PACalcBoundingBox calcBoundingBox;
 
-	int generatedZones = 0;
+	//int generatedZones = 0;
 
 public:
 
@@ -54,7 +54,7 @@ public:
 	{
 		Parser = PMeshParser();
 	};
-	shared_ptr<VisMeshZone> GenerateZone(string meshFilePath);
+	shared_ptr<VisMeshZone> GenerateZone(string meshFilePath, int zoneNumber);
 	vector<shared_ptr<VisMeshZone>> GenerateRepeatedZones(string meshFilePath, int zoneCount, int columns, int rows);
 	void loadSubVisData(shared_ptr<DataBinFile<glm::vec3>> fileDataBuffer, DataVector<glm::vec3>& triVertexData, DataVector<Face>& faceDataBuffer);
 	void loadSubVisDataOffset(shared_ptr<DataBinFile<glm::vec3>> fileDataBuffer, DataVector<glm::vec3>& triVertexData, DataVector<Face>& faceDataBuffer, glm::vec3 offset);

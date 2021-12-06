@@ -8,18 +8,18 @@
 
 using namespace std;
 
-shared_ptr<VisMeshZone> ZoneGenerator::GenerateZone(string meshFilePath)
+shared_ptr<VisMeshZone> ZoneGenerator::GenerateZone(string meshFilePath, int zoneNumber)
 {
 	shared_ptr<VisMeshZone> visZone = make_shared<VisMeshZone>();
-	int subVisPerZone = 3;
+	//int subVisPerZone = 3;
 	bool forceFileCreation = false;
 
-	auto DataIndex = Parser.ParseFaces(meshFilePath + "_faces.txt");
-	auto DataVertex = Parser.ParsePoints(meshFilePath + "_points.txt");
-	auto DataOwner = Parser.ParseCells(meshFilePath + "_owner.txt");
-	auto DataNeighbour = Parser.ParseCells(meshFilePath + "_neighbour.txt");
-	int cellCount = Parser.ParseCellCount(meshFilePath + "_owner.txt");
-	auto DataBoundary = Parser.ParseBoundary(meshFilePath + "_boundary.txt");
+	auto DataIndex = Parser.ParseFaces(meshFilePath + "faces");
+	auto DataVertex = Parser.ParsePoints(meshFilePath + "points");
+	auto DataOwner = Parser.ParseCells(meshFilePath + "owner");
+	auto DataNeighbour = Parser.ParseCells(meshFilePath + "neighbour");
+	int cellCount = Parser.ParseCellCount(meshFilePath + "owner");
+	auto DataBoundary = Parser.ParseBoundary(meshFilePath + "boundary");
 
 	auto faceData = make_shared<DataVector<Face>>(FACE);
 	createFaces.Process(*DataOwner, *faceData);
@@ -44,8 +44,8 @@ shared_ptr<VisMeshZone> ZoneGenerator::GenerateZone(string meshFilePath)
 	auto faceDataBuffer = make_shared<DataVector<Face>>(FACE);
 	auto cellDataSample = make_shared<DataVector<Cell>>(CELL);
 
-	int SampleSize = 1000;
-	int sampleGrowFactor = 2;
+	int SampleSize = ZONE_STARTING_SAMPLE_SIZE;
+	int sampleGrowFactor = ZONE_SAMPLE_GROW_FACTOR;
 	int sampleNumber = 0;
 	float samplePercent = 0;
 
@@ -58,7 +58,7 @@ shared_ptr<VisMeshZone> ZoneGenerator::GenerateZone(string meshFilePath)
 		uniformSample.Process(cellData, cellDataSample, samplePercent);
 		reconstructCells.Process(*faceData, *faceDataBuffer, *cellDataSample);
 
-		string filename = "bin/zone_" + to_string(generatedZones) + "_" + to_string(sampleNumber);
+		string filename = "bin/zone_" + to_string(zoneNumber) + "_" + to_string(sampleNumber);
 
 		if (forceFileCreation)
 		{
@@ -74,7 +74,10 @@ shared_ptr<VisMeshZone> ZoneGenerator::GenerateZone(string meshFilePath)
 
 			if (!fileDataBuffer->FileExists())
 			{
+				steady_clock::time_point begin = steady_clock::now();
 				loadSubVisData(fileDataBuffer, *triVertexData, *faceDataBuffer);
+				steady_clock::time_point end = steady_clock::now();
+				cout << " Zone creation = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
 			}
 
 			auto vis = make_shared<VisCell_bin>(fileDataBuffer);
@@ -89,7 +92,7 @@ shared_ptr<VisMeshZone> ZoneGenerator::GenerateZone(string meshFilePath)
 	}
 
 	// LAST VIS: FULL MESH ZONE (NO SAMPLING)
-	string filename = "bin/zone_" + to_string(generatedZones) + "_" + to_string(sampleNumber);
+	string filename = "bin/zone_" + to_string(zoneNumber) + "_" + to_string(sampleNumber);
 	auto lastFileDataBuffer = make_shared<DataBinFile<glm::vec3>>(POINT, filename);
 	if (!lastFileDataBuffer->FileExists())
 	{
@@ -110,12 +113,12 @@ vector<shared_ptr<VisMeshZone>> ZoneGenerator::GenerateRepeatedZones(string mesh
 	int subVisPerZone = 3;
 	bool forceFileCreation = false;
 
-	auto DataIndex = Parser.ParseFaces(meshFilePath + "_faces.txt");
-	auto DataVertex = Parser.ParsePoints(meshFilePath + "_points.txt");
-	auto DataOwner = Parser.ParseCells(meshFilePath + "_owner.txt");
-	auto DataNeighbour = Parser.ParseCells(meshFilePath + "_neighbour.txt");
-	int cellCount = Parser.ParseCellCount(meshFilePath + "_owner.txt");
-	auto DataBoundary = Parser.ParseBoundary(meshFilePath + "_boundary.txt");
+	auto DataIndex = Parser.ParseFaces(meshFilePath + "faces.txt");
+	auto DataVertex = Parser.ParsePoints(meshFilePath + "points.txt");
+	auto DataOwner = Parser.ParseCells(meshFilePath + "owner.txt");
+	auto DataNeighbour = Parser.ParseCells(meshFilePath + "neighbour.txt");
+	int cellCount = Parser.ParseCellCount(meshFilePath + "owner.txt");
+	auto DataBoundary = Parser.ParseBoundary(meshFilePath + "boundary.txt");
 
 	auto faceData = make_shared<DataVector<Face>>(FACE);
 	createFaces.Process(*DataOwner, *faceData);

@@ -94,7 +94,7 @@ public:
 		shader.use();
 		shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 		shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		shader.setVec3("lightPos", lightPosition.x, lightPosition.y, lightPosition.z);
+		shader.setVec3("lightPos", LIGHT_POS.x, LIGHT_POS.y, LIGHT_POS.z);
 
 		glm::mat4 view;
 		view = glm::lookAt(cam->cameraPos, cam->cameraPos + cam->cameraFront, cam->cameraUp);

@@ -45,7 +45,7 @@ public:
 			}
 		}
 		steady_clock::time_point end = steady_clock::now();
-		cout << " Storing data in binary = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
+		//cout << " Storing data in binary = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
 	}
 
 	template <typename TOut>
@@ -65,7 +65,7 @@ public:
 			}
 		}
 		steady_clock::time_point end = steady_clock::now();
-		cout << " Storing data in binary = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
+		//cout << " Storing data in binary = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
 	}
 
 

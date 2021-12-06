@@ -30,7 +30,7 @@ public:
 		{
 			cout << name << " not found!" << endl;
 			file.open(filename, ios::in | ios::binary | ios::trunc);
-			cout << filename << "created" << endl;
+			cout << "file " << filename << " created" << endl;
 		}
 		else
 		{

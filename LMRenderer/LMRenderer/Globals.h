@@ -8,7 +8,7 @@ extern int screenWidth;
 extern int screenHeight;
 
 extern float deltaTime;
-extern glm::vec3 lightPosition;
+extern glm::vec3 LIGHT_POS;
 
 extern int DataStructureCurrentIndex;
 
@@ -20,6 +20,9 @@ extern float MOUSE_SENSITIVITY;
 extern bool firstMouse;
 extern bool DYNAMIC_LOADING_ENABLED;
 extern int DYNAMIC_LOADING_LIMIT;
+
+extern int ZONE_STARTING_SAMPLE_SIZE;
+extern int ZONE_SAMPLE_GROW_FACTOR;
 
 extern float MESH_SCALE;
 extern float FRUSTRUM_SCALE;
